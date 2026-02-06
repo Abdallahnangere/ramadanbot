@@ -174,7 +174,7 @@ export default function Home() {
         <SettingsScreen 
           onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))}
           isDarkMode={appState.isDarkMode}
-          onToggleTheme={toggleTheme}
+          toggleTheme={toggleTheme}
           currentUser={appState.currentUser}
           onLogout={handleLogout}
         />
