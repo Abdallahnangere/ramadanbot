@@ -38,12 +38,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
   // --- DATA LOADING ---
   const loadData = async () => {
     setLoading(true);
-    const [usersData, analyticsData] = await Promise.all([
-        fetchAllUsers(),
-        getAnalytics()
-    ]);
-    setUsers(usersData);
-    setAnalytics(analyticsData);
+    try {
+        const [usersData, analyticsData] = await Promise.all([
+            fetchAllUsers(),
+            getAnalytics()
+        ]);
+        setUsers(usersData);
+        setAnalytics(analyticsData);
+    } catch (error) {
+        console.error("Failed to load admin data", error);
+    }
     setLoading(false);
   };
 
@@ -111,6 +115,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
   }
 
   const filteredUsers = users.filter(u => u.name.toLowerCase().includes(search.toLowerCase()));
+  
+  // Calculate derived metrics from users list if not available in analytics object
+  // This prevents crashes if the AnalyticsData type doesn't have these specific fields
+  const activeStreaksCount = users.filter(u => u.streak > 0).length;
+  const avgGens = analytics && analytics.totalUsers > 0 
+      ? (analytics.totalGenerations / analytics.totalUsers).toFixed(1) 
+      : "0.0";
+  const highestStreak = users.length > 0 ? Math.max(...users.map(u => u.streak || 0)) : 0;
+  const bannedCount = users.filter(u => u.is_banned).length;
+  const activeUsersCount = analytics ? analytics.totalUsers - bannedCount : 0;
 
   return (
     <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-black dark:via-gray-950 dark:to-black animate-fade-in">
@@ -192,7 +206,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-medium opacity-90">Total Users</p>
-                                <p className="text-4xl font-bold mt-1">{analytics.total_users}</p>
+                                <p className="text-4xl font-bold mt-1">{analytics.totalUsers}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
@@ -209,7 +223,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-medium opacity-90">Generations</p>
-                                <p className="text-4xl font-bold mt-1">{analytics.total_generations}</p>
+                                <p className="text-4xl font-bold mt-1">{analytics.totalGenerations}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
@@ -226,7 +240,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-medium opacity-90">Active Streaks</p>
-                                <p className="text-4xl font-bold mt-1">{analytics.active_streaks}</p>
+                                <p className="text-4xl font-bold mt-1">{activeStreaksCount}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
@@ -243,7 +257,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-medium opacity-90">Avg per User</p>
-                                <p className="text-4xl font-bold mt-1">{analytics.avg_generations_per_user.toFixed(1)}</p>
+                                <p className="text-4xl font-bold mt-1">{avgGens}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
@@ -262,7 +276,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                         </div>
                         <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Peak Streak</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{analytics.highest_streak}</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{highestStreak}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">days consecutive</p>
                     </div>
 
@@ -273,7 +287,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                         </div>
                         <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Active Users</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{analytics.total_users - (users.filter(u => u.is_banned).length || 0)}</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{activeUsersCount}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">not banned</p>
                     </div>
 
@@ -284,7 +298,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             </div>
                         </div>
                         <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Banned</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{users.filter(u => u.is_banned).length || 0}</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{bannedCount}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">restricted access</p>
                     </div>
                 </div>
@@ -327,7 +341,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">User</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Performance</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Daily Limit</th>
-                                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                              <th className="px-6 py-4 text-right text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -434,3 +448,4 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
 };
 
 export default AdminDashboard;
+                                                  
