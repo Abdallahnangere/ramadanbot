@@ -190,8 +190,13 @@ export default function Home() {
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 user={user}
-                onNavigate={(view) => {
-                    setAppState(prev => ({ ...prev, view }));
+                onLogout={handleLogout}
+                onAdmin={() => {
+                    setAppState(prev => ({ ...prev, view: 'admin' }));
+                    setIsSidebarOpen(false);
+                }}
+                onSettings={() => {
+                    setAppState(prev => ({ ...prev, view: 'settings' }));
                     setIsSidebarOpen(false);
                 }}
             />
@@ -372,7 +377,7 @@ export default function Home() {
                                 </div>
 
                                 {/* Daily Limit Card */}
-                                <div className="bg-gradient-to-br from-blue-50 to-cyan-100/50 dark:from-blue-900/20 dark:to-cyan-900/5 rounded-3xl p-5 border border-blue-200/50 dark:border-blue-900/30 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="bg-gradient-to-br from-blue-50 to-cyan-100/50 dark:from-blue-50 to-cyan-100/50 dark:from-blue-900/20 dark:to-cyan-900/5 rounded-3xl p-5 border border-blue-200/50 dark:border-blue-900/30 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex flex-col h-full justify-between">
                                         <div className="space-y-3">
                                             <div className="w-12 h-12 rounded-2xl bg-white/80 dark:bg-black/20 flex items-center justify-center shadow-sm">
@@ -463,3 +468,5 @@ export default function Home() {
     </div>
   );
 }
+
+           
