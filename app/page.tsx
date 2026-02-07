@@ -397,7 +397,6 @@ const HomePage = () => {
               <ul className="space-y-3 text-sm text-slate-600">
                 <li><Link href="/contact" className="hover:text-slate-950 transition-colors">Contact</Link></li>
                 <li><Link href="/privacy" className="hover:text-slate-950 transition-colors">Privacy</Link></li>
-                <li><a href="https://github.com/abdallahnangere/ramadanbot" target="_blank" rel="noopener noreferrer" className="hover:text-slate-950 transition-colors">GitHub</a></li>
               </ul>
             </div>
             <div>
@@ -410,8 +409,8 @@ const HomePage = () => {
             <div>
               <p className="font-semibold text-slate-950 mb-4">Connect</p>
               <ul className="space-y-3 text-sm text-slate-600">
-                <li><a href="https://twitter.com/ramadanbot" className="hover:text-slate-950 transition-colors">Twitter</a></li>
-                <li><a href="https://github.com/abdallahnangere" className="hover:text-slate-950 transition-colors">GitHub</a></li>
+                <li><a href="https://x.com/Abdalla_Nangere" target="_blank" rel="noopener noreferrer" className="hover:text-slate-950 transition-colors">X (Twitter)</a></li>
+                <li><a href="https://www.tiktok.com/@bot_ramadan?_r=1&_t=ZS-93jVLLRcvlY" target="_blank" rel="noopener noreferrer" className="hover:text-slate-950 transition-colors">TikTok</a></li>
               </ul>
             </div>
           </div>
