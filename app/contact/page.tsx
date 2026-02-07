@@ -1,182 +1,164 @@
 'use client';
 
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Github, Linkedin, Twitter, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
+import { Mail, Phone, MapPin, Github, Twitter, ArrowLeft } from 'lucide-react';
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white">
+    <main className="min-h-screen bg-white text-slate-950">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-white/10">
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between h-20">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
-              🌙
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/50">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-9 h-9">
+              <Image
+                src="/logo.png"
+                alt="Ramadan Bot"
+                fill
+                className="object-contain"
+              />
             </div>
-            <span className="text-lg font-semibold hidden sm:inline">Ramadan Bot</span>
+            <span className="text-sm font-semibold hidden sm:inline tracking-tight">Ramadan Bot</span>
           </div>
 
-          <Link href="/" className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-lg transition-colors">
-            <ArrowLeft size={18} />
-            <span className="text-sm">Back Home</span>
+          <Link href="/" className="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 rounded-full transition-colors text-sm font-medium">
+            <ArrowLeft size={16} />
+            <span>Back Home</span>
           </Link>
         </nav>
       </header>
 
       {/* Main Content */}
-      <section className="max-w-4xl mx-auto px-6 py-24">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h1 className="text-5xl sm:text-6xl font-black mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Get In Touch
+        <div className="text-center mb-24">
+          <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4">Contact & Support</p>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tight mb-6">
+            Let's Connect
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Have questions, suggestions, or just want to say hello? I'd love to hear from you.
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Have questions about Ramadan Bot? Want to collaborate or share feedback? Reach out and let's talk.
           </p>
         </div>
 
         {/* Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-          {/* Email Card */}
-          <div className="group relative bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative z-10">
-              <div className="inline-block p-4 rounded-2xl bg-blue-500/20 border border-blue-500/30 mb-6">
-                <Mail size={32} className="text-blue-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">Email</h3>
-              <p className="text-gray-400 mb-6">Send me an email and I'll get back to you as soon as possible.</p>
-              <a href="mailto:abdallahnangere@gmail.com" className="inline-block px-6 py-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/50 rounded-xl font-semibold text-sm transition-all">
-                abdallahnangere@gmail.com
-              </a>
+          {/* Email */}
+          <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-md">
+            <div className="inline-block w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-6">
+              <Mail size={24} className="text-blue-600" />
             </div>
+            <h3 className="text-xl font-bold mb-2">Email</h3>
+            <p className="text-slate-600 text-sm mb-6">Reach out anytime. I reply within 24 hours.</p>
+            <a href="mailto:abdallahnangere@gmail.com" className="text-blue-600 font-medium hover:underline text-sm">
+              abdallahnangere@gmail.com
+            </a>
           </div>
 
-          {/* WhatsApp Card */}
-          <div className="group relative bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative z-10">
-              <div className="inline-block p-4 rounded-2xl bg-green-500/20 border border-green-500/30 mb-6">
-                <Phone size={32} className="text-green-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">WhatsApp</h3>
-              <p className="text-gray-400 mb-6">Message me on WhatsApp for quick communication.</p>
-              <a href="https://wa.me/2348164135836" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-2 bg-green-600/30 hover:bg-green-600/50 border border-green-500/50 rounded-xl font-semibold text-sm transition-all">
-                +234 816 413 5836
-              </a>
+          {/* WhatsApp */}
+          <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-md">
+            <div className="inline-block w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center mb-6">
+              <Phone size={24} className="text-green-600" />
             </div>
+            <h3 className="text-xl font-bold mb-2">WhatsApp</h3>
+            <p className="text-slate-600 text-sm mb-6">Send a message on WhatsApp for quick chat.</p>
+            <a href="https://wa.me/234816413586" target="_blank" rel="noopener noreferrer" className="text-green-600 font-medium hover:underline text-sm">
+              +234 816 413 5836
+            </a>
           </div>
 
-          {/* Location Card */}
-          <div className="group relative bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative z-10">
-              <div className="inline-block p-4 rounded-2xl bg-orange-500/20 border border-orange-500/30 mb-6">
-                <MapPin size={32} className="text-orange-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">Location</h3>
-              <p className="text-gray-400 mb-6">Based in Lagos, Nigeria 🇳🇬</p>
-              <div className="inline-block px-6 py-2 bg-orange-600/30 border border-orange-500/50 rounded-xl font-semibold text-sm">
-                Lagos, Nigeria
-              </div>
+          {/* Location */}
+          <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-md">
+            <div className="inline-block w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-6">
+              <MapPin size={24} className="text-orange-600" />
             </div>
+            <h3 className="text-xl font-bold mb-2">Location</h3>
+            <p className="text-slate-600 text-sm mb-2">Based in Lagos, Nigeria 🇳🇬</p>
+            <p className="text-slate-500 text-sm">Timezone: West Africa Time (WAT)</p>
           </div>
 
-          {/* GitHub Card */}
-          <div className="group relative bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative z-10">
-              <div className="inline-block p-4 rounded-2xl bg-purple-500/20 border border-purple-500/30 mb-6">
-                <Github size={32} className="text-purple-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">GitHub</h3>
-              <p className="text-gray-400 mb-6">See my open source projects and code.</p>
-              <a href="https://github.com/abdallahnangere" target="_blank" rel="noopener noreferrer" className="inline-block px-6 py-2 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 rounded-xl font-semibold text-sm transition-all">
-                @abdallahnangere
-              </a>
+          {/* GitHub */}
+          <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-md">
+            <div className="inline-block w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center mb-6">
+              <Github size={24} className="text-white" />
             </div>
+            <h3 className="text-xl font-bold mb-2">GitHub</h3>
+            <p className="text-slate-600 text-sm mb-6">Follow along with development or contribute.</p>
+            <a href="https://github.com/abdallahnangere" target="_blank" rel="noopener noreferrer" className="text-slate-950 font-medium hover:underline text-sm">
+              @abdallahnangere
+            </a>
           </div>
         </div>
 
-        {/* About Me Section */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-12 mb-20 backdrop-blur-sm">
-          <h2 className="text-4xl font-bold mb-6 text-white">About Abdallah Nangere</h2>
-          
-          <div className="space-y-6 text-gray-300">
-            <p className="text-lg leading-relaxed">
-              I'm a passionate developer and Islamic technology enthusiast from Lagos, Nigeria 🇳🇬. I created <span className="text-white font-semibold">Ramadan Bot</span> with a simple mission: to help Muslims deepen their spiritual practice during Ramadan through authentic, AI-powered reflections.
+        {/* About Author Section */}
+        <div className="bg-slate-50 rounded-3xl border border-slate-200 p-12 mb-20">
+          <h2 className="text-3xl font-black mb-6 tracking-tight">About Abdallah</h2>
+          <div className="space-y-4 mb-8">
+            <p className="text-slate-700 leading-relaxed">
+              I'm Abdallah Nangere, a full-stack developer and passionate Islamic technology advocate. I created Ramadan Bot to help Muslims deepen their spiritual practice with authentic, AI-powered reflections grounded in Quranic teachings.
             </p>
-
-            <p className="text-lg leading-relaxed">
-              With a background in full-stack development and a deep interest in Islamic tradition, I believe technology can bridge communities and strengthen faith. Ramadan Bot represents years of learning both technical excellence and Islamic scholarship.
+            <p className="text-slate-700 leading-relaxed">
+              With over 5 years of experience in web development and a deep commitment to Islamic values, I'm dedicated to building technology that serves the Ummah. My mission is to make spiritual growth accessible, personal, and beautifully designed.
             </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-white/10 rounded-2xl p-6">
-                <div className="text-3xl mb-3">💻</div>
-                <h3 className="font-bold text-white mb-2">Full-Stack Developer</h3>
-                <p className="text-sm text-gray-400">Next.js, React, TypeScript, Node.js, PostgreSQL</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-white/10 rounded-2xl p-6">
-                <div className="text-3xl mb-3">📚</div>
-                <h3 className="font-bold text-white mb-2">Islamic Tech Advocate</h3>
-                <p className="text-sm text-gray-400">Building tools that serve the Muslim community</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-white/10 rounded-2xl p-6">
-                <div className="text-3xl mb-3">🌍</div>
-                <h3 className="font-bold text-white mb-2">Open Source Contributor</h3>
-                <p className="text-sm text-gray-400">Sharing code and knowledge with the community</p>
-              </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-widest">Expertise</p>
+            <div className="flex flex-wrap gap-3">
+              {['Full-Stack Developer', 'Islamic Tech Advocate', 'Open Source Contributor', 'UI/UX Designer', 'AI Integration', 'PWA Development'].map((skill) => (
+                <span key={skill} className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700">
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Social Links */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-12 backdrop-blur-sm">
-          <h3 className="text-2xl font-bold mb-8 text-white">Connect With Me</h3>
-          <div className="flex flex-wrap gap-4">
-            <a href="https://github.com/abdallahnangere" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg font-semibold transition-all">
-              <Github size={20} /> GitHub
+        <div className="text-center">
+          <p className="text-slate-600 mb-8">Follow Ramadan Bot on social media</p>
+          <div className="flex justify-center gap-4">
+            <a href="https://twitter.com/ramadanbot" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-full transition-all font-medium text-sm">
+              <Twitter size={18} />
+              Twitter
             </a>
-            <a href="https://wa.me/2348164135836" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-3 bg-green-600/30 hover:bg-green-600/50 border border-green-500/50 rounded-lg font-semibold transition-all">
-              <Phone size={20} /> WhatsApp
-            </a>
-            <a href="mailto:abdallahnangere@gmail.com" className="inline-flex items-center gap-3 px-6 py-3 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/50 rounded-lg font-semibold transition-all">
-              <Mail size={20} /> Email
+            <a href="https://github.com/abdallahnangere/ramadanbot" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-full transition-all font-medium text-sm">
+              <Github size={18} />
+              GitHub
             </a>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 border-y border-white/10">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl sm:text-5xl font-black">Back to the App?</h2>
-          <p className="text-lg text-gray-300">Ready to transform your Ramadan journey?</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/"
-              className="px-8 py-4 bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl font-semibold transition-all"
-            >
-              ← Back to Homepage
-            </Link>
-            <Link
-              href="/app"
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl"
-            >
-              Launch App
-            </Link>
+      <section className="bg-slate-950 text-white py-24 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-8">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Ready to start?</p>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight">
+              Back to the app
+            </h2>
+            <p className="text-lg text-slate-300">
+              Continue your spiritual journey with Ramadan Bot.
+            </p>
           </div>
+
+          <Link
+            href="/app"
+            className="inline-block px-8 py-4 bg-white text-slate-950 hover:bg-slate-100 rounded-full font-semibold transition-all"
+          >
+            Launch App →
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/50 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-          <p className="text-gray-500 text-sm">
-            © 2026 Ramadan Bot. Built with ❤️ for the Ummah by Abdallah Nangere 🇳🇬
+      <footer className="bg-slate-50 border-t border-slate-200 py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-slate-600 text-sm">
+            © 2026 Ramadan Bot. Made with ❤️ for spiritual growth. <br/>
+            <a href="https://www.ramadanbot.app" className="text-slate-950 font-semibold hover:underline">www.ramadanbot.app</a>
           </p>
         </div>
       </footer>
