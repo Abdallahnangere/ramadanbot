@@ -2,6 +2,8 @@
 
 Transform your Ramadan journey with **Ramadan Bot**, a faith-based platform that generates personalized daily reflections grounded in authentic Islamic teachings. Create beautiful, shareable flyers that inspire your community while building a consistent spiritual practice.
 
+**Live Now:** [www.ramadanbot.app](https://www.ramadanbot.app) | **App:** [app.ramadanbot.app](https://www.ramadanbot.app/app)
+
 ## ✨ What Makes Ramadan Bot Special?
 
 **Ramadan Bot** is more than just a reflection generator—it's a complete spiritual companion designed to deepen your connection with Islamic wisdom during the holy month. Every message you create is:
@@ -10,6 +12,7 @@ Transform your Ramadan journey with **Ramadan Bot**, a faith-based platform that
 - **Grammatically Perfect** with flawless prose that elevates your spiritual message
 - **Deeply Meaningful** offering profound insights that strengthen faith and practice
 - **Beautifully Presented** in elegant, Ramadan-themed designs ready to inspire others
+- **World-Class Homepage** Information-rich landing page with rich media and compelling CTAs
 
 ## 🎯 Core Features
 
@@ -98,12 +101,14 @@ After generating, you'll see a countdown timer showing when the next generation 
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Backend**: Node.js with PostgreSQL database
-- **Image Generation**: Professional rendering engine
-- **Database**: Secure PostgreSQL cloud backend
-- **Hosting**: Vercel (www.ramadanbot.vercel.app)
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Backend**: Node.js with PostgreSQL database & Google Gemini 2.5 Flash API
+- **Image Generation**: html2canvas rendering engine
+- **Database**: PostgreSQL via Neon (secure cloud backend)
+- **Hosting**: Vercel with custom domain
+- **Domain**: www.ramadanbot.app (App deployed at /app route)
 - **PWA**: Full offline support with manifest and service workers
+- **UI/UX**: Apple-standard design system with dark mode support
 
 ## 📖 Islamic Grounding
 
@@ -140,7 +145,8 @@ Created by **Abdallah Nangere** 🇳🇬
 ## 📞 Contact & Support
 
 Have suggestions? Found a bug? Want to contribute? Get in touch:
-- **Website**: [www.ramadanbot.vercel.app](https://www.ramadanbot.vercel.app)
+- **Website**: [www.ramadanbot.app](https://www.ramadanbot.app)
+- **App**: [app.ramadanbot.app](https://www.ramadanbot.app/app)
 - **GitHub**: [github.com/Abdallahnangere/ramadanbot](https://github.com/Abdallahnangere/ramadanbot)
 - **Email**: abdallahnangere@gmail.com
 - **WhatsApp**: [+234 816 413 5836](https://wa.me/2348164135836)
