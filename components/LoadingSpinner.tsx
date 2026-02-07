@@ -9,23 +9,30 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
   size = 'md', 
-  color = 'text-primary-600', 
+  color = 'text-blue-600', 
   label 
 }) => {
   const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-10 h-10',
-    lg: 'w-16 h-16',
+    sm: 'w-5 h-5',
+    md: 'w-8 h-8',
+    lg: 'w-12 h-12',
+  };
+
+  const labelSizeClasses = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-3">
       <Loader2 
         className={`animate-spin ${sizeClasses[size]} ${color}`} 
+        strokeWidth={2.5}
         aria-label="Loading"
       />
       {label && (
-        <span className="text-sm font-medium text-gray-500 animate-pulse">
+        <span className={`${labelSizeClasses[size]} font-medium text-gray-600`}>
           {label}
         </span>
       )}
