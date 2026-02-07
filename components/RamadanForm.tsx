@@ -9,9 +9,11 @@ interface RamadanFormProps {
   disabled?: boolean;
   initialName: string;
   userId: string; // Needed for tracking
+  countdownTime?: string;
+  hasLimitReached?: boolean;
 }
 
-const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialName, userId }) => {
+const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialName, userId, countdownTime = '00:00:00', hasLimitReached = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDayOpen, setIsDayOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -181,20 +183,31 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
         </div>
 
         {/* Generate Button - Apple Premium */}
-        <button
-          type="submit"
-          disabled={isLoading || disabled || !formData.topic}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold py-4 rounded-xl shadow-md hover:shadow-lg disabled:shadow-none transform active:scale-98 transition-all duration-200 flex items-center justify-center gap-2.5 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <LoadingSpinner size="sm" color="text-white" />
-          ) : (
-            <>
-              <span className="text-[15px]">Generate Flyer</span>
-              <Send size={18} fill="currentColor" strokeWidth={0} />
-            </>
-          )}
-        </button>
+        {hasLimitReached ? (
+          <button
+            type="button"
+            disabled={true}
+            className="w-full bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 font-semibold py-4 rounded-xl shadow-none cursor-not-allowed flex flex-col items-center justify-center gap-2"
+          >
+            <span className="text-[15px]">Daily Limit Reached</span>
+            <span className="font-mono text-sm font-bold text-gray-700">{countdownTime}</span>
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={isLoading || disabled || !formData.topic}
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold py-4 rounded-xl shadow-md hover:shadow-lg disabled:shadow-none transform active:scale-98 transition-all duration-200 flex items-center justify-center gap-2.5 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <LoadingSpinner size="sm" color="text-white" />
+            ) : (
+              <>
+                <span className="text-[15px]">Generate Flyer</span>
+                <Send size={18} fill="currentColor" strokeWidth={0} />
+              </>
+            )}
+          </button>
+        )}
       </form>
 
       {/* AI Disclaimer - Apple Alert Style */}

@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { User, AnalyticsData } from '../types';
-import { fetchAllUsers, updateUserLimit, toggleUserBan, getAnalytics, adminLogin } from '../app/actions';
-import { ArrowLeft, Ban, RefreshCcw, Search, ShieldCheck, TrendingUp, Users, Activity, Lock, Edit3, Save, BarChart3, Zap, Target } from 'lucide-react';
+import { fetchAllUsers, updateUserLimit, toggleUserBan, getAnalytics, adminLogin, deleteUser } from '../app/actions';
+import { ArrowLeft, Ban, RefreshCcw, Search, ShieldCheck, TrendingUp, Users, Activity, Lock, Edit3, Save, BarChart3, Zap, Target, Trash2 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface AdminDashboardProps {
@@ -55,6 +57,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const handleBan = async (id: string, currentStatus: boolean) => {
     await toggleUserBan(id, !currentStatus);
     loadData(); // Refresh
+  };
+
+  const handleDelete = async (id: string, userName: string) => {
+    if (confirm(`Are you sure you want to permanently delete user "${userName}" and all their data? This cannot be undone.`)) {
+      const result = await deleteUser(id);
+      if (result.success) {
+        alert(`User "${userName}" deleted successfully`);
+        loadData();
+      } else {
+        alert(`Failed to delete user. Please try again.`);
+      }
+    }
   };
 
   const saveLimit = async (id: string) => {
@@ -392,30 +406,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-semibold">
-                                                        {user.rate_limit_override || 3} gen/day
-                                                    </span>
-                                                    <button 
-                                                        onClick={() => { setEditLimitId(user.id); setTempLimit(user.rate_limit_override || 3); }}
-                                                        className="w-8 h-8 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                                                    >
-                                                        <Edit3 size={14} className="text-gray-600 dark:text-gray-400" />
-                                                    </button>
-                                                </div>
+                                                <span className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-semibold cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-all" onClick={() => { setEditLimitId(user.id); setTempLimit(user.rate_limit_override); }}>
+                                                    {user.rate_limit_override} generations
+                                                </span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button 
-                                                onClick={() => handleBan(user.id, user.is_banned)}
-                                                className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                                                    user.is_banned 
-                                                        ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50' 
-                                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400'
-                                                }`}
-                                            >
-                                                {user.is_banned ? "Unban" : "Ban"}
-                                            </button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button 
+                                                    onClick={() => handleBan(user.id, user.is_banned)}
+                                                    className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                                                        user.is_banned 
+                                                            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50' 
+                                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400'
+                                                    }`}
+                                                >
+                                                    {user.is_banned ? "Unban" : "Ban"}
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(user.id, user.name)}
+                                                    className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center transition-all active:scale-95"
+                                                    title="Delete user"
+                                                >
+                                                    <Trash2 size={16} strokeWidth={2} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

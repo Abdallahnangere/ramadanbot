@@ -2,5 +2,8 @@
   "/_not-found": "app/_not-found.js",
   "/admin/page": "app/admin/page.js",
   "/page": "app/page.js",
-  "/api/user/route": "app/api/user/route.js"
+  "/privacy/page": "app/privacy/page.js",
+  "/api/user/route": "app/api/user/route.js",
+  "/app/admin/page": "app/app/admin/page.js",
+  "/app/page": "app/app/page.js"
 }

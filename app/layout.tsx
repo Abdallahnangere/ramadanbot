@@ -1,98 +1,48 @@
-import type { Metadata, Viewport } from "next";
-import { Inter, Amiri, Cinzel, Cormorant_Garamond } from "next/font/google";
-import React from "react";
-import { PWARegistration } from "@/components/PWARegistration";
-import "./globals.css";
+import React from 'react';
+import './globals.css';
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-const amiri = Amiri({ weight: ['400', '700'], subsets: ["arabic"], variable: '--font-amiri' });
-const cinzel = Cinzel({ subsets: ["latin"], variable: '--font-cinzel' });
-const cormorant = Cormorant_Garamond({ weight: ['300', '400', '600'], subsets: ["latin"], variable: '--font-cormorant' });
-
-export const metadata: Metadata = {
-  title: "Ramadan Bot: AI Flyer Generator",
-  description: "Create beautiful, personalized Ramadan flyers and Islamic spiritual content with ease.",
-  metadataBase: new URL("https://www.ramadanbot.vercel.app"),
-  manifest: "/manifest.json",
-  keywords: ["Ramadan", "Islamic", "Flyer Generator", "Ramadan Bot", "Muslim", "Spirituality", "Islamic Design", "Ramadan Creator", "Islamic Content"],
-  authors: [{ name: "Abdallah Nangere" }],
-  creator: "Abdallah Nangere",
-  verification: {
-    google: "xe2tz-sYxM82yWmgNE4s_EqQeeTutOdnax8YmhYXRgA",
-  },
+export const metadata = {
+  title: 'Ramadan Bot — AI-Powered Spiritual Reflections & Flyer Creator',
+  description: 'Create beautiful, authentic Ramadan reflections grounded in Quranic teachings. Share stunning flyers with your community and build consistent spiritual practice with daily streaks.',
+  metadataBase: new URL('https://www.ramadanbot.app'),
+  keywords: ['Ramadan', 'Islamic', 'Flyer Generator', 'Spiritual Reflection', 'Muslim', 'Quranic', 'Islamic Design', 'Daily Reflection', 'Faith Practice'],
+  authors: [{ name: 'Abdallah Nangere' }],
+  creator: 'Abdallah Nangere',
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://www.ramadanbot.vercel.app",
-    siteName: "Ramadan Bot",
-    title: "Ramadan Bot: AI Flyer Generator",
-    description: "Create beautiful, personalized Ramadan flyers and Islamic spiritual content.",
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.ramadanbot.app',
+    siteName: 'Ramadan Bot',
+    title: 'Ramadan Bot — AI-Powered Spiritual Reflections',
+    description: 'Create authentic Ramadan reflections and share them as beautiful flyers.',
     images: [
       {
-        url: "/icon-512x512.png",
+        url: '/icon-512x512.png',
         width: 512,
         height: 512,
-        alt: "Ramadan Bot Logo",
-      },
-      {
-        url: "/ramadan-background.png",
-        width: 1080,
-        height: 1080,
-        alt: "Ramadan Flyer Template",
+        alt: 'Ramadan Bot Logo',
       }
     ]
   },
   twitter: {
-    card: "summary_large_image",
-    creator: "@RamadanBot",
-    title: "Ramadan Bot: AI Flyer Generator",
-    description: "Create beautiful, personalized Ramadan flyers instantly",
-    images: ["/icon-512x512.png", "/ramadan-background.png"],
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Ramadan Bot",
-  },
-  formatDetection: {
-    telephone: false,
+    card: 'summary_large_image',
+    creator: '@RamadanBot',
+    title: 'Ramadan Bot — Spiritual Reflections for the Modern Muslim',
+    description: 'Create and share authentic Ramadan reflections instantly',
+    images: ['/icon-512x512.png'],
   },
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
-  themeColor: "#000000",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Ramadan Bot" />
-        <meta name="application-name" content="Ramadan Bot" />
-        <link rel="manifest" href="/manifest.json" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#ffffff" />
         <link rel="icon" href="/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icon-192x192.png" />
-        <meta name="theme-color" content="#0f766e" />
-        <meta name="description" content="Create beautiful, personalized Ramadan flyers and Islamic spiritual content." />
+        <link rel="canonical" href="https://www.ramadanbot.app" />
       </head>
-      <body 
-        className={`${inter.variable} ${amiri.variable} ${cinzel.variable} ${cormorant.variable} antialiased bg-black flex justify-center items-center h-screen w-screen overflow-hidden`}
-        style={{ backgroundColor: '#000000', color: '#ffffff' }}
-      >
-        <PWARegistration />
+      <body className="antialiased bg-white text-slate-900">
         {children}
       </body>
     </html>

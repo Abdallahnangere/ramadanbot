@@ -31,6 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_generations_user_id ON generations(user_id);
 CREATE INDEX IF NOT EXISTS idx_generations_created_at ON generations(created_at);
 CREATE INDEX IF NOT EXISTS idx_users_last_login ON users(last_login);
 CREATE INDEX IF NOT EXISTS idx_users_name_lower ON users(LOWER(name));
+CREATE INDEX IF NOT EXISTS idx_users_is_banned ON users(is_banned);
 
 -- Add any missing columns to existing users table (idempotent)
 DO $$ 

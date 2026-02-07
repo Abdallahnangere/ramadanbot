@@ -202,3 +202,20 @@ export async function toggleUserBan(userId: string, status: boolean) {
     return { success: true };
   } finally { client.release(); }
 }
+
+export async function deleteUser(userId: string) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // Delete all generations for this user (cascade will handle this from schema, but explicit is safer)
+    await client.query('DELETE FROM generations WHERE user_id = $1', [userId]);
+    // Delete the user
+    await client.query('DELETE FROM users WHERE id = $1', [userId]);
+    await client.query('COMMIT');
+    return { success: true };
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('Delete user error:', e);
+    return { success: false };
+  } finally { client.release(); }
+}
