@@ -153,34 +153,30 @@ export default function Home() {
   };
 
   const renderContent = () => {
-    const { view, currentUser } = appState;
-
-    if (view === 'login') {
-      return <LoginScreen onLogin={handleLogin} isDarkMode={appState.isDarkMode} />;
+    if (appState.view === 'login') {
+      return <LoginScreen onLogin={handleLogin} />;
     }
 
-    if (view === 'admin' && currentUser?.role === 'admin') {
+    if (appState.view === 'admin') {
       return (
         <AdminDashboard 
-          onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))} 
-          isDarkMode={appState.isDarkMode} 
-          toggleTheme={toggleTheme} 
+          onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))}
         />
       );
     }
 
-    if (view === 'settings') {
-      return (
-        <SettingsScreen 
-          onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))} 
-          isDarkMode={appState.isDarkMode} 
-          toggleTheme={toggleTheme} 
-        />
-      );
+    if (appState.view === 'settings') {
+        return <SettingsScreen 
+            onBack={() => setAppState(prev => ({...prev, view: 'app'}))} 
+            isDarkMode={appState.isDarkMode}
+            toggleTheme={toggleTheme}
+            user={appState.currentUser!}
+            onLogout={handleLogout}
+        />;
     }
 
-    if (view !== 'app' || !currentUser) return null;
-    const user = currentUser;
+    // Main App View
+    const user = appState.currentUser!;
 
     return (
         <div className="relative h-full bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-hidden">
@@ -191,111 +187,135 @@ export default function Home() {
                 onClose={() => setIsSidebarOpen(false)}
                 user={user}
                 onLogout={handleLogout}
-                onAdmin={() => { setAppState(prev => ({ ...prev, view: 'admin' })); setIsSidebarOpen(false); }}
-                onSettings={() => { setAppState(prev => ({ ...prev, view: 'settings' })); setIsSidebarOpen(false); }}
+                onAdmin={() => {
+                    setAppState(prev => ({ ...prev, view: 'admin' }));
+                    setIsSidebarOpen(false);
+                }}
+                onSettings={() => {
+                    setAppState(prev => ({ ...prev, view: 'settings' }));
+                    setIsSidebarOpen(false);
+                }}
             />
 
-            {/* Top Navigation - Apple Premium */}
-            <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
-                <div className="px-5 h-14 flex items-center justify-between">
-                    {/* Menu Button */}
-                    <button 
+            {/* Header - Apple Style */}
+            <header className="relative flex-shrink-0 px-5 py-4 bg-white/80 dark:bg-black/60 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 z-40">
+                <div className="flex items-center justify-between">
+                    {/* Left: Menu Button */}
+                    <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all duration-200 active:scale-95"
-                        aria-label="Open menu"
+                        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+                        aria-label="Open Menu"
                     >
-                        <Menu size={20} className="text-gray-700" strokeWidth={2} />
+                        <Menu size={20} className="text-gray-700 dark:text-gray-200" />
                     </button>
 
-                    {/* Logo & Title */}
-                    <div className="flex items-center gap-2">
-                        <div className="text-2xl">🌙</div>
-                        <h1 className="text-lg font-semibold text-gray-900 tracking-tight">RamadanBot</h1>
+                    {/* Center: App Title */}
+                    <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+                        <h1 className="text-lg font-semibold text-gray-900 dark:text-white tracking-tight">
+                            RamadanBot
+                        </h1>
                     </div>
 
-                    {/* Theme Toggle */}
-                    <button
-                        onClick={toggleTheme}
-                        className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all duration-200 active:scale-95"
-                        aria-label="Toggle theme"
-                    >
-                        <span className="text-lg">{appState.isDarkMode ? '☀️' : '🌙'}</span>
-                    </button>
-                </div>
-            </nav>
+                    {/* Right: Theme Toggle & Daily Limit Badge */}
+                    <div className="flex items-center gap-3">
+                        {/* Theme Toggle - Subtle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+                            aria-label="Toggle Theme"
+                        >
+                            {appState.isDarkMode ? (
+                                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                                </svg>
+                            )}
+                        </button>
 
-            {/* Main Content - Scrollable */}
-            <main className="relative h-[calc(100%-3.5rem)] overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <div className="px-5 py-6 max-w-2xl mx-auto space-y-6">
-                    
-                    {/* Daily Limit Warning - Apple Alert Style */}
-                    {hasDownloadedToday && user.role !== 'admin' && (
-                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200 shadow-sm animate-fade-in">
-                            <div className="flex gap-3">
-                                <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
-                                        <Clock size={20} className="text-amber-600" strokeWidth={2} />
-                                    </div>
+                        {/* Daily Limit Badge */}
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
+                            <Download size={14} className="text-blue-600 dark:text-blue-400" />
+                            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                                {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Content Area - Apple Style Scrolling */}
+            <main className="flex-1 overflow-y-auto scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="px-5 py-6 space-y-6">
+                    {generatedData ? (
+                        // Flyer Preview
+                        <div className="animate-fade-in">
+                            <FlyerPreview 
+                                message={generatedData.text}
+                                formData={generatedData.formData}
+                                onReset={() => setGeneratedData(null)}
+                                user={user}
+                                onDownloaded={handleFlyerDownloaded}
+                            />
+                        </div>
+                    ) : hasDownloadedToday ? (
+                        // Daily Limit Reached - Apple Style
+                        <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in text-center space-y-8 px-4">
+                            {/* Icon */}
+                            <div className="relative">
+                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl">
+                                    <Clock size={48} className="text-white" strokeWidth={2} />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="text-sm font-semibold text-gray-900 mb-1">
-                                        Daily Limit Reached
-                                    </h3>
-                                    <p className="text-sm text-gray-600 mb-2">
-                                        You've used all your generations for today. Come back tomorrow for more!
-                                    </p>
-                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-amber-200">
-                                        <Clock size={14} className="text-amber-600" />
-                                        <span className="text-xs font-mono font-semibold text-amber-700">{countdownTime}</span>
-                                    </div>
+                                <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-50 dark:border-black flex items-center justify-center">
+                                    <span className="text-lg">✨</span>
                                 </div>
                             </div>
-                        </div>
-                    )}
 
-                    {generatedData ? (
-                        // Preview Mode - Enhanced
-                        <div className="space-y-5 animate-fade-in">
-                            {/* Header */}
-                            <div className="text-center space-y-2">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg mb-2">
-                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-                                    Your Flyer is Ready!
+                            {/* Heading */}
+                            <div className="space-y-2">
+                                <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+                                    Daily Limit Reached
                                 </h2>
-                                <p className="text-sm text-gray-600 max-w-sm mx-auto">
-                                    Review your personalized Ramadan reflection below
+                                <p className="text-base text-gray-600 dark:text-gray-400 max-w-xs mx-auto leading-relaxed">
+                                    You've created your reflection for today. Come back after:
                                 </p>
                             </div>
 
-                            {/* Flyer Preview Card */}
-                            <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-200">
-                                <FlyerPreview 
-                                    data={generatedData}
-                                    onDownload={handleFlyerDownloaded}
-                                />
+                            {/* Countdown Timer - Apple Watch Style */}
+                            <div className="w-full max-w-sm">
+                                <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-xl border border-gray-200 dark:border-gray-800">
+                                    <div className="flex items-center justify-center gap-2 mb-4">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            Next Generation In
+                                        </span>
+                                    </div>
+                                    <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 font-mono tracking-tight">
+                                        {countdownTime}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-4">
+                                        Resets automatically every 24 hours
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="space-y-3">
-                                {downloadedFlyerUrl && (
-                                    <button
-                                        onClick={handleRedownload}
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-2xl hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all duration-200 active:scale-98"
-                                    >
-                                        <Download size={20} strokeWidth={2} />
-                                        <span className="text-[15px]">Download Again</span>
-                                    </button>
-                                )}
-                                
+                            {/* Action Buttons - Apple Style */}
+                            <div className="w-full max-w-sm space-y-3">
                                 <button
-                                    onClick={() => setGeneratedData(null)}
-                                    className="w-full px-6 py-4 bg-gray-100 text-gray-700 font-semibold rounded-2xl hover:bg-gray-200 transition-all duration-200 active:scale-98"
+                                    onClick={handleRedownload}
+                                    disabled={!downloadedFlyerUrl}
+                                    className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white font-semibold py-4 rounded-2xl transition-all active:scale-98 shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-3 disabled:cursor-not-allowed"
                                 >
-                                    <span className="text-[15px]">Create Another</span>
+                                    <Download size={20} />
+                                    <span>Re-download Today's Flyer</span>
+                                </button>
+                                <button
+                                    onClick={() => setHasDownloadedToday(false)}
+                                    className="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold py-4 rounded-2xl transition-all active:scale-98"
+                                >
+                                    Continue to Home
                                 </button>
                             </div>
                         </div>
