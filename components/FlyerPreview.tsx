@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FormData, User } from '../types';
 import { generateFlyer, downloadFlyer, slugify } from '../lib/flyerGenerator';
 import LoadingSpinner from './LoadingSpinner';
-import { Download, Share2, RefreshCcw, Sparkles, XCircle, MessageCircle, Share } from 'lucide-react';
+import { Download, Share2, RefreshCcw, Sparkles, XCircle, CheckCircle2, Info } from 'lucide-react';
 
 interface FlyerPreviewProps {
   message: string;
@@ -111,141 +111,396 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
     }
   };
 
+  // Loading State - Apple Style
   if (isGenerating) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in p-6 text-center space-y-4">
-        <LoadingSpinner size="lg" color="text-ios-teal" />
-        <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Crafting Your Reflection...</h3>
-          <p className="text-gray-500 mt-2 text-sm max-w-xs mx-auto">Loading and rendering your beautiful flyer.</p>
-          <p className="text-gray-400 mt-1 text-xs font-mono">Please wait...</p>
+      <div 
+        className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-6"
+        style={{
+          background: 'linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #000000 100%)',
+        }}
+      >
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
+            style={{
+              background: 'radial-gradient(circle, rgba(0, 122, 255, 0.4) 0%, rgba(88, 86, 214, 0.3) 50%, transparent 70%)',
+              animation: 'pulse 3s ease-in-out infinite'
+            }}
+          />
         </div>
+
+        <div className="relative z-10 space-y-6">
+          {/* Animated spinner container */}
+          <div className="relative">
+            <div 
+              className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-full blur-2xl opacity-70"
+              style={{ animation: 'pulse 2s ease-in-out infinite' }}
+            />
+            <div className="relative">
+              <LoadingSpinner size="lg" color="text-blue-400" />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 
+              className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white via-gray-100 to-gray-300"
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+                letterSpacing: '-0.02em'
+              }}
+            >
+              Crafting Your Reflection
+            </h3>
+            <p 
+              className="text-gray-400 text-sm max-w-xs mx-auto leading-relaxed"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
+            >
+              Designing your beautiful flyer with precision and care
+            </p>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="flex gap-1">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-blue-400"
+                    style={{
+                      animation: `bounce 1.4s ease-in-out ${i * 0.2}s infinite`
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+          }
+          @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+          }
+        `}</style>
       </div>
     );
   }
 
-  // Show Success Screen After Download - No Countdown Here
+  // Success Screen After Download - Apple Style
   if (hasDownloaded) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in p-6 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-ios-teal to-cyan-500 flex items-center justify-center text-white text-3xl shadow-lg">
-          <Sparkles size={28} />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Flyer Downloaded! ✓</h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">Share it with your loved ones.</p>
-        </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">Don't forget to share on social media:</p>
-        <div className="space-y-2 w-full">
-          <button
-            onClick={handleRedownload}
-            className="w-full bg-white dark:bg-[#1C1C1E] text-gray-900 dark:text-white border border-gray-200 dark:border-zinc-700 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all text-sm"
-          >
-            <Download size={18} />
-            <span>Re-download</span>
-          </button>
-          <button
-            onClick={() => {
-              const caption = `Ramadan Day ${formData.day}: ${formData.topic}\\n\\n"${message.substring(0, 60)}..."\\n\\nCreated with RamadanBot`;
-              if (navigator.share) {
-                navigator.share({
-                  title: 'My Ramadan Reflection',
-                  text: caption
-                }).catch(() => {});
-              }
+      <div 
+        className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-8"
+        style={{
+          background: 'linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #000000 100%)',
+        }}
+      >
+        {/* Background gradient */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div 
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl"
+            style={{
+              background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4) 0%, rgba(16, 185, 129, 0.3) 50%, transparent 70%)',
             }}
-            className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:shadow-lg transition-all text-sm"
-          >
-            <Share2 size={18} />
-            <span>Share</span>
-          </button>
-          <button
+          />
+        </div>
+
+        <div className="relative z-10 space-y-8 max-w-sm w-full">
+          {/* Success icon with animation */}
+          <div className="flex justify-center">
+            <div className="relative">
+              <div 
+                className="absolute inset-0 bg-gradient-to-br from-green-400/30 to-emerald-500/30 rounded-full blur-2xl"
+                style={{ transform: 'scale(1.5)' }}
+              />
+              <div 
+                className="relative w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-2xl"
+                style={{
+                  animation: 'scaleIn 0.5s ease-out',
+                  boxShadow: '0 20px 60px rgba(52, 211, 153, 0.4)'
+                }}
+              >
+                <CheckCircle2 size={48} className="text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h2 
+              className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white via-gray-100 to-gray-300"
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+                letterSpacing: '-0.02em'
+              }}
+            >
+              Flyer Downloaded!
+            </h2>
+            <p 
+              className="text-gray-400 text-base"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
+            >
+              Share it with your loved ones
+            </p>
+          </div>
+
+          {/* Action buttons */}
+          <div className="space-y-3 pt-4">
+            <button
+              onClick={handleRedownload}
+              className="w-full backdrop-blur-2xl bg-white/[0.08] border border-white/[0.12] text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.97]"
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+              }}
+            >
+              <Download size={20} strokeWidth={2.5} />
+              <span>Download Again</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const caption = `Ramadan Day ${formData.day}: ${formData.topic}\\n\\n"${message.substring(0, 60)}..."\\n\\nCreated with RamadanBot`;
+                if (navigator.share) {
+                  navigator.share({
+                    title: 'My Ramadan Reflection',
+                    text: caption
+                  }).catch(() => {});
+                }
+              }}
+              className="w-full font-semibold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.97]"
+              style={{
+                background: 'linear-gradient(180deg, #007AFF 0%, #0051D5 100%)',
+                color: 'white',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+                boxShadow: '0 8px 24px rgba(0, 122, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              }}
+            >
+              <Share2 size={20} strokeWidth={2.5} />
+              <span>Share Reflection</span>
+            </button>
+
+            <button
+              onClick={onReset}
+              className="w-full backdrop-blur-2xl bg-white/[0.05] text-gray-300 font-semibold py-4 rounded-2xl transition-all active:scale-[0.97]"
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+              }}
+            >
+              Return to Home
+            </button>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // Error State - Apple Style
+  if (error) {
+    return (
+      <div 
+        className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-8"
+        style={{
+          background: 'linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #000000 100%)',
+        }}
+      >
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div 
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
+            style={{
+              background: 'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 50%, transparent 70%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 space-y-6 max-w-sm">
+          <div className="flex justify-center">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/20 backdrop-blur-xl flex items-center justify-center border border-red-500/30">
+              <XCircle size={40} className="text-red-400" strokeWidth={2} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 
+              className="text-2xl font-bold text-white"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}
+            >
+              Generation Failed
+            </h3>
+            <p 
+              className="text-gray-400 text-sm leading-relaxed"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
+            >
+              {error}
+            </p>
+          </div>
+
+          <button 
             onClick={onReset}
-            className="w-full bg-ios-teal hover:bg-cyan-600 text-white font-bold py-2.5 rounded-xl transition-all text-sm"
+            className="w-full font-semibold py-4 rounded-2xl transition-all active:scale-[0.97]"
+            style={{
+              background: 'linear-gradient(180deg, #007AFF 0%, #0051D5 100%)',
+              color: 'white',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+              boxShadow: '0 8px 24px rgba(0, 122, 255, 0.4)'
+            }}
           >
-            ← Return to Home
+            Try Again
           </button>
         </div>
       </div>
     );
   }
 
-  if (error) {
-     return (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center animate-fade-in space-y-4">
-            <XCircle size={56} className="text-red-500" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Generation Failed</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{error}</p>
-            <button 
-                onClick={onReset}
-                className="bg-gray-900 dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-xl font-bold text-sm"
-            >
-                Try Again
-            </button>
-        </div>
-     );
-  }
-
+  // Main Preview Screen - Apple Style
   return (
-    <div className="flex flex-col h-full animate-fade-in pb-4">
-      
-      {/* In-App Notification */}
+    <div 
+      className="flex flex-col h-full relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #000000 100%)',
+      }}
+    >
+      {/* Subtle background gradient */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+        <div 
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(0, 122, 255, 0.15) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      {/* Notification Toast */}
       {notification && (
-        <div className={`mb-3 p-3 rounded-lg flex items-center gap-2 text-sm font-medium animate-fade-in ${
-          notification.type === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' :
-          notification.type === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900' :
-          'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900'
-        }`}>
-          {notification.type === 'success' && <span>✓</span>}
-          {notification.type === 'error' && <span>✕</span>}
-          {notification.type === 'info' && <span>ℹ</span>}
-          {notification.message}
+        <div 
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl backdrop-blur-2xl border shadow-2xl flex items-center gap-3 max-w-sm"
+          style={{
+            background: notification.type === 'success' 
+              ? 'rgba(52, 211, 153, 0.15)' 
+              : notification.type === 'error'
+              ? 'rgba(239, 68, 68, 0.15)'
+              : 'rgba(59, 130, 246, 0.15)',
+            borderColor: notification.type === 'success'
+              ? 'rgba(52, 211, 153, 0.3)'
+              : notification.type === 'error'
+              ? 'rgba(239, 68, 68, 0.3)'
+              : 'rgba(59, 130, 246, 0.3)',
+            animation: 'slideDown 0.3s ease-out',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif'
+          }}
+        >
+          {notification.type === 'success' && <CheckCircle2 size={20} className="text-green-400" />}
+          {notification.type === 'error' && <XCircle size={20} className="text-red-400" />}
+          {notification.type === 'info' && <Info size={20} className="text-blue-400" />}
+          <span className="text-white text-sm font-medium">{notification.message}</span>
         </div>
       )}
-      
-      {/* Header - Compact */}
-      <div className="text-center mb-3">
-        <div className="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold mb-1 border border-green-200 dark:border-green-900">
-            <Sparkles size={12} />
-            <span>Success</span>
+
+      {/* Header Badge */}
+      <div className="relative z-10 text-center pt-8 pb-4 px-6">
+        <div 
+          className="inline-flex items-center gap-2 backdrop-blur-xl bg-gradient-to-r from-green-400/20 to-emerald-500/20 border border-green-400/30 px-4 py-2 rounded-full shadow-lg"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif'
+          }}
+        >
+          <Sparkles size={16} className="text-green-400" />
+          <span className="text-green-300 text-sm font-semibold">Reflection Complete</span>
         </div>
-        <h2 className="text-base font-bold text-gray-900 dark:text-white">Your Daily Reflection</h2>
+        <h2 
+          className="text-xl font-bold text-white mt-3"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+            letterSpacing: '-0.01em'
+          }}
+        >
+          Your Daily Reflection
+        </h2>
       </div>
 
-      {/* Preview Card - REDUCED HEIGHT for Visibility */}
-      <div className="flex-1 flex justify-center items-center mb-3 relative px-4 min-h-0">
-        
-        <div className="relative w-full max-w-[280px] aspect-square">
+      {/* Flyer Preview - Premium Card */}
+      <div className="flex-1 flex justify-center items-center px-6 py-6 relative z-10">
+        <div className="relative w-full max-w-[320px]">
+          {/* Card shadow layers */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-[32px] blur-2xl"
+            style={{ transform: 'scale(1.05)' }}
+          />
+          
+          <div 
+            className="relative backdrop-blur-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.04] rounded-[28px] border border-white/[0.12] p-4 shadow-2xl"
+            style={{
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              aspectRatio: '1/1'
+            }}
+          >
             {flyerUrl ? (
-                <div className="relative w-full h-full transform transition-transform duration-500">
-                    <img 
-                        src={flyerUrl} 
-                        alt="Ramadan Flyer" 
-                        className="w-full h-full object-contain rounded-[20px] shadow-lg border-[3px] border-white dark:border-[#2C2C2E]"
-                    />
-                </div>
+              <img 
+                src={flyerUrl} 
+                alt="Ramadan Flyer" 
+                className="w-full h-full object-cover rounded-[24px]"
+                style={{
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                  animation: 'fadeIn 0.5s ease-out'
+                }}
+              />
             ) : (
-                <div className="w-full h-full bg-gray-200 dark:bg-zinc-800 rounded-[20px] flex items-center justify-center">
-                    <span className="text-gray-400 text-xs">No Image</span>
-                </div>
+              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-[24px] flex items-center justify-center">
+                <span className="text-gray-500 text-sm">No Image</span>
+              </div>
             )}
+          </div>
         </div>
       </div>
 
-      {/* Compact Action Sheet - Always Visible */}
-      <div className="space-y-2 px-2 mt-auto">
+      {/* Action Section */}
+      <div className="relative z-10 px-6 pb-8 space-y-4">
+        {/* Primary Download Button */}
         <button
           onClick={handleDownload}
-          className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full font-bold text-base py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.97] relative overflow-hidden group"
+          style={{
+            background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+            color: '#000',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+            boxShadow: '0 8px 24px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+          }}
         >
-            <Download size={18} strokeWidth={2.5} />
-            <span>Download</span>
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+              animation: 'shimmer 2s infinite'
+            }}
+          />
+          <Download size={20} strokeWidth={2.5} className="relative z-10" />
+          <span className="relative z-10">Download Flyer</span>
         </button>
 
-        {/* Social Share Buttons */}
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Share on</p>
-          <div className="grid grid-cols-4 gap-1.5">
+        {/* Social Share Grid */}
+        <div className="space-y-3">
+          <p 
+            className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
+          >
+            Share on
+          </p>
+          <div className="grid grid-cols-4 gap-3">
             {/* WhatsApp */}
             <button
               onClick={async () => {
@@ -256,7 +511,6 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
                     const file = new File([blob], `Ramadan_Day_${formData.day}.png`, { type: 'image/png' });
                     const caption = `Day ${formData.day} | Streak: ${user.streak} days | RamadanBot`;
                     
-                    // Use native share if available, otherwise fallback
                     if (navigator.share) {
                       await navigator.share({
                         title: 'My Ramadan Reflection',
@@ -264,7 +518,6 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
                         files: [file]
                       });
                     } else {
-                      // Fallback: copy to clipboard and open WhatsApp
                       await navigator.clipboard?.writeText(caption);
                       window.open(`https://wa.me/?text=${encodeURIComponent(caption)}`, '_blank');
                     }
@@ -273,29 +526,26 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
                   }
                 }
               }}
-              className="bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold py-2 rounded-lg flex items-center justify-center transition-all active:scale-[0.95]"
-              title="Share on WhatsApp"
+              className="aspect-square backdrop-blur-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/40 rounded-2xl flex items-center justify-center transition-all active:scale-[0.95]"
+              style={{ boxShadow: '0 4px 12px rgba(37, 211, 102, 0.2)' }}
             >
-              <img src="/whatsapp.png" alt="WhatsApp" className="w-5 h-5" />
+              <img src="/whatsapp.png" alt="WhatsApp" className="w-6 h-6" />
             </button>
 
-            {/* X (Twitter) - Now with image support */}
+            {/* X (Twitter) */}
             <button
               onClick={async () => {
                 if (flyerUrl) {
-                  // For web sharing, open Twitter with text and encourage image upload
-                    const caption = `Day ${formData.day} of #Ramadan\n\n"${message.substring(0, 80)}..."\n\nMy Streak: ${user.streak} days 🔥\n\n#RamadanBot #IslamicReflection`;
+                  const caption = `Day ${formData.day} of #Ramadan\n\n"${message.substring(0, 80)}..."\n\nMy Streak: ${user.streak} days 🔥\n\n#RamadanBot #IslamicReflection`;
                   const text = encodeURIComponent(caption);
-                  // Note: Twitter web intent doesn't support image in URL, but users can paste
                   window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-                  // Show a tip instead of alert
                   showNotification('info', '💡 Upload the flyer image in Twitter for max engagement!');
                 }
               }}
-              className="bg-black hover:bg-gray-900 text-white font-bold py-2 rounded-lg flex items-center justify-center transition-all active:scale-[0.95]"
-              title="Share on X (Twitter)"
+              className="aspect-square backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl flex items-center justify-center transition-all active:scale-[0.95]"
+              style={{ boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)' }}
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.514l-5.106-6.669-5.829 6.669h-3.328l7.731-8.835L.424 2.25h6.679l4.882 6.479 5.288-6.479zM17.002 20.331h1.834L6.822 4.169H4.881z"/>
               </svg>
             </button>
@@ -309,15 +559,15 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
                   window.open(url, '_blank');
                 }
               }}
-              className="bg-[#1877F2] hover:bg-[#166FE5] text-white font-bold py-2 rounded-lg flex items-center justify-center transition-all active:scale-[0.95]"
-              title="Share on Facebook"
+              className="aspect-square backdrop-blur-xl bg-[#1877F2]/20 hover:bg-[#1877F2]/30 border border-[#1877F2]/40 rounded-2xl flex items-center justify-center transition-all active:scale-[0.95]"
+              style={{ boxShadow: '0 4px 12px rgba(24, 119, 242, 0.2)' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-6 h-6 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
             </button>
 
-            {/* Snapchat - Fixed with proper icon */}
+            {/* Snapchat */}
             <button
               onClick={async () => {
                 if (flyerUrl) {
@@ -341,33 +591,58 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
                   }
                 }
               }}
-              className="bg-[#FFFC00] hover:bg-[#F0F000] text-black font-bold py-2 rounded-lg flex items-center justify-center transition-all active:scale-[0.95]"
-              title="Share on Snapchat"
+              className="aspect-square backdrop-blur-xl bg-[#FFFC00]/20 hover:bg-[#FFFC00]/30 border border-[#FFFC00]/40 rounded-2xl flex items-center justify-center transition-all active:scale-[0.95]"
+              style={{ boxShadow: '0 4px 12px rgba(255, 252, 0, 0.2)' }}
             >
-              <img src="/snap.png" alt="Snapchat" className="w-5 h-5" />
+              <img src="/snap.png" alt="Snapchat" className="w-6 h-6" />
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-1">
-            <button 
-                onClick={handleShare} 
-                className="bg-white dark:bg-[#2C2C2E] text-gray-900 dark:text-white font-bold py-2.5 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-700 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform text-sm"
-            >
-                <Share2 size={16} />
-                <span>More</span>
-            </button>
-            
-            <button 
-                onClick={onReset} 
-                className="bg-gray-100 dark:bg-black/40 text-gray-600 dark:text-gray-300 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform text-sm"
-            >
-                <RefreshCcw size={16} />
-                <span>New</span>
-            </button>
+        {/* Secondary Actions */}
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <button 
+            onClick={handleShare} 
+            className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.12] text-white font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.97] transition-all"
+            style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <Share2 size={18} strokeWidth={2.5} />
+            <span>More</span>
+          </button>
+          
+          <button 
+            onClick={onReset} 
+            className="backdrop-blur-xl bg-white/[0.05] text-gray-300 font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.97] transition-all"
+            style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+            }}
+          >
+            <RefreshCcw size={18} strokeWidth={2.5} />
+            <span>New</span>
+          </button>
         </div>
       </div>
 
+      {/* Inline Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideDown {
+          from { opacity: 0; transform: translate(-50%, -20px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 };
