@@ -1,4 +1,47 @@
+# Ramadan Bot - robots.txt
+# https://www.ramadanbot.app
+
+# Allow all legitimate crawlers
 User-agent: *
 Allow: /
+Allow: /app
+Allow: /contact
+Allow: /privacy
 
+# Disallow private/admin areas
+Disallow: /admin
+Disallow: /.next
+Disallow: /*.js.map
+Disallow: /*.css.map
+
+# Disallow API endpoints from indexing
+Disallow: /api/
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Specific rules for Googlebot (allow faster crawling)
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0.5
+
+# Rules for Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# Sitemaps
 Sitemap: https://www.ramadanbot.app/sitemap.xml
+
+# Comment: This robots.txt file helps search engines crawl your site efficiently
+# while protecting private areas and respecting server resources.
