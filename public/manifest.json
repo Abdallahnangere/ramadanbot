@@ -1,28 +1,20 @@
 {
   "id": "https://www.ramadanbot.app/app",
-  "name": "Ramadan Bot - Free AI Islamic Reflections & Personalized Flyers by Abdallah Nangere",
+  "name": "Ramadan Bot: AI Flyer Generator",
   "short_name": "Ramadan Bot",
   "lang": "en",
   "dir": "ltr",
-  "description": "Generate authentic daily Islamic reflections powered by AI. Create beautiful high-resolution Ramadan flyers with your name featured. Track your spiritual streak. Completely free. Built by Abdallah Nangere.",
+  "description": "Create beautiful, personalized Ramadan flyers and Islamic spiritual content.",
   "start_url": "https://www.ramadanbot.app/app",
   "scope": "/app",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#0f766e",
   "background_color": "#ffffff",
-  "categories": ["lifestyle", "productivity", "religion"],
+  "categories": ["lifestyle", "productivity", "education"],
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "icon": "/icon.png",
-  "brand": {
-    "name": "Ramadan Bot",
-    "logo": "/logo.png"
-  },
-  "creator": {
-    "name": "Abdallah Nangere",
-    "url": "https://www.ramadanbot.app"
-  },
-  "keywords": "Ramadan, Islamic reflections, AI generator, personalized flyers, free app, Quran, Hadith, Islamic design, flyer creator, with your name, Abdallah Nangere",
+  "icons": [
     {
       "src": "/icon-72x72.png",
       "sizes": "72x72",

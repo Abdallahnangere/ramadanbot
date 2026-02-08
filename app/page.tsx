@@ -236,13 +236,15 @@ const HomePage = () => {
               }
             ].map((screen, idx) => (
               <div key={idx} className="flex flex-col items-center group">
-                {/* Premium Border Design */}
+                {/* Phone Frame */}
                 <div className="relative w-full max-w-sm mb-8">
-                  {/* Elegant Shadow Effect */}
-                  <div className="absolute -inset-2 bg-gradient-to-b from-emerald-100 to-cyan-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
+                  <div className="absolute -inset-4 bg-gradient-to-b from-slate-200 to-slate-100 rounded-[50px] opacity-0 group-hover:opacity-100 transition-opacity blur-2xl"></div>
                   
-                  {/* Premium Container */}
-                  <div className="relative rounded-2xl border-2 border-slate-200 overflow-hidden shadow-md group-hover:shadow-lg transition-shadow duration-300 aspect-[9/19.5] bg-white">
+                  <div className="relative bg-black rounded-[45px] border-[12px] border-slate-900 shadow-2xl overflow-hidden aspect-[9/19.5]">
+                    {/* Notch */}
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-3xl z-20"></div>
+                    
+                    {/* Screen */}
                     <Image
                       src={screen.image}
                       alt={screen.title}
