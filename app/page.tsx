@@ -236,20 +236,19 @@ const HomePage = () => {
               }
             ].map((screen, idx) => (
               <div key={idx} className="flex flex-col items-center group">
-                {/* Phone Frame */}
+                {/* Elegant Image Container */}
                 <div className="relative w-full max-w-sm mb-8">
-                  <div className="absolute -inset-4 bg-gradient-to-b from-slate-200 to-slate-100 rounded-[50px] opacity-0 group-hover:opacity-100 transition-opacity blur-2xl"></div>
+                  {/* Subtle shadow on hover */}
+                  <div className="absolute -inset-4 bg-gradient-to-b from-slate-100 to-slate-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity blur-2xl"></div>
                   
-                  <div className="relative bg-black rounded-[45px] border-[12px] border-slate-900 shadow-2xl overflow-hidden aspect-[9/19.5]">
-                    {/* Notch */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-3xl z-20"></div>
-                    
-                    {/* Screen */}
+                  {/* Image with elegant border */}
+                  <div className="relative rounded-2xl border border-slate-200 shadow-lg overflow-hidden group-hover:shadow-2xl group-hover:border-slate-300 transition-all duration-300">
                     <Image
                       src={screen.image}
                       alt={screen.title}
-                      fill
-                      className="object-cover"
+                      width={540}
+                      height={720}
+                      className="w-full h-auto object-cover"
                     />
                   </div>
                 </div>

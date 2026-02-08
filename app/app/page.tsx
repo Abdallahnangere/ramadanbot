@@ -23,15 +23,31 @@ export default function HomeApp() {
   const [hasDownloadedToday, setHasDownloadedToday] = useState(false);
   const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
   
+  // Initialize app: restore theme and persistent login
   useEffect(() => {
     if (typeof window !== 'undefined') {
+        // Restore theme preference
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             setAppState(prev => ({...prev, isDarkMode: true}));
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
+
+        // Restore persistent login if user data exists in localStorage
+        try {
+            const savedUser = localStorage.getItem('ramadanbot_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                setAppState(prev => ({...prev, view: 'app', currentUser: user}));
+            }
+        } catch (e) {
+            console.error('Failed to restore user session:', e);
+        }
+
+        setIsHydrated(true);
     }
   }, []);
 
@@ -60,10 +76,22 @@ export default function HomeApp() {
   }, [hasDownloadedToday, appState.currentUser?.last_generation_date]);
 
   const handleLogin = (user: User) => {
+    // Save user to localStorage for persistent login
+    try {
+      localStorage.setItem('ramadanbot_user', JSON.stringify(user));
+    } catch (e) {
+      console.error('Failed to save user session:', e);
+    }
     setAppState(prev => ({ ...prev, view: 'app', currentUser: user }));
   };
 
   const handleLogout = () => {
+    // Clear saved user from localStorage
+    try {
+      localStorage.removeItem('ramadanbot_user');
+    } catch (e) {
+      console.error('Failed to clear user session:', e);
+    }
     setAppState(prev => ({ ...prev, view: 'login', currentUser: null }));
     setGeneratedData(null);
     setIsSidebarOpen(false);
@@ -89,6 +117,13 @@ export default function HomeApp() {
        const u = appState.currentUser;
        const updatedUser = { ...u, generation_count: u.generation_count + 1 };
        setAppState(prev => ({ ...prev, currentUser: updatedUser }));
+       
+       // Update persistent login with new user data
+       try {
+         localStorage.setItem('ramadanbot_user', JSON.stringify(updatedUser));
+       } catch (e) {
+         console.error('Failed to update user session:', e);
+       }
 
        try {
          const key = 'generationHistory';
@@ -111,6 +146,12 @@ export default function HomeApp() {
                 const json = await res.json();
                 if (json.user) {
                     setAppState(prev => ({ ...prev, currentUser: json.user }));
+                    // Update persistent login with new user data
+                    try {
+                      localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+                    } catch (e) {
+                      console.error('Failed to update user session:', e);
+                    }
 
                     const usedToday = json.user.today_generations || 0;
                     const limit = json.user.limit || json.user.rate_limit_override || 3;
@@ -364,7 +405,7 @@ export default function HomeApp() {
       )}
       <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] bg-white dark:bg-black md:rounded-[48px] md:shadow-[0_0_0_14px_#1f2937,0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden transition-colors duration-300 isolate">
         <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>
-        {renderContent()}
+        {isHydrated ? renderContent() : <LoginScreen onLogin={handleLogin} />}
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1.5 bg-black/30 dark:bg-white/30 rounded-full pointer-events-none z-50"></div>
       </div>
     </div>
