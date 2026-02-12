@@ -5,11 +5,12 @@ import { User, GeneratedData, AppState } from '../../types';
 import RamadanForm from '../../components/RamadanForm';
 import FlyerPreview from '../../components/FlyerPreview';
 import LoginScreen from '../../components/LoginScreen';
-import AdminDashboard from '../../components/AdminDashboard';
+import AdminDashboard from '../../components/AdminDashboardEnhanced';
 import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
+import QuranBottomSheet from '../../components/QuranBottomSheet';
 import Toast from '../../components/Toast';
-import { Menu, Sparkles, Download, Clock } from 'lucide-react';
+import { Menu, Sparkles, Download, Clock, BookOpen } from 'lucide-react';
 
 export default function HomeApp() {
   const [appState, setAppState] = useState<AppState>({ 
@@ -19,6 +20,7 @@ export default function HomeApp() {
   });
   const [generatedData, setGeneratedData] = useState<GeneratedData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isQuranOpen, setIsQuranOpen] = useState(false);
   const [downloadedFlyerUrl, setDownloadedFlyerUrl] = useState<string | null>(null);
   const [hasDownloadedToday, setHasDownloadedToday] = useState(false);
   const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
@@ -51,29 +53,33 @@ export default function HomeApp() {
     }
   }, []);
 
+  // Real-time user data polling
   useEffect(() => {
-    if (!hasDownloadedToday || !appState.currentUser?.last_generation_date) return;
+    if (!appState.currentUser?.id) return;
 
-    const interval = setInterval(() => {
-      const now = new Date();
-      const lastGen = new Date(appState.currentUser!.last_generation_date!);
-      const nextAllowed = new Date(lastGen.getTime() + 24 * 60 * 60 * 1000);
-      const diff = nextAllowed.getTime() - now.getTime();
-
-      if (diff <= 0) {
-        setHasDownloadedToday(false);
-        setCountdownTime('00:00:00');
-        clearInterval(interval);
-      } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setCountdownTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/user?id=${appState.currentUser!.id}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.user) {
+            // Update app state
+            setAppState(prev => ({ ...prev, currentUser: json.user }));
+            // Update localStorage
+            try {
+              localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+            } catch (e) {
+              console.error('Failed to update user session:', e);
+            }
+          }
+        }
+      } catch (error) {
+        // Silent fail - polling is non-critical
       }
-    }, 1000);
+    }, 5000); // Poll every 5 seconds
 
-    return () => clearInterval(interval);
-  }, [hasDownloadedToday, appState.currentUser?.last_generation_date]);
+    return () => clearInterval(pollInterval);
+  }, [appState.currentUser?.id]);
 
   const handleLogin = (user: User) => {
     // Save user to localStorage for persistent login
@@ -304,64 +310,97 @@ export default function HomeApp() {
                                 hasLimitReached={hasDownloadedToday}
                             />
 
+                            {/* Premium Streak & Limit Cards - Apple Standard */}
                             <div className="grid grid-cols-2 gap-4 pt-2">
-                                <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-900/5 rounded-3xl p-5 border border-orange-200/50 dark:border-orange-900/30 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex flex-col h-full justify-between">
-                                        <div className="space-y-3">
-                                            <div className="w-12 h-12 rounded-2xl bg-white/80 dark:bg-black/20 flex items-center justify-center shadow-sm">
-                                                <Sparkles size={24} className="text-orange-600 dark:text-orange-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-1">
-                                                    Streak
-                                                </p>
-                                                <p className="text-4xl font-bold text-orange-700 dark:text-orange-300">
-                                                    {user.streak}
-                                                </p>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                    days
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <div className="w-full bg-orange-200/50 dark:bg-orange-900/20 rounded-full h-2">
-                                                <div 
-                                                    className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-500" 
-                                                    style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
-                                                />
-                                            </div>
-                                        </div>
+                              {/* Streak Card */}
+                              <div className="group relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+                                {/* Animated background gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                
+                                <div className="relative p-6 flex flex-col h-full justify-between">
+                                  {/* Top section */}
+                                  <div>
+                                    {/* Icon */}
+                                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
+                                      <span className="text-2xl">🔥</span>
                                     </div>
+                                    
+                                    {/* Label */}
+                                    <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
+                                      Streak
+                                    </p>
+                                    
+                                    {/* Value */}
+                                    <div className="space-y-1">
+                                      <p className="text-5xl font-black text-white tracking-tight">
+                                        {user.streak}
+                                      </p>
+                                      <p className="text-xs text-white/60 font-medium">
+                                        day{user.streak !== 1 ? 's' : ''} on fire
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Progress bar */}
+                                  <div className="mt-4 space-y-2">
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-white/50 font-medium">Progress to 30 days</span>
+                                      <span className="text-white font-bold">{Math.min(100, Math.round((user.streak/30)*100))}%</span>
+                                    </div>
+                                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                      <div 
+                                        className="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-orange-500/50" 
+                                        style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
+                              </div>
 
-                                <div className="bg-gradient-to-br from-blue-50 to-cyan-100/50 dark:from-blue-50 to-cyan-100/50 dark:from-blue-900/20 dark:to-cyan-900/5 rounded-3xl p-5 border border-blue-200/50 dark:border-blue-900/30 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex flex-col h-full justify-between">
-                                        <div className="space-y-3">
-                                            <div className="w-12 h-12 rounded-2xl bg-white/80 dark:bg-black/20 flex items-center justify-center shadow-sm">
-                                                <Download size={24} className="text-blue-600 dark:text-blue-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-                                                    Daily Limit
-                                                </p>
-                                                <p className="text-4xl font-bold text-blue-700 dark:text-blue-300">
-                                                    {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
-                                                </p>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                    remaining
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <div className="w-full bg-blue-200/50 dark:bg-blue-900/20 rounded-full h-2">
-                                                <div 
-                                                    className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500" 
-                                                    style={{ width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` }} 
-                                                />
-                                            </div>
-                                        </div>
+                              {/* Daily Limit Card */}
+                              <div className="group relative bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+                                {/* Animated background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                
+                                <div className="relative p-6 flex flex-col h-full justify-between">
+                                  {/* Top section */}
+                                  <div>
+                                    {/* Icon */}
+                                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
+                                      <Sparkles size={24} className="text-white" />
                                     </div>
+                                    
+                                    {/* Label */}
+                                    <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
+                                      Daily Limit
+                                    </p>
+                                    
+                                    {/* Value */}
+                                    <div className="space-y-1">
+                                      <p className="text-5xl font-black text-white tracking-tight">
+                                        {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
+                                      </p>
+                                      <p className="text-xs text-white/60 font-medium">
+                                        generation{(user.remaining || 3) !== 1 ? 's' : ''} left today
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Progress bar */}
+                                  <div className="mt-4 space-y-2">
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-white/50 font-medium">Daily usage</span>
+                                      <span className="text-white font-bold">{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                      <div 
+                                        className="bg-gradient-to-r from-lime-300 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-emerald-500/50" 
+                                        style={{ width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` }} 
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
+                              </div>
                             </div>
 
                             <div className="bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-200 dark:border-gray-800">
@@ -389,6 +428,16 @@ export default function HomeApp() {
 
                 <div className="h-6"></div>
             </main>
+
+            {/* Quran Tab */}
+            {!generatedData && (
+              <button
+                onClick={() => setIsQuranOpen(true)}
+                className="absolute bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl flex items-center justify-center transition-all transform hover:scale-110 active:scale-95 z-40 group"
+              >
+                <BookOpen size={24} className="group-hover:animate-bounce" />
+              </button>
+            )}
         </div>
     );
   };
@@ -403,6 +452,32 @@ export default function HomeApp() {
           onClose={() => setToast(null)}
         />
       )}
+      
+      {/* Quran Bottom Sheet */}
+      {appState.currentUser && (
+        <QuranBottomSheet 
+          isOpen={isQuranOpen}
+          onClose={() => setIsQuranOpen(false)}
+          user={appState.currentUser}
+          onProgressUpdate={() => {
+            // Refresh user data
+            if (appState.currentUser?.id) {
+              fetch(`/api/user?id=${appState.currentUser.id}`)
+                .then(res => res.json())
+                .then(json => {
+                  if (json.user) {
+                    setAppState(prev => ({ ...prev, currentUser: json.user }));
+                    try {
+                      localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+                    } catch (e) {}
+                  }
+                })
+                .catch(e => console.error(e));
+            }
+          }}
+        />
+      )}
+      
       <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] bg-white dark:bg-black md:rounded-[48px] md:shadow-[0_0_0_14px_#1f2937,0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden transition-colors duration-300 isolate">
         <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>
         {isHydrated ? renderContent() : <LoginScreen onLogin={handleLogin} />}

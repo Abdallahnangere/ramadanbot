@@ -96,27 +96,25 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
   // Share to WhatsApp with image
   const shareToWhatsApp = async () => {
     if (!flyerUrl) return;
-    
     try {
-      const caption = `🌙 Ramadan Day ${formData.day}: ${formData.topic}\n\n"${message.substring(0, 100)}..."\n\n✨ Created with RamadanBot by ${user.name}\n🔥 My Streak: ${user.streak} days`;
-      
+      // New brilliant emoji-charged caption
+      const caption = `🌙 Ramadan Day ${formData.day} | 🔥 ${user.streak} day streak!\nwww.ramadanbot.app`;
       // Try native share first (mobile)
-      if (navigator.share) {
+      if (navigator.canShare && navigator.canShare({ files: [] }) && navigator.share) {
         const response = await fetch(flyerUrl);
         const blob = await response.blob();
         const file = new File([blob], `Ramadan_Day_${formData.day}.png`, { type: 'image/png' });
-        
         await navigator.share({
-          title: 'My Ramadan Reflection',
-          text: caption,
-          files: [file]
+          files: [file],
+          text: caption
         });
         showNotification('success', 'Shared to WhatsApp');
       } else {
-        // Fallback: Download first then open WhatsApp
+        // Fallback: Download first, then open WhatsApp mobile intent
         handleDownload();
         setTimeout(() => {
-          window.open(`https://wa.me/?text=${encodeURIComponent(caption)}`, '_blank');
+          // Use WhatsApp mobile intent for direct app open
+          window.location.href = `intent://send?text=${encodeURIComponent(caption)}#Intent;scheme=whatsapp;package=com.whatsapp;action=android.intent.action.SEND;end`;
           showNotification('info', 'Attach the downloaded image to WhatsApp');
         }, 500);
       }

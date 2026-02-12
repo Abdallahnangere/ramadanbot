@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { User, AnalyticsData } from '../types';
-import { fetchAllUsers, updateUserLimit, toggleUserBan, getAnalytics, adminLogin, deleteUser } from '../app/actions';
-import { ArrowLeft, Ban, RefreshCcw, Search, ShieldCheck, TrendingUp, Users, Activity, Lock, Edit3, Save, BarChart3, Zap, Target, Trash2 } from 'lucide-react';
+import { fetchAllUsers, updateUserLimit, toggleUserBan, getAnalytics, adminLogin, deleteUser, updateUserName } from '../app/actions';
+import { ArrowLeft, Ban, RefreshCcw, Search, ShieldCheck, TrendingUp, Users, Activity, Lock, Edit3, Save, BarChart3, Zap, Target, Trash2, Clock, Sparkles } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface AdminDashboardProps {
@@ -22,6 +22,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [search, setSearch] = useState('');
   const [editLimitId, setEditLimitId] = useState<string | null>(null);
   const [tempLimit, setTempLimit] = useState<number>(1);
+  const [editNameId, setEditNameId] = useState<string | null>(null);
+  const [tempName, setTempName] = useState<string>('');
 
   // --- LOGIN LOGIC ---
   const handleLogin = async (e: React.FormEvent) => {
@@ -75,6 +77,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
     await updateUserLimit(id, tempLimit);
     setEditLimitId(null);
     loadData();
+  };
+
+  const saveName = async (id: string) => {
+    if (!tempName.trim()) {
+      alert('Name cannot be empty');
+      return;
+    }
+    const result = await updateUserName(id, tempName);
+    if (result.success) {
+      setEditNameId(null);
+      loadData();
+    } else {
+      alert(result.error || 'Failed to update name');
+    }
   };
 
   // Login Screen - Apple Style
