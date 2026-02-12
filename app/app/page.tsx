@@ -8,9 +8,9 @@ import LoginScreen from '../../components/LoginScreen';
 import AdminDashboard from '../../components/AdminDashboardEnhanced';
 import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
-import QuranBottomSheet from '../../components/QuranBottomSheet';
+import QuranFullScreenModal from '../../components/QuranFullScreenModal';
 import Toast from '../../components/Toast';
-import { Menu, Sparkles, Download, Clock, BookOpen } from 'lucide-react';
+import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
 
 export default function HomeApp() {
   const [appState, setAppState] = useState<AppState>({ 
@@ -53,7 +53,7 @@ export default function HomeApp() {
     }
   }, []);
 
-  // Real-time user data polling
+  // Real-time data polling - OPTIMIZED: reduces database load from 5s to 30s interval
   useEffect(() => {
     if (!appState.currentUser?.id) return;
 
@@ -63,20 +63,25 @@ export default function HomeApp() {
         if (res.ok) {
           const json = await res.json();
           if (json.user) {
-            // Update app state
-            setAppState(prev => ({ ...prev, currentUser: json.user }));
-            // Update localStorage
-            try {
-              localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
-            } catch (e) {
-              console.error('Failed to update user session:', e);
+            const hasChanges = 
+              json.user.streak !== appState.currentUser?.streak ||
+              json.user.remaining !== appState.currentUser?.remaining ||
+              json.user.generation_count !== appState.currentUser?.generation_count;
+            
+            if (hasChanges) {
+              setAppState(prev => ({ ...prev, currentUser: json.user }));
+              try {
+                localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+              } catch (e) {
+                console.error('Failed to update user session:', e);
+              }
             }
           }
         }
       } catch (error) {
         // Silent fail - polling is non-critical
       }
-    }, 5000); // Poll every 5 seconds
+    }, 30000); // Poll every 30 seconds instead of 5 - 6x reduction
 
     return () => clearInterval(pollInterval);
   }, [appState.currentUser?.id]);
@@ -220,6 +225,28 @@ export default function HomeApp() {
 
     return (
         <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#000000] dark:via-[#0a0a0a] dark:to-[#000000] transition-colors duration-300">
+            {/* Qur'an Full Screen Modal */}
+            <QuranFullScreenModal
+                isOpen={activeTab === 'quran'}
+                onClose={() => setActiveTab('flyer')}
+                user={user}
+                onProgressUpdate={() => {
+                  if (appState.currentUser?.id) {
+                    fetch(`/api/user?id=${appState.currentUser.id}`)
+                      .then(res => res.json())
+                      .then(json => {
+                        if (json.user) {
+                          setAppState(prev => ({ ...prev, currentUser: json.user }));
+                          try {
+                            localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+                          } catch (e) {}
+                        }
+                      })
+                      .catch(e => console.error(e));
+                  }
+                }}
+            />
+
             <Sidebar 
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
@@ -235,6 +262,7 @@ export default function HomeApp() {
                 }}
             />
 
+            {/* Header - Polished Apple Style */}
             <header className="relative flex-shrink-0 px-5 py-4 bg-white/80 dark:bg-black/60 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 z-40">
                 <div className="flex items-center justify-between">
                     <button
@@ -246,40 +274,28 @@ export default function HomeApp() {
                     </button>
 
                     <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
-                        <h1 className="text-lg font-semibold text-gray-900 dark:text-white tracking-tight">
-                            RamadanBot
+                        <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+                            🌙 RamadanBot
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={toggleTheme}
-                            className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
-                            aria-label="Toggle Theme"
-                        >
-                            {appState.isDarkMode ? (
-                                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-                                </svg>
-                            ) : (
-                                <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                                </svg>
-                            )}
-                        </button>
-
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
-                            <Download size={14} className="text-blue-600 dark:text-blue-400" />
-                            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                                {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
-                            </span>
-                        </div>
-                    </div>
+                    <button
+                        onClick={toggleTheme}
+                        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+                        aria-label="Toggle Theme"
+                    >
+                        {appState.isDarkMode ? (
+                            <Sun size={20} className="text-yellow-500" />
+                        ) : (
+                            <Moon size={20} className="text-gray-600" />
+                        )}
+                    </button>
                 </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <div className="px-5 py-6 space-y-6">
+            {/* Main Content Area - Scrollable on Short Displays */}
+            <main className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="px-5 py-6 space-y-6 pb-28">
                     {activeTab === 'flyer' ? (
                         <>
                             {generatedData ? (
@@ -427,40 +443,16 @@ export default function HomeApp() {
                                 </div>
                             )}
                         </>
-                    ) : (
-                        <QuranBottomSheet 
-                            isOpen={activeTab === 'quran'}
-                            onClose={() => setActiveTab('flyer')}
-                            user={user}
-                            onProgressUpdate={() => {
-                              // Refresh user data
-                              if (appState.currentUser?.id) {
-                                fetch(`/api/user?id=${appState.currentUser.id}`)
-                                  .then(res => res.json())
-                                  .then(json => {
-                                    if (json.user) {
-                                      setAppState(prev => ({ ...prev, currentUser: json.user }));
-                                      try {
-                                        localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
-                                      } catch (e) {}
-                                    }
-                                  })
-                                  .catch(e => console.error(e));
-                              }
-                            }}
-                        />
-                    )}
+                    ) : null}
                 </div>
-
-                <div className="h-6"></div>
             </main>
 
-            {/* Tab Navigation */}
-            <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl px-5 py-3">
+            {/* Bottom Navigation - Fixed and Always Visible */}
+            <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl px-5 py-3 md:max-w-[400px] md:left-1/2 md:-translate-x-1/2 md:rounded-t-3xl z-40">
               <div className="flex gap-3">
                 <button
                   onClick={() => setActiveTab('flyer')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     activeTab === 'flyer'
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -471,7 +463,7 @@ export default function HomeApp() {
                 </button>
                 <button
                   onClick={() => setActiveTab('quran')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
                     activeTab === 'quran'
                       ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -481,7 +473,7 @@ export default function HomeApp() {
                   <span>Quran</span>
                 </button>
               </div>
-            </div>
+            </nav>
         </div>
     );
   };

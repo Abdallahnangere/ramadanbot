@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, user, onLogout, onAd
       />
 
       {/* Sidebar Panel - Pure Apple Design */}
-      <div className={`absolute top-0 left-0 bottom-0 w-[320px] bg-white z-50 transform transition-transform duration-300 ease-out shadow-2xl ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`absolute top-0 left-0 bottom-0 w-[320px] bg-white dark:bg-gray-900 z-50 transform transition-transform duration-300 ease-out shadow-2xl ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
         {/* Close Button - Minimalist Apple Style */}
         <button
