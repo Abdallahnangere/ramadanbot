@@ -60,40 +60,71 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
     const fetchQuranPage = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `https://api.quran.com/api/v4/quran/pages/${currentPage}?fields=text_madina`
-        );
-        const data = await response.json();
+        // Map page number to surah for demonstration
+        // Each surah gets ~4 pages (PAGES_PER_PHASE), and we have 30 days with 5 phases each = 150 pages total
+        // This is 114 surahs compressed into 150 pages (some multi-page, some single)
         
-        if (data.ayahs && Array.isArray(data.ayahs)) {
-          // Fetch translations
+        // For now, map page to surah: pages 1-4 = surah 1, 5-8 = surah 2, etc
+        const pagesPerSurah = 4;
+        const surahNumber = Math.floor((currentPage - 1) / pagesPerSurah) + 1;
+        
+        // Don't exceed 114 surahs
+        const finalSurah = Math.min(surahNumber, 114);
+        
+        console.log(`Page ${currentPage} -> Surah ${finalSurah}`);
+        
+        // Fetch surah with Arabic text
+        const response = await fetch(
+          `https://api.alquran.cloud/v1/surah/${finalSurah}`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch surah ${finalSurah}: ${response.status}`);
+        }
+        
+        const surahData = await response.json();
+        const ayahs = surahData.data.ayahs || [];
+        
+        console.log(`Fetched surah ${finalSurah}: ${ayahs.length} ayahs`);
+        
+        if (ayahs.length > 0) {
+          // Fetch English translations
           const enrichedAyahs = await Promise.all(
-            data.ayahs.map(async (ayah: any) => {
+            ayahs.map(async (ayah: any) => {
               let translation = '';
               try {
-                const transRes = await fetch(
-                  `https://api.quran.com/api/v4/ayahs/${ayah.number}/en/sahih`
+                const transResponse = await fetch(
+                  `https://api.alquran.cloud/v1/ayah/${ayah.number}/en.asad`
                 );
-                const transData = await transRes.json();
-                translation = transData.text || '';
+                if (transResponse.ok) {
+                  const transData = await transResponse.json();
+                  translation = transData.data?.text || '';
+                }
               } catch (e) {
-                // Silent fail, no translation available
+                // Silently fail
               }
               
               return {
                 number: ayah.number,
-                text: ayah.text_madina || '',
-                surah: ayah.surah || { number: 1, name: 'Al-Fatiha', englishName: 'The Opening' },
-                ayah: ayah.verse_number || 1,
+                text: ayah.text || '',
+                surah: {
+                  number: surahData.data.number,
+                  name: surahData.data.name || 'Unknown',
+                  englishName: surahData.data.englishName || 'Unknown'
+                },
+                ayah: ayah.numberInSurah || 1,
                 englishTranslation: translation
               };
             })
           );
           
+          console.log('Successfully loaded', enrichedAyahs.length, 'ayahs');
           setQuranText(enrichedAyahs);
+        } else {
+          throw new Error('No ayahs in response');
         }
       } catch (error) {
-        console.error('Failed to fetch Quran:', error);
+        console.error('Failed to fetch Qur\'an:', error);
         setQuranText([]);
       } finally {
         setLoading(false);
@@ -339,60 +370,70 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
               <div className="inline-block">
                 <div className="animate-spin rounded-full h-16 w-16 border-4 border-white/20 border-t-white"></div>
               </div>
-              <p className="text-white/60 font-medium">Loading Qur'an...</p>
+              <p className="text-white/60 font-medium">Loading Qur'an (Page {currentPage}/{end})...</p>
+              <p className="text-xs text-white/40 mt-2">Check browser console for details</p>
+            </div>
+          </div>
+        ) : quranText.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center space-y-4">
+              <p className="text-gray-400 text-lg">No Quranic text available</p>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setCurrentPage(1);
+                }}
+                className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+              >
+                Retry
+              </button>
             </div>
           </div>
         ) : (
           <div className="min-h-full flex flex-col items-center justify-center px-4 md:px-8 py-8 md:py-12">
-            {quranText.length > 0 ? (
-              <div className="w-full max-w-4xl space-y-8">
-                {quranText.map((ayah, idx) => (
-                  <div key={idx} className="space-y-4">
-                    {/* Large Arabic Text - Mushaf Style */}
-                    <div className="text-center">
-                      <p 
-                        className="text-4xl md:text-5xl lg:text-6xl leading-relaxed md:leading-relaxed text-amber-50 font-bold hover:text-white transition-colors" 
-                        style={{
-                          fontFamily: "'Traditional Arabic', 'Arial Unicode MS', 'DejaVu Sans', serif",
-                          fontWeight: '700',
-                          lineHeight: '2.2',
-                          direction: 'rtl',
-                          textAlign: 'center',
-                        }}
-                        dir="rtl"
-                      >
-                        {ayah.text}
-                      </p>
-                      
-                      {/* Surah and Ayah Info */}
-                      <p className="text-xs md:text-sm text-amber-600/80 mt-4 md:mt-6 font-semibold">
-                        {ayah.surah.name} • الآية {ayah.ayah}
+            <div className="w-full max-w-4xl space-y-8">
+              {quranText.map((ayah, idx) => (
+                <div key={idx} className="space-y-4">
+                  {/* Large Arabic Text - Mushaf Style */}
+                  <div className="text-center">
+                    <p 
+                      className="text-4xl md:text-5xl lg:text-6xl leading-relaxed md:leading-relaxed text-amber-50 font-bold hover:text-white transition-colors" 
+                      style={{
+                        fontFamily: "'Traditional Arabic', 'Arial Unicode MS', 'DejaVu Sans', serif",
+                        fontWeight: '700',
+                        lineHeight: '2.2',
+                        direction: 'rtl',
+                        textAlign: 'center',
+                      }}
+                      dir="rtl"
+                    >
+                      {ayah.text}
+                    </p>
+                    
+                    {/* Surah and Ayah Info */}
+                    <p className="text-xs md:text-sm text-amber-600/80 mt-4 md:mt-6 font-semibold">
+                      {ayah.surah.name} • الآية {ayah.ayah}
+                    </p>
+                  </div>
+
+                  {/* English Translation Below if Enabled */}
+                  {showEnglish && ayah.englishTranslation && (
+                    <div className="text-center border-t border-amber-600/20 pt-4">
+                      <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
+                        {ayah.englishTranslation}
                       </p>
                     </div>
+                  )}
 
-                    {/* English Translation Below if Enabled */}
-                    {showEnglish && ayah.englishTranslation && (
-                      <div className="text-center border-t border-amber-600/20 pt-4">
-                        <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
-                          {ayah.englishTranslation}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Divider */}
-                    {idx < quranText.length - 1 && (
-                      <div className="flex justify-center mt-6 md:mt-8">
-                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center">
-                <p className="text-gray-400 text-lg">Loading Qur'anic text...</p>
-              </div>
-            )}
+                  {/* Divider */}
+                  {idx < quranText.length - 1 && (
+                    <div className="flex justify-center mt-6 md:mt-8">
+                      <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
