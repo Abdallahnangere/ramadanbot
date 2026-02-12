@@ -93,51 +93,62 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
     }
   };
 
-  // Share to WhatsApp with image (Cross-platform)
+  // Share to WhatsApp with image (PWA-aware, cross-platform)
   const shareToWhatsApp = async () => {
     if (!flyerUrl) return;
     try {
-      const caption = `🌙 Ramadan Day ${formData.day} | 🔥 ${user.streak} day streak!\nwww.ramadanbot.app`;
+      const caption = `🌙 Ramadan Day ${formData.day} | 🔥 ${user.streak} day streak!\n✨ Complete the full Qur'an in 30 days\nwww.ramadanbot.app`;
       
-      // Download the image first
+      // Step 1: Download the image
       handleDownload();
       
-      // Try native share with files
-      if (navigator.share && navigator.canShare?.({ files: [] })) {
+      // Step 2: Try native share API (PWA-aware - works for installed apps)
+      if (navigator.share) {
         try {
           const response = await fetch(flyerUrl);
           const blob = await response.blob();
           const file = new File([blob], `Ramadan_Day_${formData.day}.png`, { type: 'image/png' });
           
-          await navigator.share({
-            files: [file],
-            text: caption,
-            title: 'My Ramadan Flyer'
-          });
-          showNotification('success', 'Shared to WhatsApp!');
-          return;
+          // Check if we can share files in this environment
+          if (navigator.canShare?.({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              text: caption,
+              title: 'My Ramadan Flyer'
+            });
+            showNotification('success', 'Shared to WhatsApp!');
+            return;
+          }
         } catch (e) {
-          // User cancelled or share failed, fall through to alternatives
+          // User cancelled or share failed, continue to alternatives
+          console.log('Native share cancelled:', e);
         }
       }
       
-      // Mobile fallback - use WhatsApp mobile URL scheme
+      // Step 3: PWA intent-based approach
       const wa_text = encodeURIComponent(caption);
-      if (/iPhone|iPad|iPod|Android/.test(navigator.userAgent)) {
-        // Mobile: Open WhatsApp app with message
-        setTimeout(() => {
-          window.open(`https://wa.me/?text=${wa_text}`, '_blank');
-        }, 500);
-        showNotification('success', 'Opening WhatsApp - attach the downloaded image');
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      const isMobile = isAndroid || isIOS;
+      
+      // Use appropriate WhatsApp intent
+      if (isAndroid) {
+        // Android: Use intent URI for WhatsApp
+        window.location.href = `intent://send?text=${wa_text}#Intent;package=com.whatsapp;scheme=https;end`;
+        showNotification('info', 'Attaching flyer to WhatsApp message');
+      } else if (isIOS) {
+        // iOS: Use WhatsApp URL scheme
+        const iosUrl = `whatsapp://send?text=${wa_text}`;
+        window.location.href = iosUrl;
+        showNotification('info', 'Opening WhatsApp');
       } else {
-        // Desktop: Open WhatsApp Web
-        setTimeout(() => {
-          window.open(`https://web.whatsapp.com/send?text=${wa_text}`, '_blank');
-        }, 500);
-        showNotification('info', 'Open WhatsApp Web - attach the downloaded image');
+        // Desktop/PWA: Open WhatsApp Web
+        const desktopUrl = `https://web.whatsapp.com/send?text=${wa_text}`;
+        window.open(desktopUrl, '_blank', 'noopener,noreferrer');
+        showNotification('info', 'WhatsApp Web opened - attach the downloaded image');
       }
     } catch (e) {
-      console.log('WhatsApp share error:', e);
+      console.error('WhatsApp share error:', e);
       showNotification('error', 'Could not open WhatsApp');
     }
   };
