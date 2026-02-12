@@ -431,3 +431,149 @@ export async function updateQuranStreak(userId: string) {
     client.release();
   }
 }
+
+/**
+ * Get all completed phases for a user (used for locking mechanism)
+ */
+export async function getCompletedQuranPhases(userId: string): Promise<{ success: boolean; completedPhases?: Array<{ day: number; phase: number }>; error?: string }> {
+  const client = await pool.connect();
+  try {
+    const res = await client.query(`
+      SELECT day, phase FROM quran_progress
+      WHERE user_id = $1 AND completed = true
+      ORDER BY day, phase
+    `, [userId]);
+
+    return {
+      success: true,
+      completedPhases: res.rows.map(row => ({ day: row.day, phase: row.phase }))
+    };
+  } catch (e) {
+    console.error('Get completed phases error:', e);
+    return { success: false, error: 'Failed to fetch completed phases' };
+  } finally {
+    client.release();
+  }
+}
+
+/**
+ * Enhanced complete Quran phase with locking validation
+ */
+export async function completeQuranPhaseEnhanced(
+  userId: string,
+  day: number,
+  phase: number
+): Promise<{ success: boolean; user?: any; error?: string }> {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Validate inputs
+    if (day < 1 || day > 30 || phase < 1 || phase > 5) {
+      return { success: false, error: 'Invalid day or phase' };
+    }
+
+    // Get user
+    const userRes = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0) {
+      return { success: false, error: 'User not found' };
+    }
+
+    // Check if already completed
+    const existingRes = await client.query(
+      'SELECT completed FROM quran_progress WHERE user_id = $1 AND day = $2 AND phase = $3',
+      [userId, day, phase]
+    );
+    if (existingRes.rows.length > 0 && existingRes.rows[0].completed) {
+      return { success: false, error: 'Phase already completed' };
+    }
+
+    // Get all completed phases to validate locking
+    const completedRes = await client.query(`
+      SELECT day, phase FROM quran_progress
+      WHERE user_id = $1 AND completed = true
+      ORDER BY day, phase
+    `, [userId]);
+    const completedPhases = completedRes.rows.map(r => ({ day: r.day, phase: r.phase }));
+
+    // Validate locking: Day 1 Phase 1 always unlocked
+    if (day === 1 && phase === 1) {
+      // OK
+    } else if (phase > 1) {
+      // Check previous phase same day
+      const prevPhaseCompleted = completedPhases.some(p => p.day === day && p.phase === phase - 1);
+      if (!prevPhaseCompleted) {
+        return { success: false, error: 'Complete the previous phase first' };
+      }
+    } else if (day > 1) {
+      // Check all phases of previous day
+      const allPrevDayCompleted = [1, 2, 3, 4, 5].every(p =>
+        completedPhases.some(cp => cp.day === day - 1 && cp.phase === p)
+      );
+      if (!allPrevDayCompleted) {
+        return { success: false, error: 'Complete all phases of the previous day first' };
+      }
+    }
+
+    // Calculate page range
+    const pagesPerDay = Math.ceil(604 / 30);
+    const pagesPerPhase = Math.ceil(pagesPerDay / 5);
+    const completedDays = (day - 1) * pagesPerDay;
+    const completedPhasesInDay = (phase - 1) * pagesPerPhase;
+    const pageStart = completedDays + completedPhasesInDay + 1;
+    const pageEnd = Math.min(pageStart + pagesPerPhase - 1, 604);
+
+    // Insert phase completion
+    await client.query(`
+      INSERT INTO quran_progress (user_id, day, phase, page_start, page_end, completed, completed_at)
+      VALUES ($1, $2, $3, $4, $5, true, NOW())
+      ON CONFLICT (user_id, day, phase) DO UPDATE SET 
+        completed = true,
+        completed_at = NOW()
+    `, [userId, day, phase, pageStart, pageEnd]);
+
+    // Update user stats
+    completedPhases.push({ day, phase });
+    const totalPagesRead = completedPhases.length * pagesPerPhase;
+
+    // Check if fully completed (all 150 phases)
+    const isFullyCompleted = completedPhases.length === 150;
+
+    // Update user stats - build query dynamically
+    let updateQuery = `
+      UPDATE users SET 
+        quran_current_day = $1,
+        quran_current_phase = $2,
+        quran_current_page = $3,
+        quran_total_pages_read = $4,
+        quran_last_read_date = NOW(),
+        quran_started_at = COALESCE(quran_started_at, NOW())`;
+    
+    if (isFullyCompleted) {
+      updateQuery += `,\n        quran_completed_at = NOW()`;
+    }
+    
+    updateQuery += `\n      WHERE id = $5\n      RETURNING *`;
+
+    const updateRes = await client.query(updateQuery, [
+      day,
+      phase,
+      pageEnd,
+      totalPagesRead,
+      userId
+    ]);
+
+    await client.query('COMMIT');
+    
+    return { 
+      success: true, 
+      user: safeUser(updateRes.rows[0])
+    };
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('Complete Quran phase error:', e);
+    return { success: false, error: 'Failed to complete phase' };
+  } finally {
+    client.release();
+  }
+}

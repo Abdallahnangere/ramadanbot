@@ -8,9 +8,10 @@ import LoginScreen from '../../components/LoginScreen';
 import AdminDashboard from '../../components/AdminDashboardEnhanced';
 import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
-import QuranFullScreenModal from '../../components/QuranFullScreenModal';
+import AppleQuranReader from '../../components/AppleQuranReader';
 import Toast from '../../components/Toast';
 import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
+import { getCompletedQuranPhases, completeQuranPhaseEnhanced } from '../actions';
 
 export default function HomeApp() {
   const [appState, setAppState] = useState<AppState>({ 
@@ -26,6 +27,7 @@ export default function HomeApp() {
   const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [completedQuranPhases, setCompletedQuranPhases] = useState<Array<{ day: number; phase: number }>>([]);
   
   // Initialize app: restore theme and persistent login
   useEffect(() => {
@@ -52,6 +54,17 @@ export default function HomeApp() {
         setIsHydrated(true);
     }
   }, []);
+
+  // Load completed Quran phases on app initialization
+  useEffect(() => {
+    if (appState.currentUser?.id) {
+      getCompletedQuranPhases(appState.currentUser.id).then(result => {
+        if (result.success && result.completedPhases) {
+          setCompletedQuranPhases(result.completedPhases);
+        }
+      }).catch(e => console.error('Failed to load completed phases:', e));
+    }
+  }, [appState.currentUser?.id]);
 
   // Real-time data polling - OPTIMIZED: reduces database load from 5s to 30s interval
   useEffect(() => {
@@ -223,13 +236,48 @@ export default function HomeApp() {
 
     const user = appState.currentUser!;
 
+    // Handler for completing a Quran phase
+    const handleCompleteQuranPhase = async (day: number, phase: number): Promise<boolean> => {
+      try {
+        const result = await completeQuranPhaseEnhanced(user.id, day, phase);
+        if (result.success && result.user) {
+          setCompletedQuranPhases(prev => {
+            const isDuplicate = prev.some(p => p.day === day && p.phase === phase);
+            return isDuplicate ? prev : [...prev, { day, phase }];
+          });
+          
+          // Update user in app state
+          setAppState(prev => ({ ...prev, currentUser: result.user }));
+          
+          // Update persistent login
+          try {
+            localStorage.setItem('ramadanbot_user', JSON.stringify(result.user));
+          } catch (e) {
+            console.error('Failed to update user session:', e);
+          }
+          
+          setToast({ type: 'success', message: `🎉 Phase ${phase} completed! Keep going!` });
+          return true;
+        } else {
+          setToast({ type: 'error', message: result.error || 'Failed to complete phase' });
+          return false;
+        }
+      } catch (error) {
+        console.error('Error completing phase:', error);
+        setToast({ type: 'error', message: 'An error occurred while completing the phase' });
+        return false;
+      }
+    };
+
     return (
         <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#000000] dark:via-[#0a0a0a] dark:to-[#000000] transition-colors duration-300">
-            {/* Qur'an Full Screen Modal */}
-            <QuranFullScreenModal
+            {/* Apple-Style Quran Reader */}
+            <AppleQuranReader
                 isOpen={activeTab === 'quran'}
                 onClose={() => setActiveTab('flyer')}
                 user={user}
+                completedPhases={completedQuranPhases}
+                onCompletePhase={handleCompleteQuranPhase}
                 onProgressUpdate={() => {
                   if (appState.currentUser?.id) {
                     fetch(`/api/user?id=${appState.currentUser.id}`)
