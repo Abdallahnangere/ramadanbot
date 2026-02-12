@@ -237,218 +237,218 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
   }
 
   return (
-    <div className={`fixed inset-0 bg-black/95 backdrop-blur-2xl z-50 flex flex-col ${isOpen ? '' : 'hidden'}`}>
+    <div className={`fixed inset-0 bg-black z-50 flex flex-col ${isOpen ? '' : 'hidden'}`}>
       <audio ref={audioRef} />
       
-      {/* Header */}
-      <div className="flex-shrink-0 px-4 md:px-6 py-4 md:py-5 bg-black/50 backdrop-blur-xl border-b border-white/10">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg md:text-2xl font-bold text-white">Qur'an Reading</h1>
-            <p className="text-xs md:text-sm text-gray-400 mt-1">Day {currentDay}/30 • Phase {currentPhase}/5 • Page {currentPage}/{end}</p>
+      {/* TOP STATIC BAR - Progress, Controls, Close */}
+      <div className="flex-shrink-0 bg-black/80 backdrop-blur-xl border-b border-white/10 px-3 md:px-6 py-3 md:py-4 space-y-2">
+        {/* Row 1: Day/Phase Selectors and Close */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex gap-2 flex-1">
+            {/* Day Selector */}
+            <div className="relative flex-1">
+              <button
+                onClick={() => setExpandedDay(expandedDay === currentDay ? null : currentDay)}
+                className="w-full flex items-center justify-between px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs md:text-sm font-semibold transition-all"
+              >
+                <span>📅 Day {currentDay}</span>
+                <ChevronDown size={16} className={`transform transition-transform ${expandedDay === currentDay ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedDay === currentDay && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-50 max-h-40 overflow-y-auto">
+                  {Array.from({ length: RAMADAN_DAYS }).map((_, idx) => (
+                    <button
+                      key={idx + 1}
+                      onClick={() => {
+                        setCurrentDay(idx + 1);
+                        setCurrentPhase(1);
+                        setCurrentPage(getPhasePages(idx + 1, 1).start);
+                        setExpandedDay(null);
+                      }}
+                      className={`w-full px-3 py-1.5 text-xs font-medium text-left hover:bg-white/20 transition-all ${
+                        currentDay === idx + 1 ? 'bg-amber-600 text-white' : 'text-gray-300'
+                      }`}
+                    >
+                      Day {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Phase Selector */}
+            <div className="relative flex-1">
+              <button
+                onClick={() => setExpandedDay(expandedDay === -currentPhase ? null : -currentPhase)}
+                className="w-full flex items-center justify-between px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs md:text-sm font-semibold transition-all"
+              >
+                <span>☪️ Phase {currentPhase}</span>
+                <ChevronDown size={16} className={`transform transition-transform ${expandedDay === -currentPhase ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedDay === -currentPhase && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-50">
+                  {Array.from({ length: QURAN_PHASES_PER_DAY }).map((_, idx) => (
+                    <button
+                      key={idx + 1}
+                      onClick={() => {
+                        setCurrentPhase(idx + 1);
+                        setCurrentPage(getPhasePages(currentDay, idx + 1).start);
+                        setExpandedDay(null);
+                      }}
+                      className={`w-full px-3 py-1.5 text-xs font-medium text-left hover:bg-white/20 transition-all whitespace-nowrap ${
+                        currentPhase === idx + 1 ? 'bg-purple-600 text-white' : 'text-gray-300'
+                      }`}
+                    >
+                      Phase {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Close Button */}
           <button 
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+            className="flex-shrink-0 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
           >
-            <X size={24} className="text-white" />
+            <X size={20} className="text-white" />
           </button>
+        </div>
+
+        {/* Row 2: Progress Bar */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-gray-400">Page {currentPage}/{end}</span>
+            <span className="text-xs font-bold text-amber-400">{Math.round(pageProgress)}%</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-2 rounded-full transition-all duration-500 shadow-lg shadow-amber-500/50" 
+              style={{ width: `${pageProgress}%` }} 
+            />
+          </div>
         </div>
       </div>
 
-      {/* Main Content - Responsive */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-4 md:px-6 py-6 md:py-8 space-y-6 max-w-5xl mx-auto">
-          {loading ? (
-            <div className="flex items-center justify-center h-96">
-              <div className="space-y-4 text-center">
-                <div className="inline-block">
-                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-white/20 border-t-white"></div>
-                </div>
-                <p className="text-white/60 font-medium">Loading Qur'an...</p>
+      {/* MAIN CONTENT - Full Page Arabic Text */}
+      <div className="flex-1 overflow-y-auto bg-gradient-to-b from-black via-gray-950 to-black">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="space-y-4 text-center">
+              <div className="inline-block">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-white/20 border-t-white"></div>
               </div>
+              <p className="text-white/60 font-medium">Loading Qur'an...</p>
             </div>
-          ) : (
-            <div>
-              {/* Qur'an Text Display */}
-              <div className="bg-gradient-to-br from-amber-900/20 to-orange-900/20 rounded-3xl p-6 md:p-8 border-2 border-amber-600/30 backdrop-blur-sm">
-                <div className="space-y-6">
-                  {quranText.length > 0 ? (
-                    quranText.map((ayah, idx) => (
-                      <div key={idx} className="space-y-3">
-                        {/* Arabic */}
-                        <div className="text-right">
-                          <p 
-                            className="text-3xl md:text-4xl leading-relaxed text-amber-50 font-bold hover:text-white transition-colors font-arabic" 
-                            dir="rtl"
-                          >
-                            {ayah.text}
-                          </p>
-                          <p className="text-xs md:text-sm text-amber-600/80 mt-2 md:mt-3 font-semibold">
-                            {ayah.surah.name} • الآية {ayah.ayah}
-                          </p>
-                        </div>
-
-                        {/* English Translation */}
-                        {showEnglish && ayah.englishTranslation && (
-                          <div className="pl-4 md:pl-6 border-l-4 border-amber-500/50">
-                            <p className="text-xs md:text-sm text-gray-200 leading-relaxed">
-                              {ayah.englishTranslation}
-                            </p>
-                          </div>
-                        )}
-
-                        {idx < quranText.length - 1 && <hr className="border-amber-600/20" />}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-gray-400 py-8 md:py-12">
-                      <p className="text-base md:text-lg">Loading Qur'anic text...</p>
+          </div>
+        ) : (
+          <div className="min-h-full flex flex-col items-center justify-center px-4 md:px-8 py-8 md:py-12">
+            {quranText.length > 0 ? (
+              <div className="w-full max-w-4xl space-y-8">
+                {quranText.map((ayah, idx) => (
+                  <div key={idx} className="space-y-4">
+                    {/* Large Arabic Text - Mushaf Style */}
+                    <div className="text-center">
+                      <p 
+                        className="text-4xl md:text-5xl lg:text-6xl leading-relaxed md:leading-relaxed text-amber-50 font-bold hover:text-white transition-colors" 
+                        style={{
+                          fontFamily: "'Traditional Arabic', 'Arial Unicode MS', 'DejaVu Sans', serif",
+                          fontWeight: '700',
+                          lineHeight: '2.2',
+                          direction: 'rtl',
+                          textAlign: 'center',
+                        }}
+                        dir="rtl"
+                      >
+                        {ayah.text}
+                      </p>
+                      
+                      {/* Surah and Ayah Info */}
+                      <p className="text-xs md:text-sm text-amber-600/80 mt-4 md:mt-6 font-semibold">
+                        {ayah.surah.name} • الآية {ayah.ayah}
+                      </p>
                     </div>
-                  )}
-                </div>
-              </div>
 
-              {/* Progress Bar */}
-              <div className="mt-6 md:mt-8 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs md:text-sm font-medium text-gray-300">Phase Progress</span>
-                  <span className="text-xs md:text-sm font-bold text-amber-400">{Math.round(pageProgress)}%</span>
-                </div>
-                <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden backdrop-blur-sm">
-                  <div 
-                    className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-3 rounded-full transition-all duration-500 shadow-lg shadow-amber-500/50" 
-                    style={{ width: `${pageProgress}%` }} 
-                  />
-                </div>
+                    {/* English Translation Below if Enabled */}
+                    {showEnglish && ayah.englishTranslation && (
+                      <div className="text-center border-t border-amber-600/20 pt-4">
+                        <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
+                          {ayah.englishTranslation}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Divider */}
+                    {idx < quranText.length - 1 && (
+                      <div className="flex justify-center mt-6 md:mt-8">
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="text-center">
+                <p className="text-gray-400 text-lg">Loading Qur'anic text...</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Bottom Controls - Fixed */}
-      <div className="flex-shrink-0 bg-black/50 backdrop-blur-xl border-t border-white/10 px-4 md:px-6 py-4 space-y-3">
-        {/* Control Buttons */}
-        <div className="flex gap-2 md:gap-3">
+      {/* BOTTOM CONTROL BAR - Fixed */}
+      <div className="flex-shrink-0 bg-black/80 backdrop-blur-xl border-t border-white/10 px-3 md:px-6 py-3 space-y-2">
+        {/* Navigation and Control Buttons */}
+        <div className="flex gap-2 items-center justify-between">
           <button
-            onClick={() => setShowEnglish(!showEnglish)}
-            className={`flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-3 rounded-xl font-semibold transition-all text-sm md:text-base ${
-              showEnglish
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
-            }`}
+            onClick={handlePreviousPage}
+            disabled={currentPage <= start}
+            className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           >
-            <Globe size={18} />
-            <span className="hidden md:inline">English</span>
+            <ChevronLeft size={20} className="text-white" />
           </button>
+          
           <button
             onClick={isPlayingAudio ? handleStopAudio : handlePlayAudio}
-            className={`flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-3 rounded-xl font-semibold transition-all text-sm md:text-base ${
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-semibold transition-all text-sm ${
               isPlayingAudio
                 ? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
                 : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
             }`}
           >
             {isPlayingAudio ? <Pause size={18} /> : <Play size={18} />}
-            <span className="hidden md:inline">Recitation</span>
+            <span>Recitation</span>
           </button>
-        </div>
 
-        {/* Navigation Controls */}
-        <div className="flex items-center justify-between gap-2 md:gap-3">
           <button
-            onClick={handlePreviousPage}
-            disabled={currentPage <= start}
-            className="flex-shrink-0 w-10 md:w-12 h-10 md:h-12 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+            onClick={() => setShowEnglish(!showEnglish)}
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-semibold transition-all text-sm ${
+              showEnglish
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+            }`}
           >
-            <ChevronLeft size={20} className="text-white" />
+            <Globe size={18} />
+            <span>English</span>
           </button>
-          
-          <div className="flex-1 text-center">
-            <p className="text-xs md:text-sm text-gray-300 font-medium">
-              Page {currentPage} of {end}
-            </p>
-          </div>
 
           <button
             onClick={handleNextPage}
             disabled={currentPage >= end}
-            className="flex-shrink-0 w-10 md:w-12 h-10 md:h-12 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+            className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           >
             <ChevronRight size={20} className="text-white" />
           </button>
-        </div>
-
-        {/* Day/Phase Selector Dropdowns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-          <div className="relative">
-            <button
-              onClick={() => setExpandedDay(expandedDay === currentDay ? null : currentDay)}
-              className="w-full flex items-center justify-between px-3 md:px-4 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs md:text-sm font-semibold transition-all"
-            >
-              <span>Day {currentDay}</span>
-              <ChevronDown size={16} className={`transform transition-transform ${expandedDay === currentDay ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedDay === currentDay && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-50 max-h-48 overflow-y-auto">
-                {Array.from({ length: RAMADAN_DAYS }).map((_, idx) => (
-                  <button
-                    key={idx + 1}
-                    onClick={() => {
-                      setCurrentDay(idx + 1);
-                      setCurrentPhase(1);
-                      setCurrentPage(getPhasePages(idx + 1, 1).start);
-                      setExpandedDay(null);
-                    }}
-                    className={`w-full px-4 py-2 text-xs md:text-sm font-medium text-left hover:bg-white/20 transition-all ${
-                      currentDay === idx + 1 ? 'bg-amber-600 text-white' : 'text-gray-300'
-                    }`}
-                  >
-                    Day {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => setExpandedDay(expandedDay === -currentPhase ? null : -currentPhase)}
-              className="w-full flex items-center justify-between px-3 md:px-4 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs md:text-sm font-semibold transition-all"
-            >
-              <span>Phase {currentPhase}</span>
-              <ChevronDown size={16} className={`transform transition-transform ${expandedDay === -currentPhase ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedDay === -currentPhase && (
-              <div className="absolute top-full right-0 bg-gray-900 border border-white/20 rounded-lg overflow-hidden z-50">
-                {Array.from({ length: QURAN_PHASES_PER_DAY }).map((_, idx) => (
-                  <button
-                    key={idx + 1}
-                    onClick={() => {
-                      setCurrentPhase(idx + 1);
-                      setCurrentPage(getPhasePages(currentDay, idx + 1).start);
-                      setExpandedDay(null);
-                    }}
-                    className={`w-full px-4 py-2 text-xs md:text-sm font-medium text-left hover:bg-white/20 transition-all whitespace-nowrap ${
-                      currentPhase === idx + 1 ? 'bg-purple-600 text-white' : 'text-gray-300'
-                    }`}
-                  >
-                    Phase {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Complete Phase Button */}
         {currentPage === end && (
           <button
             onClick={handleCompletePhase}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95"
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-2.5 md:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm md:text-base"
           >
-            <Check size={20} />
+            <Check size={18} />
             Complete Phase {currentPhase}
           </button>
         )}

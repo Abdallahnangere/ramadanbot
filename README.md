@@ -33,7 +33,39 @@ Transform your Ramadan journey with **Ramadan Bot**, a faith-based platform that
 - Auto-generated captions with your streak count
 - Instant sharing with custom messages
 
-### 🔥 **Streak Tracking System**
+### � **Full-Page Qur'an Reader** ✨ NEW
+Experience the Qur'an in a beautifully designed full-screen reader:
+
+#### **Key Features:**
+- **Mushaf Al-Madinah Styling** - Traditional Arabic typography with authentic presentation
+- **Full-Page Display** - Centered, large Arabic text (4-6xl responsive sizing) for optimal readability
+- **30-Day Journey Structure** - Divide the entire Qur'an into 30 days × 5 phases/day (aligns with 5 daily prayers)
+- **Smart Day/Phase Navigation** - Quick-select dropdowns at the top bar for instant navigation across all 150 combinations
+- **Professional Intro Screen** - Onboarding explains the 30-day structure, phase alignment, and benefits (~10-15 min per phase)
+- **Live Progress Tracking** - Real-time visual progress bar at the top showing phase completion percentage
+- **Audio Recitation** - Integrated audio playback (Alafasy recitation) accessible via play/pause button
+- **English Translation** - Toggle between Arabic text and English translation (Sahih International)
+- **Responsive Design** - Optimized for mobile and desktop viewing
+- **Completion Recognition** - Celebration modal and progress updates when phases are completed
+- **Session Persistence** - Your reading progress is saved automatically
+
+#### **How to Use:**
+1. Open the **Qur'an Reader** from the main app dashboard
+2. Welcome screen explains the 30-day Ramadan Qur'an completion structure
+3. Select your day and phase from the top bar dropdowns
+4. Read the full-page Arabic text with optional English translation
+5. Use **◀ ▶** buttons to navigate pages, or auto-skip with day/phase selector
+6. Enable recitation audio to hear the verses read by professional Qari (reciter)
+7. Click "Complete Phase" when you finish to log progress and move to the next phase
+8. Your streak and progress update in real-time across the app
+
+#### **The 30-Day Structure:**
+- **30 Days** = Full span of Ramadan month
+- **5 Phases per Day** = Aligned with 5 daily Islamic prayers (Fajr, Dhuhr, Asr, Maghrib, Isha)
+- **~10-15 mins per Phase** = Sustainable commitment after each prayer
+- **Complete Result** = Full Qur'an revision (all 60 Hizbs) by month's end, إن شاء الله
+
+### �🔥 **Streak Tracking System**
 - Track your consecutive days of spiritual reflection
 - Build accountability and motivation
 - Share your streak across social platforms
@@ -109,6 +141,9 @@ After generating, you'll see a countdown timer showing when the next generation 
 - **Domain**: www.ramadanbot.app (App deployed at /app route)
 - **PWA**: Full offline support with manifest and service workers
 - **UI/UX**: Apple-standard design system with dark mode support
+- **Qur'an APIs**: 
+  - **quran.com API v4** - Qur'anic text, translations (Sahih International), and page data
+  - **Islamic.network API** - Audio recitations (Alafasy - 128kbps MP3 surah files)
 
 ## 📖 Islamic Grounding
 
