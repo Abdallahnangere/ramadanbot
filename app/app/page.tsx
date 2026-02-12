@@ -20,7 +20,7 @@ export default function HomeApp() {
   });
   const [generatedData, setGeneratedData] = useState<GeneratedData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isQuranOpen, setIsQuranOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'flyer' | 'quran'>('flyer');
   const [downloadedFlyerUrl, setDownloadedFlyerUrl] = useState<string | null>(null);
   const [hasDownloadedToday, setHasDownloadedToday] = useState(false);
   const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
@@ -280,164 +280,208 @@ export default function HomeApp() {
 
             <main className="flex-1 overflow-y-auto scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="px-5 py-6 space-y-6">
-                    {generatedData ? (
-                        <div className="animate-fade-in">
-                            <FlyerPreview 
-                                message={generatedData.text}
-                                formData={generatedData.formData}
-                                onReset={handleReset}
-                                user={user}
-                                onDownloaded={handleFlyerDownloaded}
-                            />
-                        </div>
-                    ) : (
-                        <div className="animate-fade-in-up space-y-6">
-                            <div className="space-y-1">
-                                <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                    Salam, {user.name.split(' ')[0]} 👋
-                                </h2>
-                                <p className="text-base text-gray-600 dark:text-gray-400">
-                                    Ready for today's reflection?
-                                </p>
-                            </div>
-
-                            <RamadanForm 
-                                onSuccess={handleSuccess} 
-                                initialName={user.name} 
-                                userId={user.id}
-                                disabled={hasDownloadedToday}
-                                countdownTime={countdownTime}
-                                hasLimitReached={hasDownloadedToday}
-                            />
-
-                            {/* Premium Streak & Limit Cards - Apple Standard */}
-                            <div className="grid grid-cols-2 gap-4 pt-2">
-                              {/* Streak Card */}
-                              <div className="group relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
-                                {/* Animated background gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                
-                                <div className="relative p-6 flex flex-col h-full justify-between">
-                                  {/* Top section */}
-                                  <div>
-                                    {/* Icon */}
-                                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
-                                      <span className="text-2xl">🔥</span>
-                                    </div>
-                                    
-                                    {/* Label */}
-                                    <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
-                                      Streak
-                                    </p>
-                                    
-                                    {/* Value */}
-                                    <div className="space-y-1">
-                                      <p className="text-5xl font-black text-white tracking-tight">
-                                        {user.streak}
-                                      </p>
-                                      <p className="text-xs text-white/60 font-medium">
-                                        day{user.streak !== 1 ? 's' : ''} on fire
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Progress bar */}
-                                  <div className="mt-4 space-y-2">
-                                    <div className="flex items-center justify-between text-xs">
-                                      <span className="text-white/50 font-medium">Progress to 30 days</span>
-                                      <span className="text-white font-bold">{Math.min(100, Math.round((user.streak/30)*100))}%</span>
-                                    </div>
-                                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
-                                      <div 
-                                        className="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-orange-500/50" 
-                                        style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
-                                      />
-                                    </div>
-                                  </div>
+                    {activeTab === 'flyer' ? (
+                        <>
+                            {generatedData ? (
+                                <div className="animate-fade-in">
+                                    <FlyerPreview 
+                                        message={generatedData.text}
+                                        formData={generatedData.formData}
+                                        onReset={handleReset}
+                                        user={user}
+                                        onDownloaded={handleFlyerDownloaded}
+                                    />
                                 </div>
-                              </div>
-
-                              {/* Daily Limit Card */}
-                              <div className="group relative bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
-                                {/* Animated background */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                
-                                <div className="relative p-6 flex flex-col h-full justify-between">
-                                  {/* Top section */}
-                                  <div>
-                                    {/* Icon */}
-                                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
-                                      <Sparkles size={24} className="text-white" />
-                                    </div>
-                                    
-                                    {/* Label */}
-                                    <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
-                                      Daily Limit
-                                    </p>
-                                    
-                                    {/* Value */}
+                            ) : (
+                                <div className="animate-fade-in-up space-y-6">
                                     <div className="space-y-1">
-                                      <p className="text-5xl font-black text-white tracking-tight">
-                                        {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
-                                      </p>
-                                      <p className="text-xs text-white/60 font-medium">
-                                        generation{(user.remaining || 3) !== 1 ? 's' : ''} left today
-                                      </p>
+                                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+                                            Salam, {user.name.split(' ')[0]} 👋
+                                        </h2>
+                                        <p className="text-base text-gray-600 dark:text-gray-400">
+                                            Ready for today's reflection?
+                                        </p>
                                     </div>
-                                  </div>
-                                  
-                                  {/* Progress bar */}
-                                  <div className="mt-4 space-y-2">
-                                    <div className="flex items-center justify-between text-xs">
-                                      <span className="text-white/50 font-medium">Daily usage</span>
-                                      <span className="text-white font-bold">{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
-                                    </div>
-                                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
-                                      <div 
-                                        className="bg-gradient-to-r from-lime-300 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-emerald-500/50" 
-                                        style={{ width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` }} 
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
 
-                            <div className="bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-200 dark:border-gray-800">
-                                <div className="flex gap-3">
-                                    <div className="flex-shrink-0">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                            <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
+                                    <RamadanForm 
+                                        onSuccess={handleSuccess} 
+                                        initialName={user.name} 
+                                        userId={user.id}
+                                        disabled={hasDownloadedToday}
+                                        countdownTime={countdownTime}
+                                        hasLimitReached={hasDownloadedToday}
+                                    />
+
+                                    {/* Premium Streak & Limit Cards - Apple Standard */}
+                                    <div className="grid grid-cols-2 gap-4 pt-2">
+                                      {/* Streak Card */}
+                                      <div className="group relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+                                        {/* Animated background gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        
+                                        <div className="relative p-6 flex flex-col h-full justify-between">
+                                          {/* Top section */}
+                                          <div>
+                                            {/* Icon */}
+                                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
+                                              <span className="text-2xl">🔥</span>
+                                            </div>
+                                            
+                                            {/* Label */}
+                                            <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
+                                              Streak
+                                            </p>
+                                            
+                                            {/* Value */}
+                                            <div className="space-y-1">
+                                              <p className="text-5xl font-black text-white tracking-tight">
+                                                {user.streak}
+                                              </p>
+                                              <p className="text-xs text-white/60 font-medium">
+                                                day{user.streak !== 1 ? 's' : ''} on fire
+                                              </p>
+                                            </div>
+                                          </div>
+                                          
+                                          {/* Progress bar */}
+                                          <div className="mt-4 space-y-2">
+                                            <div className="flex items-center justify-between text-xs">
+                                              <span className="text-white/50 font-medium">Progress to 30 days</span>
+                                              <span className="text-white font-bold">{Math.min(100, Math.round((user.streak/30)*100))}%</span>
+                                            </div>
+                                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                              <div 
+                                                className="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-orange-500/50" 
+                                                style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Daily Limit Card */}
+                                      <div className="group relative bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+                                        {/* Animated background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        
+                                        <div className="relative p-6 flex flex-col h-full justify-between">
+                                          {/* Top section */}
+                                          <div>
+                                            {/* Icon */}
+                                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
+                                              <Sparkles size={24} className="text-white" />
+                                            </div>
+                                            
+                                            {/* Label */}
+                                            <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
+                                              Daily Limit
+                                            </p>
+                                            
+                                            {/* Value */}
+                                            <div className="space-y-1">
+                                              <p className="text-5xl font-black text-white tracking-tight">
+                                                {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
+                                              </p>
+                                              <p className="text-xs text-white/60 font-medium">
+                                                generation{(user.remaining || 3) !== 1 ? 's' : ''} left today
+                                              </p>
+                                            </div>
+                                          </div>
+                                          
+                                          {/* Progress bar */}
+                                          <div className="mt-4 space-y-2">
+                                            <div className="flex items-center justify-between text-xs">
+                                              <span className="text-white/50 font-medium">Daily usage</span>
+                                              <span className="text-white font-bold">{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
+                                            </div>
+                                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                              <div 
+                                                className="bg-gradient-to-r from-lime-300 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-emerald-500/50" 
+                                                style={{ width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` }} 
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-200 dark:border-gray-800">
+                                        <div className="flex gap-3">
+                                            <div className="flex-shrink-0">
+                                                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                                    <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-medium text-gray-900 dark:text-white mb-1">
+                                                    Daily Reflection Tips
+                                                </p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                                                    Choose a topic that resonates with your current spiritual journey. Add specific verses or Hadith for more personalized content.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-medium text-gray-900 dark:text-white mb-1">
-                                            Daily Reflection Tips
-                                        </p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                                            Choose a topic that resonates with your current spiritual journey. Add specific verses or Hadith for more personalized content.
-                                        </p>
-                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            )}
+                        </>
+                    ) : (
+                        <QuranBottomSheet 
+                            isOpen={activeTab === 'quran'}
+                            onClose={() => setActiveTab('flyer')}
+                            user={user}
+                            onProgressUpdate={() => {
+                              // Refresh user data
+                              if (appState.currentUser?.id) {
+                                fetch(`/api/user?id=${appState.currentUser.id}`)
+                                  .then(res => res.json())
+                                  .then(json => {
+                                    if (json.user) {
+                                      setAppState(prev => ({ ...prev, currentUser: json.user }));
+                                      try {
+                                        localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+                                      } catch (e) {}
+                                    }
+                                  })
+                                  .catch(e => console.error(e));
+                              }
+                            }}
+                        />
                     )}
                 </div>
 
                 <div className="h-6"></div>
             </main>
 
-            {/* Quran Tab */}
-            {!generatedData && (
-              <button
-                onClick={() => setIsQuranOpen(true)}
-                className="absolute bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl flex items-center justify-center transition-all transform hover:scale-110 active:scale-95 z-40 group"
-              >
-                <BookOpen size={24} className="group-hover:animate-bounce" />
-              </button>
-            )}
+            {/* Tab Navigation */}
+            <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl px-5 py-3">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setActiveTab('flyer')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                    activeTab === 'flyer'
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <Sparkles size={18} />
+                  <span>Flyer</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('quran')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                    activeTab === 'quran'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <BookOpen size={18} />
+                  <span>Quran</span>
+                </button>
+              </div>
+            </div>
         </div>
     );
   };
@@ -450,31 +494,6 @@ export default function HomeApp() {
           message={toast.message}
           duration={4000}
           onClose={() => setToast(null)}
-        />
-      )}
-      
-      {/* Quran Bottom Sheet */}
-      {appState.currentUser && (
-        <QuranBottomSheet 
-          isOpen={isQuranOpen}
-          onClose={() => setIsQuranOpen(false)}
-          user={appState.currentUser}
-          onProgressUpdate={() => {
-            // Refresh user data
-            if (appState.currentUser?.id) {
-              fetch(`/api/user?id=${appState.currentUser.id}`)
-                .then(res => res.json())
-                .then(json => {
-                  if (json.user) {
-                    setAppState(prev => ({ ...prev, currentUser: json.user }));
-                    try {
-                      localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
-                    } catch (e) {}
-                  }
-                })
-                .catch(e => console.error(e));
-            }
-          }}
         />
       )}
       

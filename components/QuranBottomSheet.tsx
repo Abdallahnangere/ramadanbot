@@ -21,6 +21,8 @@ interface QuranAyah {
     englishName: string;
   };
   ayah: number;
+  translation?: string;
+  audioUrl?: string;
 }
 
 const QURAN_PHASES_PER_DAY = 5;
@@ -49,25 +51,39 @@ const QuranBottomSheet: React.FC<QuranBottomSheetProps> = ({ isOpen, onClose, us
     return { start: phaseStartPage, end: phaseEndPage };
   };
 
-  // Fetch Quran text from API
+  // Fetch Quran text from API with translations
   useEffect(() => {
     if (!isOpen || !currentPage) return;
 
     const fetchQuranPage = async () => {
       setLoading(true);
       try {
-        // Quran.com API - fetch ayahs for current page range
-        // For simplicity, we'll fetch by surah/ayah numbers
-        // Note: In production, you'd want to map pages to surah/ayah numbers
+        // AlQuran Cloud API - fetch page with English Sahih translation
         const response = await fetch(
-          `https://api.alquran.cloud/v1/page/${currentPage}`
+          `https://api.alquran.cloud/v1/page/${currentPage}/en.sahih`
         );
         const data = await response.json();
-        if (data.ayahs) {
-          setQuranText(data.ayahs);
+        if (data.data && data.data.ayahs) {
+          // Transform to include translations
+          const transformed = data.data.ayahs.map((ayah: any) => ({
+            ...ayah,
+            translation: ayah.text || '[Translation]',
+            audioUrl: `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${String(ayah.surah.number).padStart(3, '0')}.mp3`
+          }));
+          setQuranText(transformed);
         }
       } catch (error) {
         console.error('Failed to fetch Quran page:', error);
+        // Fallback to basic fetch
+        try {
+          const fallback = await fetch(`https://api.alquran.cloud/v1/page/${currentPage}`);
+          const data = await fallback.json();
+          if (data.data && data.data.ayahs) {
+            setQuranText(data.data.ayahs);
+          }
+        } catch (e) {
+          console.error('Fallback failed:', e);
+        }
       } finally {
         setLoading(false);
       }
@@ -210,8 +226,7 @@ const QuranBottomSheet: React.FC<QuranBottomSheetProps> = ({ isOpen, onClose, us
                           {showEnglish && (
                             <div className="pl-4 border-l-2 border-indigo-400">
                               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                                {/* English translation would come from API */}
-                                [English translation]
+                                {(ayah as any).translation || '[English translation]'}
                               </p>
                             </div>
                           )}
