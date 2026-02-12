@@ -60,37 +60,73 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
     const fetchQuranPage = async () => {
       setLoading(true);
       try {
-        // Map page number to surah for demonstration
-        // Each surah gets ~4 pages (PAGES_PER_PHASE), and we have 30 days with 5 phases each = 150 pages total
-        // This is 114 surahs compressed into 150 pages (some multi-page, some single)
+        // Calculate which ayahs to show based on page number
+        // Total Qur'an: 6236 ayahs across 114 surahs
+        // We divide into 604 pages (30 days × 5 phases × 4 pages)
+        // Each page shows approximately 10-11 ayahs
         
-        // For now, map page to surah: pages 1-4 = surah 1, 5-8 = surah 2, etc
-        const pagesPerSurah = 4;
-        const surahNumber = Math.floor((currentPage - 1) / pagesPerSurah) + 1;
+        const TOTAL_AYAHS = 6236;
+        const TOTAL_PAGES = 604;
+        const AYAHS_PER_PAGE = Math.ceil(TOTAL_AYAHS / TOTAL_PAGES);
         
-        // Don't exceed 114 surahs
-        const finalSurah = Math.min(surahNumber, 114);
+        const startAyahIndex = (currentPage - 1) * AYAHS_PER_PAGE;
+        const endAyahIndex = Math.min(startAyahIndex + AYAHS_PER_PAGE, TOTAL_AYAHS);
         
-        console.log(`Page ${currentPage} -> Surah ${finalSurah}`);
+        console.log(`Page ${currentPage}: Fetching ayahs ${startAyahIndex + 1} to ${endAyahIndex} (${AYAHS_PER_PAGE} per page)`);
         
-        // Fetch surah with Arabic text
-        const response = await fetch(
-          `https://api.alquran.cloud/v1/surah/${finalSurah}`
+        // Fetch all surahs and build a sequential list of all ayahs
+        const surahsResponse = await fetch(
+          `https://api.alquran.cloud/v1/surahs`
         );
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch surah ${finalSurah}: ${response.status}`);
+        if (!surahsResponse.ok) {
+          throw new Error(`Failed to fetch surahs: ${surahsResponse.status}`);
         }
         
-        const surahData = await response.json();
-        const ayahs = surahData.data.ayahs || [];
+        const surahsList = await surahsResponse.json();
+        const surahs = surahsList.data;
         
-        console.log(`Fetched surah ${finalSurah}: ${ayahs.length} ayahs`);
+        console.log(`Fetched ${surahs.length} surahs`);
         
-        if (ayahs.length > 0) {
-          // Fetch English translations
+        // Build sequential list of all ayahs
+        let allAyahs: any[] = [];
+        
+        for (const surah of surahs) {
+          try {
+            const surahResponse = await fetch(
+              `https://api.alquran.cloud/v1/surah/${surah.number}`
+            );
+            
+            if (surahResponse.ok) {
+              const surahData = await surahResponse.json();
+              const ayahs = surahData.data.ayahs || [];
+              
+              // Add ayahs with surah metadata
+              ayahs.forEach((ayah: any) => {
+                allAyahs.push({
+                  ...ayah,
+                  surahName: surahData.data.name,
+                  surahEnglishName: surahData.data.englishName,
+                  surahNumber: surahData.data.number
+                });
+              });
+            }
+          } catch (e) {
+            console.error(`Failed to fetch surah ${surah.number}:`, e);
+          }
+        }
+        
+        console.log(`Total ayahs collected: ${allAyahs.length}`);
+        
+        // Get ayahs for this page
+        const pageAyahs = allAyahs.slice(startAyahIndex, endAyahIndex);
+        
+        console.log(`Page ${currentPage}: Got ${pageAyahs.length} ayahs (indices ${startAyahIndex}-${endAyahIndex})`);
+        
+        if (pageAyahs.length > 0) {
+          // Fetch English translations for each ayah on this page
           const enrichedAyahs = await Promise.all(
-            ayahs.map(async (ayah: any) => {
+            pageAyahs.map(async (ayah: any) => {
               let translation = '';
               try {
                 const transResponse = await fetch(
@@ -108,9 +144,9 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
                 number: ayah.number,
                 text: ayah.text || '',
                 surah: {
-                  number: surahData.data.number,
-                  name: surahData.data.name || 'Unknown',
-                  englishName: surahData.data.englishName || 'Unknown'
+                  number: ayah.surahNumber,
+                  name: ayah.surahName,
+                  englishName: ayah.surahEnglishName
                 },
                 ayah: ayah.numberInSurah || 1,
                 englishTranslation: translation
@@ -118,13 +154,14 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
             })
           );
           
-          console.log('Successfully loaded', enrichedAyahs.length, 'ayahs');
+          console.log(`Successfully enriched ${enrichedAyahs.length} ayahs with translations`);
           setQuranText(enrichedAyahs);
         } else {
-          throw new Error('No ayahs in response');
+          console.error('No ayahs found for page:', currentPage);
+          setQuranText([]);
         }
       } catch (error) {
-        console.error('Failed to fetch Qur\'an:', error);
+        console.error('Failed to fetch Qur\'an page:', error);
         setQuranText([]);
       } finally {
         setLoading(false);
