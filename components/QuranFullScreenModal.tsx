@@ -30,6 +30,11 @@ const TOTAL_PAGES = 604;
 const RAMADAN_DAYS = 30;
 const ALAFASY_BASE = 'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy';
 
+// Qur'an specific constants
+const TOTAL_AYAHS = 6236;
+const AYAHS_PER_DAY = Math.floor(TOTAL_AYAHS / RAMADAN_DAYS); // ~208
+const AYAHS_PER_PHASE = Math.floor(AYAHS_PER_DAY / QURAN_PHASES_PER_DAY); // ~42
+
 const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onClose, user, onProgressUpdate }) => {
   const [currentDay, setCurrentDay] = useState(user.quran_current_day || 1);
   const [currentPhase, setCurrentPhase] = useState(user.quran_current_phase || 1);
@@ -45,108 +50,76 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentSurahPlaying, setCurrentSurahPlaying] = useState<number | null>(null);
 
-  // Get phase boundaries
+  // Get phase boundaries (in ayah numbers, not pages)
   const getPhasePages = (day: number, phase: number) => {
-    const dayStartPage = (day - 1) * PAGES_PER_PHASE * QURAN_PHASES_PER_DAY;
-    const phaseStartPage = dayStartPage + (phase - 1) * PAGES_PER_PHASE + 1;
-    const phaseEndPage = phaseStartPage + PAGES_PER_PHASE - 1;
-    return { start: phaseStartPage, end: phaseEndPage };
+    // Calculate ayah ranges based on day and phase
+    const dayStartAyah = (day - 1) * AYAHS_PER_DAY + 1;
+    const phaseStartAyah = dayStartAyah + (phase - 1) * AYAHS_PER_PHASE;
+    const phaseEndAyah = Math.min(phaseStartAyah + AYAHS_PER_PHASE - 1, TOTAL_AYAHS);
+    
+    // For backward compatibility with the naming (currentPage), we use start/end
+    return {
+      start: phaseStartAyah,
+      end: phaseEndAyah
+    };
   };
 
-  // Fetch Qur'an text with proper error handling and translations
+  // Fetch Qur'an text for current day/phase using ayah ranges
   useEffect(() => {
-    if (!isOpen || !currentPage) return;
+    if (!isOpen) return;
 
-    const fetchQuranPage = async () => {
+    const fetchPhaseAyahs = async () => {
       setLoading(true);
       try {
-        // Calculate which ayahs to show based on page number
-        // Total Qur'an: 6236 ayahs across 114 surahs
-        // We divide into 604 pages (30 days × 5 phases × 4 pages)
-        // Each page shows approximately 10-11 ayahs
+        // Get ayah range for this day and phase
+        const { start: startAyah, end: endAyah } = getPhasePages(currentDay, currentPhase);
         
-        const TOTAL_AYAHS = 6236;
-        const TOTAL_PAGES = 604;
-        const AYAHS_PER_PAGE = Math.ceil(TOTAL_AYAHS / TOTAL_PAGES);
+        console.log(`Day ${currentDay}, Phase ${currentPhase}: Fetching ayahs ${startAyah} to ${endAyah}`);
         
-        const startAyahIndex = (currentPage - 1) * AYAHS_PER_PAGE;
-        const endAyahIndex = Math.min(startAyahIndex + AYAHS_PER_PAGE, TOTAL_AYAHS);
-        
-        console.log(`Page ${currentPage}: Fetching ayahs ${startAyahIndex + 1} to ${endAyahIndex} (${AYAHS_PER_PAGE} per page)`);
-        
-        // Fetch all surahs and build a sequential list of all ayahs
-        const surahsResponse = await fetch(
-          `https://api.alquran.cloud/v1/surahs`
-        );
-        
-        if (!surahsResponse.ok) {
-          throw new Error(`Failed to fetch surahs: ${surahsResponse.status}`);
+        // Fetch all ayahs in range
+        const ayahPromises = [];
+        for (let ayahNum = startAyah; ayahNum <= endAyah; ayahNum++) {
+          ayahPromises.push(
+            fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}`)
+              .then(res => res.ok ? res.json() : null)
+              .catch(e => {
+                console.error(`Failed to fetch ayah ${ayahNum}:`, e);
+                return null;
+              })
+          );
         }
         
-        const surahsList = await surahsResponse.json();
-        const surahs = surahsList.data;
+        const ayahResponses = await Promise.all(ayahPromises);
+        const ayahs = ayahResponses.filter(r => r && r.data);
         
-        console.log(`Fetched ${surahs.length} surahs`);
+        console.log(`Fetched ${ayahs.length} ayahs for Phase ${currentPhase}`);
         
-        // Build sequential list of all ayahs
-        let allAyahs: any[] = [];
-        
-        for (const surah of surahs) {
-          try {
-            const surahResponse = await fetch(
-              `https://api.alquran.cloud/v1/surah/${surah.number}`
-            );
-            
-            if (surahResponse.ok) {
-              const surahData = await surahResponse.json();
-              const ayahs = surahData.data.ayahs || [];
-              
-              // Add ayahs with surah metadata
-              ayahs.forEach((ayah: any) => {
-                allAyahs.push({
-                  ...ayah,
-                  surahName: surahData.data.name,
-                  surahEnglishName: surahData.data.englishName,
-                  surahNumber: surahData.data.number
-                });
-              });
-            }
-          } catch (e) {
-            console.error(`Failed to fetch surah ${surah.number}:`, e);
-          }
-        }
-        
-        console.log(`Total ayahs collected: ${allAyahs.length}`);
-        
-        // Get ayahs for this page
-        const pageAyahs = allAyahs.slice(startAyahIndex, endAyahIndex);
-        
-        console.log(`Page ${currentPage}: Got ${pageAyahs.length} ayahs (indices ${startAyahIndex}-${endAyahIndex})`);
-        
-        if (pageAyahs.length > 0) {
-          // Fetch English translations for each ayah on this page
+        if (ayahs.length > 0) {
+          // Enrich with translations
           const enrichedAyahs = await Promise.all(
-            pageAyahs.map(async (ayah: any) => {
+            ayahs.map(async (response) => {
+              const ayah = response.data;
               let translation = '';
+              
               try {
-                const transResponse = await fetch(
+                const transRes = await fetch(
                   `https://api.alquran.cloud/v1/ayah/${ayah.number}/en.asad`
                 );
-                if (transResponse.ok) {
-                  const transData = await transResponse.json();
+                if (transRes.ok) {
+                  const transData = await transRes.json();
                   translation = transData.data?.text || '';
                 }
               } catch (e) {
-                // Silently fail
+                console.log(`Translation not available for ayah ${ayah.number}`);
               }
               
               return {
                 number: ayah.number,
                 text: ayah.text || '',
                 surah: {
-                  number: ayah.surahNumber,
-                  name: ayah.surahName,
-                  englishName: ayah.surahEnglishName
+                  number: ayah.surah?.number || 1,
+                  name: ayah.surah?.name || 'Unknown',
+                  englishName: ayah.surah?.englishName || 'Unknown'
                 },
                 ayah: ayah.numberInSurah || 1,
                 englishTranslation: translation
@@ -154,22 +127,22 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
             })
           );
           
-          console.log(`Successfully enriched ${enrichedAyahs.length} ayahs with translations`);
+          console.log(`Successfully loaded ${enrichedAyahs.length} ayahs with translations`);
           setQuranText(enrichedAyahs);
         } else {
-          console.error('No ayahs found for page:', currentPage);
+          console.error('No ayahs fetched for this phase');
           setQuranText([]);
         }
       } catch (error) {
-        console.error('Failed to fetch Qur\'an page:', error);
+        console.error('Failed to fetch phase ayahs:', error);
         setQuranText([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchQuranPage();
-  }, [isOpen, currentPage]);
+    fetchPhaseAyahs();
+  }, [isOpen, currentDay, currentPhase]);
 
   // Handle audio cleanup
   useEffect(() => {
@@ -205,18 +178,24 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
   };
 
   const handleNextPage = () => {
-    const { end } = getPhasePages(currentDay, currentPhase);
-    if (currentPage < end) {
-      setCurrentPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Move to next phase
+    if (currentPhase < QURAN_PHASES_PER_DAY) {
+      setCurrentPhase(currentPhase + 1);
+    } else if (currentDay < RAMADAN_DAYS) {
+      // Move to first phase of next day
+      setCurrentDay(currentDay + 1);
+      setCurrentPhase(1);
     }
   };
 
   const handlePreviousPage = () => {
-    const { start } = getPhasePages(currentDay, currentPhase);
-    if (currentPage > start) {
-      setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Move to previous phase
+    if (currentPhase > 1) {
+      setCurrentPhase(currentPhase - 1);
+    } else if (currentDay > 1) {
+      // Move to last phase of previous day
+      setCurrentDay(currentDay - 1);
+      setCurrentPhase(QURAN_PHASES_PER_DAY);
     }
   };
 
@@ -247,7 +226,7 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
         body: JSON.stringify({
           quran_current_day: nextDay > RAMADAN_DAYS ? RAMADAN_DAYS : nextDay,
           quran_current_phase: nextDay > RAMADAN_DAYS ? QURAN_PHASES_PER_DAY : nextPhase,
-          quran_current_page: nextDay > RAMADAN_DAYS ? 604 : getPhasePages(nextDay, nextPhase).start,
+          quran_current_page: 1, // Just use 1 as placeholder
         }),
       });
 
@@ -261,7 +240,7 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
   };
 
   const { start, end } = getPhasePages(currentDay, currentPhase);
-  const pageProgress = ((currentPage - start) / (end - start + 1)) * 100;
+  const pageProgress = ((end - start) / (end - start + 1)) * 100; // Will always be ~100% since we display the whole phase
 
   if (!isOpen) return null;
 
@@ -330,7 +309,6 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
                       onClick={() => {
                         setCurrentDay(idx + 1);
                         setCurrentPhase(1);
-                        setCurrentPage(getPhasePages(idx + 1, 1).start);
                         setExpandedDay(null);
                       }}
                       className={`w-full px-3 py-1.5 text-xs font-medium text-left hover:bg-white/20 transition-all ${
@@ -360,7 +338,6 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
                       key={idx + 1}
                       onClick={() => {
                         setCurrentPhase(idx + 1);
-                        setCurrentPage(getPhasePages(currentDay, idx + 1).start);
                         setExpandedDay(null);
                       }}
                       className={`w-full px-3 py-1.5 text-xs font-medium text-left hover:bg-white/20 transition-all whitespace-nowrap ${
@@ -387,13 +364,13 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
         {/* Row 2: Progress Bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-400">Page {currentPage}/{end}</span>
-            <span className="text-xs font-bold text-amber-400">{Math.round(pageProgress)}%</span>
+            <span className="text-xs font-medium text-gray-400">Ayahs {start}-{end}</span>
+            <span className="text-xs font-bold text-amber-400">Phase Complete</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
             <div 
               className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-2 rounded-full transition-all duration-500 shadow-lg shadow-amber-500/50" 
-              style={{ width: `${pageProgress}%` }} 
+              style={{ width: '100%' }} 
             />
           </div>
         </div>
@@ -407,8 +384,8 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
               <div className="inline-block">
                 <div className="animate-spin rounded-full h-16 w-16 border-4 border-white/20 border-t-white"></div>
               </div>
-              <p className="text-white/60 font-medium">Loading Qur'an (Page {currentPage}/{end})...</p>
-              <p className="text-xs text-white/40 mt-2">Check browser console for details</p>
+              <p className="text-white/60 font-medium">Loading Qur'an (Day {currentDay}, Phase {currentPhase})...</p>
+              <p className="text-xs text-white/40 mt-2">Fetching ayahs {start}-{end}</p>
             </div>
           </div>
         ) : quranText.length === 0 ? (
@@ -418,7 +395,8 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
               <button
                 onClick={() => {
                   setLoading(true);
-                  setCurrentPage(1);
+                  setCurrentDay(1);
+                  setCurrentPhase(1);
                 }}
                 className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
               >
@@ -481,7 +459,7 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
         <div className="flex gap-2 items-center justify-between">
           <button
             onClick={handlePreviousPage}
-            disabled={currentPage <= start}
+            disabled={currentDay === 1 && currentPhase === 1}
             className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           >
             <ChevronLeft size={20} className="text-white" />
@@ -513,7 +491,7 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
 
           <button
             onClick={handleNextPage}
-            disabled={currentPage >= end}
+            disabled={currentDay === RAMADAN_DAYS && currentPhase === QURAN_PHASES_PER_DAY}
             className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           >
             <ChevronRight size={20} className="text-white" />
@@ -521,15 +499,13 @@ const QuranFullScreenModal: React.FC<QuranFullScreenModalProps> = ({ isOpen, onC
         </div>
 
         {/* Complete Phase Button */}
-        {currentPage === end && (
-          <button
-            onClick={handleCompletePhase}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-2.5 md:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm md:text-base"
-          >
-            <Check size={18} />
-            Complete Phase {currentPhase}
-          </button>
-        )}
+        <button
+          onClick={handleCompletePhase}
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-2.5 md:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm md:text-base"
+        >
+          <Check size={18} />
+          Complete Phase {currentPhase}
+        </button>
       </div>
 
       {/* Congratulations Modal */}
