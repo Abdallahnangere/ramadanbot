@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   Zap,
   BookOpen,
-  Volume2,
+  AlertCircle,
 } from 'lucide-react';
 import { User } from '../types';
 import {
@@ -42,22 +42,27 @@ const AppleQuranReader: React.FC<AppleQuranReaderProps> = ({
   const [currentPhase, setCurrentPhase] = useState(user.quran_current_phase || 1);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pageImages, setPageImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [currentImageLoading, setCurrentImageLoading] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [showCongrats, setShowCongrats] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize on mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load page images for current phase
   useEffect(() => {
+    if (!mounted) return;
+    
     const images = getPhasePageImages(currentDay, currentPhase);
     setPageImages(images);
     setCurrentPageIndex(0);
-    setImageLoading(true);
-  }, [currentDay, currentPhase]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [isOpen]);
+    setImageErrors(new Set());
+    setCurrentImageLoading(true);
+  }, [currentDay, currentPhase, mounted]);
 
   const phaseRange = getPhasePageRange(currentDay, currentPhase);
   const currentAbsolutePage = phaseRange.start + currentPageIndex;
@@ -79,14 +84,24 @@ const AppleQuranReader: React.FC<AppleQuranReaderProps> = ({
   const handleNextPage = () => {
     if (currentPageIndex < pageImages.length - 1) {
       setCurrentPageIndex(currentPageIndex + 1);
-      setImageLoading(true);
+      setCurrentImageLoading(true);
+      setImageErrors(prev => {
+        const newSet = new Set(Array.from(prev));
+        newSet.delete(pageImages[currentPageIndex + 1]);
+        return newSet;
+      });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPageIndex > 0) {
       setCurrentPageIndex(currentPageIndex - 1);
-      setImageLoading(true);
+      setCurrentImageLoading(true);
+      setImageErrors(prev => {
+        const newSet = new Set(Array.from(prev));
+        newSet.delete(pageImages[currentPageIndex - 1]);
+        return newSet;
+      });
     }
   };
 
@@ -132,245 +147,241 @@ const AppleQuranReader: React.FC<AppleQuranReaderProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  const handleImageLoad = () => {
+    setCurrentImageLoading(false);
+  };
+
+  const handleImageError = (imageUrl: string) => {
+    console.error('Failed to load image:', imageUrl);
+    const newErrorSet = new Set(Array.from(imageErrors));
+    newErrorSet.add(imageUrl);
+    setImageErrors(newErrorSet);
+    setCurrentImageLoading(false);
+  };
+
+  if (!isOpen || !mounted) return null;
+
+  const currentImageUrl = pageImages[currentPageIndex];
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="w-full h-full md:w-[95vw] md:h-[95vh] md:rounded-3xl bg-white dark:bg-slate-950 flex flex-col overflow-hidden shadow-2xl">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Ramadan Quran Journey
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Day {currentDay} • Phase {currentPhase} of {QURAN_CONFIG.PHASES_PER_DAY}
+    <div className="fixed inset-0 z-50 bg-white dark:bg-black overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="flex-shrink-0 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" />
+          <div>
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+              Quran - Day {currentDay} Phase {currentPhase}
+            </h2>
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+              Page {currentAbsolutePage} of {QURAN_CONFIG.TOTAL_PAGES}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-white/40 dark:hover:bg-black/40 rounded-full transition-colors flex-shrink-0"
+        >
+          <X className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400" />
+        </button>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="flex-shrink-0 bg-white dark:bg-slate-950 border-b border-gray-100 dark:border-slate-800 px-4 py-3 md:px-6 md:py-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Ramadan Progress
+          </span>
+          <span className="text-xs md:text-sm font-bold text-indigo-600 dark:text-indigo-400">
+            {overallProgress}% Complete
+          </span>
+        </div>
+        <div className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full transition-all duration-500"
+            style={{ width: `${overallProgress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Main Quran Page Display */}
+      <div className="flex-1 overflow-hidden flex flex-col bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-950 dark:to-black relative">
+        {isPhaseLocked ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-30">
+            <div className="text-center">
+              <Lock className="w-12 h-12 md:w-16 md:h-16 text-white mx-auto mb-4" />
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                Phase Locked
+              </h3>
+              <p className="text-sm md:text-base text-gray-200 max-w-xs mx-auto">
+                Complete the previous phase to unlock this one
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/60 dark:hover:bg-slate-800 rounded-full transition-colors"
-          >
-            <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-          </button>
+        ) : null}
+
+        {/* Image Container - Mushaf Style */}
+        <div className="flex-1 flex items-center justify-center p-3 md:p-6 overflow-auto">
+          {currentImageUrl ? (
+            <div className="relative w-full h-full flex items-center justify-center">
+              {currentImageLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-black/80 backdrop-blur-sm z-20">
+                  <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-indigo-200 dark:border-indigo-900 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
+                  <p className="mt-4 text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    Loading page {currentAbsolutePage}...
+                  </p>
+                </div>
+              )}
+
+              {imageErrors.has(currentImageUrl) ? (
+                <div className="flex flex-col items-center justify-center gap-3 p-8">
+                  <AlertCircle className="w-12 h-12 md:w-16 md:h-16 text-red-500" />
+                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    Failed to load page {currentAbsolutePage}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">
+                    Check your internet connection and try again
+                  </p>
+                </div>
+              ) : (
+                <img
+                  key={currentImageUrl}
+                  src={currentImageUrl}
+                  alt={`Quran Page ${currentAbsolutePage}`}
+                  onLoad={handleImageLoad}
+                  onError={() => handleImageError(currentImageUrl)}
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                  draggable={false}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-3 p-8">
+              <AlertCircle className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+                No pages available for this phase
+              </p>
+            </div>
+          )}
         </div>
 
-        {/* Overall Progress Bar */}
-        <div className="bg-white dark:bg-slate-900 px-6 py-4 border-b border-gray-100 dark:border-slate-800">
+        {/* Page Thumbnails - Scrollable */}
+        <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 px-3 md:px-4 py-2 md:py-3 overflow-x-auto">
+          <div className="flex gap-2 min-w-max md:flex-wrap md:min-w-0">
+            {pageImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setCurrentPageIndex(idx);
+                  setCurrentImageLoading(true);
+                  const newErrorSet = new Set(Array.from(imageErrors));
+                  newErrorSet.delete(pageImages[idx]);
+                  setImageErrors(newErrorSet);
+                }}
+                className={`flex-shrink-0 h-10 md:h-12 px-3 rounded-lg text-xs md:text-sm font-semibold transition-all ${
+                  idx === currentPageIndex
+                    ? 'bg-indigo-600 text-white shadow-lg'
+                    : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                Pg {phaseRange.start + idx}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Controls */}
+      <div className="flex-shrink-0 bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-700 px-4 py-3 md:px-6 md:py-4">
+        {showCongrats && (
+          <div className="mb-3 p-3 md:p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-300 dark:border-green-700 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+              <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+              <span className="text-sm md:text-base font-medium">Phase {currentPhase} completed! 🎉</span>
+            </div>
+          </div>
+        )}
+
+        {/* Phase Progress */}
+        <div className="mb-3 md:mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Ramadan Progress
+            <span className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Phase Progress
             </span>
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              {overallProgress}%
+            <span className="text-xs md:text-sm font-bold text-indigo-600 dark:text-indigo-400">
+              {currentPageIndex + 1} of {pageImages.length} pages
             </span>
           </div>
           <div className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
-              style={{ width: `${overallProgress}%` }}
+              className="h-full bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full transition-all duration-300"
+              style={{
+                width: `${pageImages.length ? ((currentPageIndex + 1) / pageImages.length) * 100 : 0}%`,
+              }}
             />
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-hidden flex">
-          {/* Left Navigation */}
-          <div className="hidden md:flex md:w-64 flex-col border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 overflow-y-auto">
-            <div className="p-4">
-              <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">
-                Ramadan Days
-              </h3>
-              <div className="space-y-2">
-                {Array.from({ length: QURAN_CONFIG.RAMADAN_DAYS }, (_, i) => i + 1).map(
-                  (day) => {
-                    const dayCompleted = completedPhases.some(
-                      (p) =>
-                        p.day === day &&
-                        p.phase === QURAN_CONFIG.PHASES_PER_DAY
-                    );
-                    const isCurrentDay = day === currentDay;
+        {/* Navigation and Actions */}
+        <div className="grid grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPageIndex === 0 || isPhaseLocked}
+            className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-1"
+          >
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="hidden sm:inline text-xs md:text-sm">Prev</span>
+          </button>
 
-                    return (
-                      <button
-                        key={day}
-                        onClick={() => setCurrentDay(day)}
-                        className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                          isCurrentDay
-                            ? 'bg-blue-500 text-white shadow-lg'
-                            : dayCompleted
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                            : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>Day {day}</span>
-                          {dayCompleted && (
-                            <CheckCircle2 className="w-4 h-4" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  }
-                )}
-              </div>
-            </div>
-          </div>
+          <button
+            onClick={handleCompletePhase}
+            disabled={isPhaseCompleted || isPhaseLocked || isSubmitting}
+            className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-2 text-xs md:text-sm"
+          >
+            <Zap className="w-4 h-4 md:w-5 md:h-5" />
+            {isSubmitting
+              ? 'Completing...'
+              : isPhaseCompleted
+              ? '✓ Complete'
+              : 'Complete'}
+          </button>
 
-            {/*  Content Area */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 p-4 md:p-8 relative">
-            {isPhaseLocked && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                <div className="text-center">
-                  <Lock className="w-12 h-12 text-white mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    Phase Locked
-                  </h3>
-                  <p className="text-gray-300">
-                    Complete the previous phase to unlock this one
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {loading || imageLoading ? (
-              <div className="flex flex-col items-center justify-center gap-3">
-                <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
-                <p className="text-gray-600 dark:text-gray-400">
-                  Loading page {currentAbsolutePage}...
-                </p>
-              </div>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center">
-                {pageImages[currentPageIndex] && (
-                  <div className="relative w-full h-full max-w-2xl">
-                    <img
-                      src={pageImages[currentPageIndex]}
-                      alt={`Quran Page ${currentAbsolutePage}`}
-                      onLoad={() => setImageLoading(false)}
-                      onError={() => setImageLoading(false)}
-                      className="w-full h-full object-contain rounded-xl shadow-2xl"
-                    />
-                    {/* Page Number Indicator */}
-                    <div className="absolute bottom-4 right-4 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                      Page {currentAbsolutePage} / {QURAN_CONFIG.TOTAL_PAGES}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPageIndex === pageImages.length - 1 || isPhaseLocked}
+            className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-1"
+          >
+            <span className="hidden sm:inline text-xs md:text-sm">Next</span>
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
         </div>
 
-        {/* Footer Controls */}
-        <div className="bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 p-4 md:p-6">
-          {/* Congrats Message */}
-          {showCongrats && (
-            <div className="mb-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-300 dark:border-green-700 rounded-xl">
-              <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Great! Phase {currentPhase} completed! 🎉</span>
-              </div>
-            </div>
-          )}
+        {/* Phase Navigation */}
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
+          <button
+            onClick={handlePrevPhase}
+            disabled={currentDay === 1 && currentPhase === 1}
+            className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-1 text-xs md:text-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Phase</span>
+          </button>
 
-          {/* Phase Progress */}
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Phase Progress
-              </span>
-              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                {phaseProgress}% ({currentPageIndex + 1}/{pageImages.length})
-              </span>
-            </div>
-            <div className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300"
-                style={{
-                  width: `${((currentPageIndex + 1) / pageImages.length) * 100}%`,
-                }}
-              />
-            </div>
+          <div className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 font-semibold flex items-center justify-center text-xs md:text-sm">
+            Day {currentDay}/{QURAN_CONFIG.RAMADAN_DAYS}
           </div>
 
-          {/* Controls */}
-          <div className="flex flex-col gap-4">
-            {/* Page Navigation */}
-            <div className="flex items-center justify-between gap-4">
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPageIndex === 0}
-                className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-              </button>
-
-              <div className="flex-1 grid grid-cols-5 gap-1">
-                {pageImages.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentPageIndex(idx)}
-                    className={`h-8 rounded-lg text-xs font-medium transition-all ${
-                      idx === currentPageIndex
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                disabled={currentPageIndex === pageImages.length - 1}
-                className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-              </button>
-            </div>
-
-            {/* Phase Navigation and Action */}
-            <div className="flex flex-col md:flex-row gap-3">
-              <button
-                onClick={handlePrevPhase}
-                disabled={currentDay === 1 && currentPhase === 1}
-                className="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Previous Phase</span>
-              </button>
-
-              <button
-                onClick={handleCompletePhase}
-                disabled={isPhaseCompleted || isPhaseLocked || isSubmitting}
-                className="flex-1 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold transition-all shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-2"
-              >
-                <Zap className="w-4 h-4" />
-                {isSubmitting
-                  ? 'Completing...'
-                  : isPhaseCompleted
-                  ? 'Phase Complete'
-                  : `Complete Phase ${currentPhase}`}
-              </button>
-
-              <button
-                onClick={handleNextPhase}
-                disabled={
-                  currentDay === QURAN_CONFIG.RAMADAN_DAYS &&
-                  currentPhase === QURAN_CONFIG.PHASES_PER_DAY
-                }
-                className="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <span className="hidden sm:inline">Next Phase</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+          <button
+            onClick={handleNextPhase}
+            disabled={
+              currentDay === QURAN_CONFIG.RAMADAN_DAYS &&
+              currentPhase === QURAN_CONFIG.PHASES_PER_DAY
+            }
+            className="px-3 md:px-4 py-2 md:py-3 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 font-medium transition-colors flex items-center justify-center gap-1 text-xs md:text-sm"
+          >
+            <span>Phase</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>
