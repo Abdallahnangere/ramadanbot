@@ -1,11 +1,12 @@
 {
   "/_not-found": "app/_not-found.js",
   "/admin/page": "app/admin/page.js",
-  "/contact/page": "app/contact/page.js",
+  "/api/quran/page/route": "app/api/quran/page/route.js",
   "/page": "app/page.js",
+  "/contact/page": "app/contact/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/api/user/route": "app/api/user/route.js",
-  "/app/page": "app/app/page.js",
-  "/app/admin/page": "app/app/admin/page.js"
+  "/app/admin/page": "app/app/admin/page.js",
+  "/app/page": "app/app/page.js"
 }

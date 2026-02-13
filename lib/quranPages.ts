@@ -57,13 +57,14 @@ export function getPhasePageRange(day: number, phase: number): PageRange {
 }
 
 /**
- * Get page image URL from Quran.com CDN
+ * Get page image URL from our API endpoint
  * @param pageNumber - Page number (1-604)
  * @returns Image URL
  */
 export function getPageImageUrl(pageNumber: number): string {
-  // Using high-quality Quran.com images
-  return `https://cdn.qurancdn.com/images/pages/page${pageNumber}.png`;
+  // Using our own API endpoint that proxies and handles fallbacks
+  // Format: /api/quran/page?page=1
+  return `/api/quran/page?page=${pageNumber}`;
 }
 
 /**
