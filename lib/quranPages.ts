@@ -57,14 +57,15 @@ export function getPhasePageRange(day: number, phase: number): PageRange {
 }
 
 /**
- * Get page image URL from our API endpoint
+ * Get page image URL from local .ai files
  * @param pageNumber - Page number (1-604)
- * @returns Image URL
+ * @returns Direct path to local file in public folder
  */
 export function getPageImageUrl(pageNumber: number): string {
-  // Using our own API endpoint that proxies and handles fallbacks
-  // Format: /api/quran/page?page=1
-  return `/api/quran/page?page=${pageNumber}`;
+  // Files stored as: public/001___Hafs39__DM.ai through public/604___Hafs39__DM.ai
+  // Serve directly as static assets from public folder
+  const paddedPage = String(pageNumber).padStart(3, '0');
+  return `/${paddedPage}___Hafs39__DM.ai`;
 }
 
 /**

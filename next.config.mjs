@@ -92,6 +92,35 @@ const nextConfig = {
         ]
       },
       {
+        source: '/:page(\\d{3})___Hafs39__DM.ai',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, immutable, stale-while-revalidate=2592000'
+          },
+          {
+            key: 'Content-Type',
+            value: 'application/postscript'
+          },
+          {
+            key: 'Content-Encoding',
+            value: 'gzip'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin'
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*'
+          }
+        ]
+      },
+      {
         source: '/:path*',
         headers: [
           {
