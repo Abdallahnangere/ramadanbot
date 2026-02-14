@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  ChevronLeft, ChevronRight, X, BookOpen, Zap, CheckCircle2, Moon, Sun, ZoomIn, ZoomOut, HelpCircle, ChevronDown, Search,
+  ChevronLeft, ChevronRight, X, BookOpen, Zap, CheckCircle2, ZoomIn, ZoomOut, HelpCircle, ChevronDown, Search,
 } from 'lucide-react';
 import { User } from '../types';
 import { completeQuranPhaseEnhanced, getCompletedQuranPhases } from '../app/actions';
@@ -25,7 +25,7 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   const [currentPhase, setCurrentPhase] = useState(user.quran_current_phase || 1);
   const [currentPageOffset, setCurrentPageOffset] = useState(0);
   const [completedPhases, setCompletedPhases] = useState<CompletedPhase[]>([]);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const isDarkMode = true; // Always dark mode
   const [zoom, setZoom] = useState(100);
   const [showDayDropdown, setShowDayDropdown] = useState(false);
   const [showPhaseDropdown, setShowPhaseDropdown] = useState(false);
@@ -109,9 +109,9 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
       const result = await completeQuranPhaseEnhanced(user.id, currentDay, currentPhase);
       if (result.success) {
         setCompletedPhases([...completedPhases, { day: currentDay, phase: currentPhase }]);
-        setCongratsMessage(`Phase ${currentPhase} completed! 🎉`);
+        setCongratsMessage(`🎉 Phase ${currentPhase} of Day ${currentDay} Completed! 🎉`);
         setShowCongrats(true);
-        setTimeout(() => setShowCongrats(false), 3000);
+        setTimeout(() => setShowCongrats(false), 4000);
         
         // Auto-advance to next phase
         if (currentPhase < 5) {
@@ -189,9 +189,9 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
     
-    if (Math.abs(diff) > 50) { // Minimum swipe distance
-      if (diff > 0) handleNextPage(); // Swipe left = next
-      else handlePrevPage(); // Swipe right = previous
+    if (Math.abs(diff) > 50) { // Minimum swipe distance (50px)
+      if (diff > 0) handleNextPage(); // Swipe left → next page
+      else handlePrevPage(); // Swipe right → previous page
      }
   };
 
@@ -257,9 +257,6 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-800 text-yellow-400 hover:bg-gray-700' : 'bg-slate-200 text-slate-900 hover:bg-slate-300'} font-semibold`}>
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
             <button onClick={onClose} className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-900'} font-semibold`}>
               <X size={20} />
             </button>
