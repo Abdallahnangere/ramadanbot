@@ -324,7 +324,9 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
     );
   }
 
-  const filteredUsers = users.filter(u => u.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredUsers = users
+    .filter(u => u.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); // Sort by newest first
   const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
   const paginatedUsers = filteredUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE);
   
@@ -530,140 +532,179 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                 />
               </div>
 
-              {/* Users Table */}
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-lg">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">User</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Last Activity</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Stats</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Limit</th>
-                        <th className="px-6 py-4 text-right text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      {paginatedUsers.map(user => (
-                        <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-base font-bold">
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
-                                {editNameId === user.id ? (
-                                  <div className="flex gap-2">
-                                    <input
-                                      type="text"
-                                      value={tempName}
-                                      onChange={(e) => setTempName(e.target.value)}
-                                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white outline-none focus:border-blue-500"
-                                      autoFocus
-                                    />
-                                    <button
-                                      onClick={() => saveName(user.id)}
-                                      className="w-7 h-7 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center hover:bg-green-200 dark:hover:bg-green-900/50 transition-all"
-                                    >
-                                      <Check size={14} className="text-green-600 dark:text-green-400" />
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <div className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
-                                      {user.name}
-                                      <button
-                                        onClick={() => { setEditNameId(user.id); setTempName(user.name); }}
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                      >
-                                        <Edit3 size={12} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-                                      </button>
-                                    </div>
-                                    <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">ID: ...{user.id.slice(-6)}</div>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="space-y-1">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                Topic: {user.last_topic || 'N/A'}
-                              </div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {/* No last_topic_date in User type, so just show 'Never' or remove this line */}
-                                Never
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-gray-900 dark:text-white">🔥 {user.streak}</span>
-                              </div>
-                              <div className="text-xs text-gray-600 dark:text-gray-400">
-                                Total: {user.generation_count}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            {editLimitId === user.id ? (
-                              <div className="flex items-center gap-2">
-                                <input 
-                                  type="number" 
-                                  value={tempLimit}
-                                  onChange={(e) => setTempLimit(parseInt(e.target.value))}
-                                  className="w-20 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white font-semibold outline-none focus:border-blue-500"
-                                  min="1"
-                                  max="50"
+              {/* Users Grid - Card Based Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedUsers.map(user => {
+                  const joinDate = new Date(user.created_at);
+                  const daysAgo = Math.floor((new Date().getTime() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+                  const quranProgress = user.quran_current_day ? Math.round((user.quran_current_day / 29) * 100) : 0;
+                  
+                  return (
+                    <div 
+                      key={user.id}
+                      className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg dark:hover:shadow-none transition-shadow duration-200 hover:border-emerald-300 dark:hover:border-emerald-800"
+                    >
+                      {/* Header: Name and Status Badge */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            {editNameId === user.id ? (
+                              <div className="flex gap-2 mb-1">
+                                <input
+                                  type="text"
+                                  value={tempName}
+                                  onChange={(e) => setTempName(e.target.value)}
+                                  className="flex-1 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white outline-none focus:border-emerald-500"
+                                  autoFocus
                                 />
-                                <button 
-                                  onClick={() => saveLimit(user.id)} 
-                                  className="w-7 h-7 rounded-lg bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 flex items-center justify-center transition-all"
+                                <button
+                                  onClick={() => saveName(user.id)}
+                                  className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all"
                                 >
-                                  <Check size={14} className="text-green-600 dark:text-green-400" />
+                                  <Check size={16} className="text-emerald-600 dark:text-emerald-400" />
                                 </button>
                               </div>
                             ) : (
-                              <span 
-                                onClick={() => { setEditLimitId(user.id); setTempLimit(user.rate_limit_override); }}
-                                className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-semibold cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-all inline-block"
-                              >
-                                {user.rate_limit_override}
-                              </span>
+                              <>
+                                <div className="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2 group">
+                                  {user.name}
+                                  <button
+                                    onClick={() => { setEditNameId(user.id); setTempName(user.name); }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    <Edit3 size={12} className="text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400" />
+                                  </button>
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">ID: {user.id.slice(-6)}</div>
+                              </>
                             )}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => handleBan(user.id, user.is_banned)}
-                                className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition-all ${
-                                  user.is_banned 
-                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30'
-                                }`}
-                              >
-                                {user.is_banned ? "Unban" : "Ban"}
-                              </button>
-                              <button 
-                                onClick={() => handleDelete(user.id, user.name)}
-                                className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center transition-all"
-                                title="Delete"
-                              >
-                                <Trash2 size={14} />
-                              </button>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {user.is_banned && (
+                            <div className="px-3 py-1 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center gap-1">
+                              <Ban size={12} className="text-red-600 dark:text-red-400" />
+                              <span className="text-xs font-semibold text-red-700 dark:text-red-400">Banned</span>
                             </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          )}
+                          {user.role === 'admin' && (
+                            <div className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center gap-1">
+                              <ShieldCheck size={12} className="text-purple-600 dark:text-purple-400" />
+                              <span className="text-xs font-semibold text-purple-700 dark:text-purple-400">Admin</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Join Date */}
+                      <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-800">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 font-medium uppercase tracking-wide">Joined</p>
+                        <p className="text-sm text-gray-900 dark:text-white font-semibold">
+                          {joinDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">{daysAgo} days ago</p>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        {/* Streak */}
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-3 border border-orange-200/50 dark:border-orange-800/30">
+                          <p className="text-xs text-orange-700 dark:text-orange-400 font-medium uppercase tracking-wide">Streak</p>
+                          <p className="text-2xl font-bold text-orange-600 dark:text-orange-300 flex items-center gap-1">
+                            {user.streak} 🔥
+                          </p>
+                        </div>
+
+                        {/* Generations */}
+                        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 border border-blue-200/50 dark:border-blue-800/30">
+                          <p className="text-xs text-blue-700 dark:text-blue-400 font-medium uppercase tracking-wide">Reflections</p>
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-300">
+                            {user.generation_count}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Qur'ān Progress (if available) */}
+                      {user.quran_current_day && (
+                        <div className="mb-4 p-3 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-xl border border-teal-200/50 dark:border-teal-800/30">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs text-teal-700 dark:text-teal-400 font-medium uppercase tracking-wide">Qur'ān Progress</p>
+                            <span className="text-xs font-bold text-teal-600 dark:text-teal-400">{quranProgress}%</span>
+                          </div>
+                          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-teal-500 to-emerald-600 transition-all duration-300"
+                              style={{ width: `${quranProgress}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-teal-600 dark:text-teal-400 mt-2 font-semibold">
+                            Day {user.quran_current_day} of 29 • Phase {user.quran_current_phase || 0}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Daily Limit */}
+                      <div className="mb-4">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 font-medium uppercase tracking-wide mb-2">Daily Limit</p>
+                        {editLimitId === user.id ? (
+                          <div className="flex items-center gap-2">
+                            <input 
+                              type="number" 
+                              value={tempLimit}
+                              onChange={(e) => setTempLimit(parseInt(e.target.value))}
+                              className="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white font-semibold outline-none focus:border-emerald-500"
+                              min="1"
+                              max="50"
+                              autoFocus
+                            />
+                            <button 
+                              onClick={() => saveLimit(user.id)} 
+                              className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 flex items-center justify-center transition-all"
+                            >
+                              <Check size={16} className="text-emerald-600 dark:text-emerald-400" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button 
+                            onClick={() => { setEditLimitId(user.id); setTempLimit(user.rate_limit_override); }}
+                            className="w-full px-3 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-bold cursor-pointer hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-all border border-emerald-300 dark:border-emerald-700"
+                          >
+                            {user.rate_limit_override} generations/day
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleBan(user.id, user.is_banned)}
+                          className={`flex-1 px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                            user.is_banned 
+                              ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-green-100 dark:hover:bg-green-900/30' 
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30'
+                          }`}
+                        >
+                          {user.is_banned ? "Unban" : "Ban"}
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(user.id, user.name)}
+                          className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center transition-all"
+                          title="Delete user"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 rounded-b-2xl">
+                <div className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center gap-2">
                     <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
                       Showing {(currentPage - 1) * USERS_PER_PAGE + 1} to {Math.min(currentPage * USERS_PER_PAGE, filteredUsers.length)} of {filteredUsers.length} users
@@ -673,7 +714,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                     <button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all"
                     >
                       ← Previous
                     </button>
@@ -687,8 +728,8 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`w-8 h-8 rounded-lg font-semibold transition-all text-sm ${
                               isActive
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
                             }`}
                           >
                             {pageNum}
@@ -700,7 +741,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                     <button
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all"
                     >
                       Next →
                     </button>
