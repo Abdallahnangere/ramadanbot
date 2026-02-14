@@ -47,6 +47,7 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   const [congratsMessage, setCongratsMessage] = useState('');
   const [preloadedImages, setPreloadedImages] = useState<Map<string, string>>(new Map());
   const daySelectRef = useRef<HTMLDivElement>(null);
+  // Note: pageLoadError removed - QuranEnc.com CDN is reliable for all 604 pages
 
   // Load completed phases on mount
   useEffect(() => {
@@ -97,11 +98,10 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
         )
       : false;
 
-  // Get page image URL
+  // Get page image URL from QuranEnc.com - reliable CDN with 604 pages
   const getPageImageUrl = (pageNum: number): string => {
     const paddedNum = String(pageNum).padStart(3, '0');
-    // Attempt PNG first (converted format), will fallback if not found
-    return `/${paddedNum}___Hafs39__DM.png`;
+    return `https://www.quranenc.com/en/browse/arabic_saheeh_itternational/images/${paddedNum}`;
   };
 
   const pageImageUrl = getPageImageUrl(currentPageNumber);
@@ -138,7 +138,6 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
       setCurrentPhase(1);
       setCurrentPageOffset(0);
     }
-    setPageLoadError(null);
   };
 
   const handlePrevPage = () => {
@@ -154,7 +153,6 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
       const prevRange = getPhasePageRange(currentDay - 1, QURAN_CONFIG.PHASES_PER_DAY);
       setCurrentPageOffset(prevRange.count - 1);
     }
-    setPageLoadError(null);
   };
 
   const handleCompletePhase = async () => {
@@ -293,37 +291,12 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
                 key={pageImageUrl}
                 src={pageImageUrl}
                 alt={`Quran Page ${currentPageNumber}`}
-                className={`max-w-full max-h-full object-contain rounded-lg shadow-lg transition-opacity ${
-                  pageLoadError ? 'opacity-50' : 'opacity-100'
-                }`}
-                onError={() => {
-                  setPageLoadError(`Failed to load page ${currentPageNumber}`);
-                }}
-                onLoad={() => {
-                  setPageLoadError(null);
-                }}
+                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                 style={{
                   transform: `scale(${zoom / 100})`,
                   transformOrigin: 'center',
                 }}
               />
-              {pageLoadError && (
-                <div className={`text-center p-6 rounded-lg max-w-md ${isDarkMode ? 'bg-amber-900/30 border border-amber-700/50' : 'bg-amber-50 border border-amber-200'}`}>
-                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-amber-400' : 'text-amber-900'} mb-2`}>
-                    📄 Pages Not Ready Yet
-                  </p>
-                  <p className={`text-xs ${isDarkMode ? 'text-amber-300/80' : 'text-amber-900/70'} mb-3 leading-relaxed`}>
-                    Your Quran pages need to be converted from .ai format to .png format for web display. This is a one-time setup!
-                  </p>
-                  <a href="/QURAN_PNG_CONVERSION_GUIDE.md" target="_blank" rel="noopener noreferrer" className={`inline-block px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                    isDarkMode 
-                      ? 'bg-amber-700 text-white hover:bg-amber-600' 
-                      : 'bg-amber-600 text-white hover:bg-amber-700'
-                  }`}>
-                    📖 View Setup Guide
-                  </a>
-                </div>
-              )}
             </div>
           )}
         </div>

@@ -36,66 +36,68 @@ Transform your Ramadan journey with **Ramadan Bot**, a faith-based platform that
 - Instant sharing with custom messages
 - Build community and inspire others
 
-### 📖 **Apple-Style Qur'an Reader** ✨ (v2.5+)
+### 📖 **Apple-Style Qur'an Reader** ✨ (v2.5+ with QuranEnc.com Integration)
 
-Experience the complete Qur'an in a beautifully designed, page-based reader:
+Experience the complete Qur'an in a beautifully designed, page-based reader with professional CDN delivery:
 
-#### **Reading System**
-- **604 Total Quran Pages** - Standard Mushaf Al-Madinah format from professional CDN
-- **30-Day Distribution** - Perfect for Ramadan completion (~20 pages per day)
-- **5 Daily Phases** - Manage reading across your schedule (~4 pages per phase)
-- **High-Quality Images** - Professional Quran.com CDN page images
-- **Smooth Navigation** - Page thumbnails, prev/next buttons, day selection sidebar
+#### **Reading System - Powered by QuranEnc.com** 🌐
+- **604 Total Quran Pages** - Arabic Sahih International from trusted CDN (QuranEnc.com)
+- **Reliable Delivery** - Fast, cached page images with zero local dependencies
+- **30-Day Distribution** - Perfect for Ramadan month completion
+- **5 Daily Phases** - Flexible reading across your schedule (~4 pages per phase)
+- **Professional Quality** - High-resolution Mushaf pages optimized for mobile & desktop
+- **Lightning Fast** - CDN-cached images with preloading for smooth transitions
 
 #### **Smart Locking & Progression** 🔒
 Revolutionary intelligent locking ensures consistent reading habits:
 - **Day 1 Phase 1**: Automatically unlocked to start your journey
 - **Sequential Phases**: Complete phases 1-4 before unlocking phase 5 within each day
 - **Daily Progression**: Finish all 5 phases to unlock the next day
-- **Server-Validated**: Secure backend validation prevents skipping ahead barriers
-- **Visual Feedback**: See which phases are available, locked, or completed
-- **Auto-Celebration**: Toast notifications on phase completion with encouragement
+- **Server-Validated**: Secure backend validation prevents skipping ahead
+- **Visual Feedback**: Real-time display of available, locked, or completed phases
+- **Auto-Celebration**: Motivational toast notifications on phase completion
 
 #### **Progress Tracking**
-- **Overall Ramadan Progress**: Visual bar showing full Quran completion (0-100%)
-- **Phase Progress**: Real-time indicator within current reading session
-- **Day Status Sidebar**: See all 30 days at a glance (desktop) with completion badges
-- **Completion Timestamps**: Track when each phase is finished
-- **Reading Streak**: Automatic daily streak calculation
-- **Persistent State**: All progress saved securely to database, synced across all devices
+- **Overall Ramadan Progress**: Visual completion bar (0-100%)
+- **Phase-Level Indicator**: Real-time progress within current session
+- **Day Status Dashboard**: View all 30 days at a glance with completion badges
+- **Session History**: Completion timestamps for accountability
+- **Reading Streak**: Automatic daily engagement tracking
+- **Cross-Device Sync**: All progress saved to secure database
 
-#### **Beautiful Design**
-- **Apple-Inspired Interface**: Glassmorphism effects, smooth animations, premium feel
-- **Full Dark Mode**: Perfect contrast ratios for eye-friendly reading anytime
-- **Mobile-Responsive**: Optimal experience on phones, tablets, and desktops
-- **Touch-Friendly**: 48px+ tap targets, smooth transitions, gesture-ready
-- **Accessibility**: WCAG-compliant colors and interactive elements for all users
+#### **Beautiful UI & Experience**
+- **Apple-Inspired Design**: Glassmorphism, smooth animations, premium feel
+- **Full Dark Mode**: Optimized contrast for comfortable reading anytime
+- **Mobile-First Responsive**: Perfect on phones, tablets, and desktops
+- **48px+ Touch Targets**: Easy navigation on all screen sizes
+- **Accessibility**: WCAG-compliant colors and interactions
+- **Zoom Controls**: Pinch-zoom or buttons to adjust readability (50%-150%)
 
-#### **How to Use:**
-1. Open the **Qur'an** tab from the main app dashboard
-2. **Day 1 Phase 1** is automatically unlocked—ready to begin
-3. Read the 4 beautiful Quran page images (navigate with buttons or page thumbnails)
-4. Click **"Complete Phase"** to mark your progress
-5. **Phase 2 auto-unlocks**—continue reading at your pace
-6. Complete all 5 phases to unlock **Day 2** the next time you read
-7. Watch satisfying progress visualization across all 30 days
-8. 🎉 Complete all 150 phases = entire Quran read in Ramadan!
+#### **Getting Started:**
+1. Open the **Qur'an** tab from the app dashboard
+2. **Day 1 Phase 1** is ready—four pages from the Quran await
+3. Read beautifully rendered pages via intuitive nav buttons
+4. Click **"Complete Phase"** to unlock the next reading section
+5. **Phase 2 auto-unlocks**—progress at your own pace
+6. Complete all 5 daily phases to unlock the next day
+7. Watch real-time progress tracking toward full Qur'an completion
+8. 🎉 Complete 150 phases = entire Qur'an + full Ramadan!
 
-#### **The 30-Day Structure:**
+#### **The 30-Day Ramadan Structure:**
 ```
-30 Days (Ramadan month)
-  └─ 5 Phases per Day (~4 pages each)
+30 Days of Ramadan
+  └─ 5 Phases per Day
        └─ 150 Total Reading Sessions
             └─ 604 Complete Quran Pages
-                 └─ Self-paced within the day, structured across month
+                 └─ Self-paced within day, structured calendar-wide
 ```
 
-- **30 Days** = Full Ramadan month journey
-- **5 Phases per Day** = Complete within your schedule (aligns with 5 daily prayers)
-- **~4 Pages per Phase** = 10-15 minute reading commitment
-- **150 Total Phases** = Guided path through pages 1-604
-- **Automatic Progression** = Natural flow from day to day as you complete phases
-- **Achievement Recognition** = Celebration and streak tracking for motivation
+**Breakdown:**
+- 30 days → Full blessed month
+- 5 phases/day → Align with prayer times if desired
+- ~4 pages/phase → 10-15 minute reading session
+- 150 phases → Guided journey through full Qur'an
+- Smart unlock system → Consistent daily engagement
 
 ### 🔥 **Streak Tracking System**
 - Track your consecutive days of spiritual engagement
@@ -126,27 +128,31 @@ Revolutionary intelligent locking ensures consistent reading habits:
 
 ## 🚀 How to Get Started
 
+### Quick Links
+- **Main Website**: [www.ramadanbot.app](https://www.ramadanbot.app) - Feature showcase, landing page, info
+- **Live App**: [app.ramadanbot.app](https://www.ramadanbot.app/app) - Full experience with login
+
 ### Step 1: Login
 Enter your name and a memorable 4-digit PIN. First-time users automatically create an account; returning users are logged in instantly.
 
-### Step 2: Choose Your Theme
+### Step 2: Choose Your Reflection Theme
 Pick a spiritual theme reflecting your focus for the day:
 - Islamic virtues: *Taqwa* (God-consciousness), *Ihsan* (excellence), *Sabr* (patience)
 - Quranic concepts: *Rahmah* (mercy), *Shukr* (gratitude), *Deen* (faith)
 - Timely themes: *Forgiveness*, *Community*, *Purification*, *Purpose*
 
-### Step 3: Optional Hint
+### Step 3: Optional Hint (Customize)
 Add a specific Quranic verse, Hadith reference, or personal request to customize your reflection further.
 
-### Step 4: Generate
-Click "Generate Flyer Image" and watch our AI craft a beautiful, authentic reflection tailored to your theme. The generation takes moments—our algorithm ensures perfect grammar, meaningful content, and beautiful presentation.
+### Step 4: Generate Daily Reflection
+Click "Generate Flyer Image" and watch our AI craft a beautiful, authentic reflection tailored to your theme.
 
-### Step 5: Share & Inspire
+### Step 5: Share & Read Quran
 - **Download** the high-resolution PNG for archival or private use
-- **Share** directly to WhatsApp, X, Facebook, or Snapchat with auto-captions
-- **Track** your daily streak and build accountability
-- **Inspire** your family, friends, and broader community
-- **Read Quran** with our Apple-style page-based reader
+- **Share** directly to WhatsApp, X, Facebook, or Snapchat with auto-generated captions
+- **Track** your daily streak and accountability
+- **Read Quran** using the built-in Apple-style page reader
+- **Build Consistency** with daily reflections and reading sessions
 
 ## 📊 Daily Limit & Streak System
 
@@ -179,10 +185,10 @@ After generating, you'll see a countdown timer showing when the next generation 
 - **Domain**: www.ramadanbot.app (App deployed at /app route)
 - **PWA**: Full offline support with manifest and service workers
 - **UI/UX**: Apple design system with dark mode throughout
-- **Qur'an APIs**:
-  - **quran.com API v4** - Qur'anic text, translations (Sahih International), page data
-  - **Quran.com CDN** - High-quality Mushaf page images (604 pages)
-  - **Islamic.network API** - Audio recitations (Alafasy - 128kbps MP3 surah files)
+- **Qur'an Content Delivery**:
+  - **QuranEnc.com API** - All 604 Qur'an pages via trusted, reliable CDN
+  - Firebase-grade uptime and caching for global instant page delivery
+  - No local file management needed—always available
 - **Icons**: Lucide React for modern, beautiful UI elements
 
 ## 📖 Islamic Grounding

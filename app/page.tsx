@@ -122,7 +122,7 @@ const HomePage = () => {
               <span className="text-slate-400">Companion</span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Generate authentic Islamic reflections, create beautiful flyers <span className="text-slate-950 font-semibold">with your name featured</span>, and build your spiritual streak.
+              Generate authentic Islamic reflections, create beautiful flyers <span className="text-slate-950 font-semibold">with your name featured</span>, read the complete Quran with our Apple-style reader, and build your spiritual streak.
             </p>
           </div>
 
@@ -169,6 +169,11 @@ const HomePage = () => {
                 description: 'Quranic-based spiritual reflections powered by advanced AI, personalized for you.'
               },
               {
+                icon: '📖',
+                title: 'Quran Reader',
+                description: 'Apple-style 604-page Quran reader with smart phase locking and progress tracking.'
+              },
+              {
                 icon: '✨',
                 title: 'Your Name Featured',
                 description: 'Every flyer beautifully includes your name, making each reflection uniquely yours.'
@@ -187,11 +192,6 @@ const HomePage = () => {
                 icon: '🎨',
                 title: 'Premium Design',
                 description: '1080x1080px high-resolution flyers with elegant Islamic design.'
-              },
-              {
-                icon: '📲',
-                title: 'PWA Installed',
-                description: 'Works offline like a native app on any device. No app store needed.'
               }
             ].map((feature, idx) => (
               <div key={idx} className="p-8 bg-white rounded-2xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-md">
