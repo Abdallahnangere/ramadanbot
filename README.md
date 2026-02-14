@@ -66,8 +66,8 @@ Read at your own pace with full control over your Qur'ān journey:
 - **Cross-Device Sync**: All progress saved to secure database
 
 #### **Beautiful UI & Experience**
-- **Apple-Inspired Design**: Glassmorphism, smooth animations, premium feel
-- **Full Dark Mode**: Optimized contrast for comfortable reading anytime
+- **Premium Design**: Elegant glassmorphic interface with smooth animations and professional feel
+- **Full Dark Mode**: WCAG AAA compliant contrast for comfortable reading anytime
 - **Mobile-First Responsive**: Perfect on phones, tablets, and desktops
 - **48px+ Touch Targets**: Easy navigation on all screen sizes
 - **Accessibility**: WCAG-compliant colors and interactions
