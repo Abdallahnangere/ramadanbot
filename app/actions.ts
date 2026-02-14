@@ -330,7 +330,7 @@ export async function getEnhancedAnalytics() {
       maxGenerations: parseInt(stats.maxgenerations) || 0,
       maxStreak: parseInt(stats.maxstreak) || 0,
       quranActiveUsers: parseInt(stats.quranactiveusers) || 0,
-      quranCompleted: parseInt(stats.quarancompleted) || 0,
+      quranCompleted: parseInt(stats.qurancompleted) || 0,
     };
   } finally {
     client.release();

@@ -3,9 +3,9 @@
   "/admin/page": "app/admin/page.js",
   "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/privacy/page": "app/privacy/page.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/api/user/route": "app/api/user/route.js",
-  "/app/page": "app/app/page.js",
-  "/app/admin/page": "app/app/admin/page.js"
+  "/app/admin/page": "app/app/admin/page.js",
+  "/app/page": "app/app/page.js"
 }
