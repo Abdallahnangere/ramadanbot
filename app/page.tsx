@@ -204,6 +204,119 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Qur'ān Reader Detailed Section */}
+      <section className="py-24 px-4 bg-gradient-to-br from-emerald-50 via-white to-cyan-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-emerald-600 uppercase tracking-widest mb-3">Professional Reading Experience</p>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
+              Qur'ān Reader v3.0
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              A meticulously designed interface for structured Qur'anic reading during Ramadan and beyond.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+            {/* Left: Features */}
+            <div className="space-y-6">
+              <div className="p-6 bg-white rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">📖</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">29-Day Structure</h3>
+                    <p className="text-sm text-slate-600">Complete the full 604-page Qur'ān over Ramadan with perfectly balanced daily assignments ensuring spiritual progression.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-white rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">🎯</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">5 Daily Phases</h3>
+                    <p className="text-sm text-slate-600">Read aligned with prayer times: Fajr, Dhuhr, Asr, Maghrib, Isha – each phase takes 10-15 minutes.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-white rounded-2xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">🔓</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">Complete Freedom</h3>
+                    <p className="text-sm text-slate-600">Navigate to any day or phase instantly. Read at your own pace without restrictions. Progress is fully flexible.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Benefits */}
+            <div className="space-y-6">
+              <div className="p-6 bg-white rounded-2xl border border-cyan-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">💾</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">Auto-Saving Progress</h3>
+                    <p className="text-sm text-slate-600">Your reading position saves automatically every 5 seconds. Resume exactly where you left off across all devices.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-white rounded-2xl border border-cyan-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">🎨</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">Professional Design</h3>
+                    <p className="text-sm text-slate-600">Dark mode, zoom controls, swipe navigation, and intuitive dropdowns. Optimized for phones, tablets, and desktops.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-white rounded-2xl border border-cyan-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="text-3xl">🏆</div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-2">Streak Tracking</h3>
+                    <p className="text-sm text-slate-600">Automatic celebrations at each phase completion. Visualize your journey toward completing all 145 phases.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Distribution Details */}
+          <div className="bg-white rounded-2xl border-2 border-emerald-300 p-8 shadow-md">
+            <h3 className="text-2xl font-bold mb-6 text-slate-900">Reading Distribution</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="font-bold text-slate-900 mb-3">Days 1-20: Standard Pace</h4>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li>📄 <strong>20 pages per day</strong></li>
+                  <li>📍 <strong>4 pages per phase</strong></li>
+                  <li>⏱️ <strong>10-12 min per phase</strong></li>
+                  <li>💯 <strong>400 total pages</strong></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-900 mb-3">Days 21-29: Final Push</h4>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li>📄 <strong>22-23 pages per day</strong></li>
+                  <li>📍 <strong>5 pages per phase</strong></li>
+                  <li>⏱️ <strong>12-15 min per phase</strong></li>
+                  <li>💯 <strong>204 total pages</strong></li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-6 pt-6 border-t-2 border-slate-200">
+              <p className="text-center font-bold text-lg text-emerald-600">
+                604 Pages ÷ 145 Phases = Complete Qur'ān in 29 Days ✨
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Showcase Section */}
       <section id="showcase" className="py-28 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -214,48 +327,60 @@ const HomePage = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {[
               {
                 title: 'Dashboard',
-                subtitle: 'Manage your streaks',
+                subtitle: 'Track your journey',
                 image: '/login.png',
-                description: 'PIN-based login • Track streaks • View stats'
+                description: 'PIN login • Streaks • Stats'
               },
               {
                 title: 'Generate',
-                subtitle: 'Create reflections',
+                subtitle: 'AI Reflections',
                 image: '/generate.png',
-                description: 'Pick themes • Add hints • Generate instantly'
+                description: 'Themes • Hints • Instant creation'
               },
               {
                 title: 'Share',
-                subtitle: 'Personalized flyers',
+                subtitle: 'Beautiful flyers',
                 image: '/share.png',
-                description: 'Your name featured • High resolution • One-tap share'
+                description: 'Featured name • High-res • Shareable'
+              },
+              {
+                title: 'Qur\'ān Guide',
+                subtitle: 'How to use',
+                image: '/Guide.jpg',
+                description: '29 days • 5 phases • Complete guide'
+              },
+              {
+                title: 'Reader Interface',
+                subtitle: 'Reading experience',
+                image: '/Interface.jpg',
+                description: 'Smooth navigation • Dark mode • Intuitive'
               }
             ].map((screen, idx) => (
-              <div key={idx} className="flex flex-col items-center group">
+              <div key={idx} className="flex flex-col items-center group h-full">
                 {/* Elegant Image Container */}
-                <div className="relative w-full max-w-sm mb-8">
+                <div className="relative w-full mb-6 flex-1">
                   {/* Subtle shadow on hover */}
-                  <div className="absolute -inset-4 bg-gradient-to-b from-slate-100 to-slate-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity blur-2xl"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-b from-slate-100 to-slate-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
                   
                   {/* Image with elegant border */}
-                  <div className="relative rounded-2xl border border-slate-200 shadow-lg overflow-hidden group-hover:shadow-2xl group-hover:border-slate-300 transition-all duration-300">
+                  <div className="relative rounded-xl border border-slate-200 shadow-lg overflow-hidden group-hover:shadow-xl group-hover:border-slate-300 transition-all duration-300 w-full h-full flex items-center">
                     <Image
                       src={screen.image}
                       alt={screen.title}
-                      width={540}
-                      height={720}
+                      width={300}
+                      height={400}
                       className="w-full h-auto object-cover"
                     />
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-center">{screen.title}</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">{screen.subtitle}</p>
-                <p className="text-xs text-slate-500 text-center mt-3">{screen.description}</p>
+                <h3 className="text-base font-bold text-center">{screen.title}</h3>
+                <p className="text-xs text-slate-600 text-center mt-1.5">{screen.subtitle}</p>
+                <p className="text-xs text-slate-500 text-center mt-2">{screen.description}</p>
               </div>
             ))}
           </div>
