@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AdminDashboard from '../../../components/AdminDashboard';
+import AdminDashboardEnhanced from '../../../components/AdminDashboardEnhanced';
 import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
@@ -9,7 +9,7 @@ export default function AdminPage() {
 
   return (
     <div className="h-screen w-full bg-black">
-      <AdminDashboard onBack={() => router.push('/app')} />
+      <AdminDashboardEnhanced onBack={() => router.push('/app')} />
     </div>
   );
 }

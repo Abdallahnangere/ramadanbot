@@ -1,15 +1,18 @@
 /**
- * Quran Page System
+ * Quran Page System - Production Distribution
  * Total Pages: 604 (standard Quran mushaf)
- * Total Days: 30 (Ramadan)
- * Pages per Day: ~20
- * Phases per Day: 5
- * Pages per Phase: ~4
+ * Total Days: 29 (Ramadan, starting from day 1 of Ramadan)
+ * 
+ * Distribution:
+ * - Days 1-20: 4 pages per phase (20 pages/day) = 400 pages
+ * - Days 21-29: ~22-23 pages/day × 9 days = 204 pages
+ * 
+ * Phases per Day: 5 (aligned with 5 daily prayers)
  */
 
 export const QURAN_CONFIG = {
   TOTAL_PAGES: 604,
-  RAMADAN_DAYS: 30,
+  RAMADAN_DAYS: 29,
   PHASES_PER_DAY: 5,
 } as const;
 
@@ -31,28 +34,37 @@ export interface DayPhaseInfo {
 
 /**
  * Calculate page range for a specific day and phase
- * @param day - Ramadan day (1-30)
+ * Days 1-20: 4 pages per phase (20 pages/day)
+ * Days 21-29: approximately 4.5 pages per phase (~22-23 pages/day)
+ * @param day - Ramadan day (1-29)
  * @param phase - Phase within day (1-5)
  * @returns Page range start and end
  */
 export function getPhasePageRange(day: number, phase: number): PageRange {
-  const { TOTAL_PAGES, RAMADAN_DAYS, PHASES_PER_DAY } = QURAN_CONFIG;
+  const { TOTAL_PAGES, PHASES_PER_DAY } = QURAN_CONFIG;
 
-  // Calculate pages per day (distribute 604 pages across 30 days)
-  const pagesPerDay = Math.ceil(TOTAL_PAGES / RAMADAN_DAYS); // 21 pages per day
-  const pagesPerPhase = Math.ceil(pagesPerDay / PHASES_PER_DAY); // 5 pages per phase
+  let pagesPerDay: number;
+  let firstPageOfDay: number;
 
-  // Calculate completed days and phases
-  const completedDays = (day - 1) * pagesPerDay;
-  const completedPhasesInDay = (phase - 1) * pagesPerPhase;
+  // Days 1-20: 20 pages/day (4 per phase)
+  if (day <= 20) {
+    pagesPerDay = 20;
+    firstPageOfDay = (day - 1) * 20 + 1;
+  } else {
+    // Days 21-29: distribute remaining pages (604 - 400 = 204 pages for 9 days)
+    const remainingPages = TOTAL_PAGES - 400; // 204 pages
+    pagesPerDay = Math.ceil(remainingPages / 9); // ~22-23 pages per day
+    firstPageOfDay = 400 + (day - 21) * pagesPerDay + 1;
+  }
 
-  const startPage = completedDays + completedPhasesInDay + 1;
-  const endPage = Math.min(startPage + pagesPerPhase - 1, TOTAL_PAGES);
+  const pagesPerPhase = Math.ceil(pagesPerDay / PHASES_PER_DAY);
+  const firstPageOfPhase = firstPageOfDay + (phase - 1) * pagesPerPhase;
+  const lastPageOfPhase = Math.min(firstPageOfPhase + pagesPerPhase - 1, TOTAL_PAGES);
 
   return {
-    start: startPage,
-    end: endPage,
-    count: endPage - startPage + 1,
+    start: Math.max(1, firstPageOfPhase),
+    end: Math.min(lastPageOfPhase, TOTAL_PAGES),
+    count: Math.min(lastPageOfPhase, TOTAL_PAGES) - Math.max(1, firstPageOfPhase) + 1,
   };
 }
 
