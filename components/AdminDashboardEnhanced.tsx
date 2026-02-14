@@ -134,110 +134,299 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
         position: 'fixed',
         top: '-9999px',
         left: '-9999px',
-        width: '1200px',
-        backgroundColor: 'white',
-        padding: '40px',
+        width: '1600px',
+        backgroundColor: '#ffffff',
+        padding: '0',
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
         color: '#000'
       });
 
-      const formattedTime = new Date().toLocaleString();
+      const formattedDate = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      const formattedTime = new Date().toLocaleTimeString('en-US');
+
       const content = `
         <div style="
           width: 100%;
+          background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+          color: #1f2937;
           padding: 60px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          text-align: center;
-          border-radius: 20px;
+          font-family: 'SF Pro Display', -apple-system, sans-serif;
         ">
-          <div style="font-size: 48px; margin-bottom: 20px; font-weight: 700;">
-            🌙 RamadanBot Analytics
+          <!-- Header Section -->
+          <div style="
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 50px 60px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+            <div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                margin-bottom: 12px;
+                letter-spacing: -1px;
+              ">
+                RamadanBot
+              </div>
+              <div style="
+                font-size: 20px;
+                opacity: 0.95;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+              ">
+                Analytics Dashboard Report
+              </div>
+            </div>
+            <div style="
+              font-size: 72px;
+              opacity: 0.9;
+              text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            ">
+              🌙
+            </div>
           </div>
-          <div style="font-size: 28px; margin-bottom: 40px; opacity: 0.9;">
-            Dashboard Report
-          </div>
-          
+
+          <!-- Main Stats Grid (3x2) -->
           <div style="
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
             margin-bottom: 40px;
           ">
+            <!-- Total Users -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Total Users</div>
-              <div style="font-size: 48px; font-weight: 700;">${analytics.totalUsers}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">👥</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Total Users</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.totalUsers}</div>
             </div>
-            
+
+            <!-- Total Generations -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Total Generations</div>
-              <div style="font-size: 48px; font-weight: 700;">${analytics.totalGenerations}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">✨</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Reflections Generated</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.totalGenerations}</div>
             </div>
-            
+
+            <!-- Active Users -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Active Today</div>
-              <div style="font-size: 48px; font-weight: 700;">${analytics.activeToday}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">🔥</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Active Users</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.activeToday || 0}</div>
             </div>
-            
+
+            <!-- Avg Generations -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Avg per User</div>
-              <div style="font-size: 48px; font-weight: 700;">${analytics.avgGenerationsPerUser?.toFixed(1) || '0'}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">📊</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Avg per User</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.avgGenerationsPerUser?.toFixed(1) || '0'}</div>
             </div>
-            
+
+            <!-- Max Streak -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Max Streak</div>
-              <div style="font-size: 48px; font-weight: 700;">🔥 ${analytics.maxStreak || '0'}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">🏆</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Max Streak</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.maxStreak || 0}</div>
             </div>
-            
+
+            <!-- Qur'ān Reading -->
             <div style="
-              background: rgba(255,255,255,0.15);
-              backdrop-filter: blur(10px);
-              padding: 30px;
-              border-radius: 15px;
-              border: 2px solid rgba(255,255,255,0.3);
+              background: white;
+              border-radius: 20px;
+              padding: 36px;
+              border: 2px solid #e5e7eb;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+              text-align: center;
             ">
-              <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Quran Progress</div>
-              <div style="font-size: 48px; font-weight: 700;">${analytics.quranActiveUsers || '0'}</div>
+              <div style="
+                font-size: 48px;
+                margin-bottom: 12px;
+              ">📖</div>
+              <div style="
+                font-size: 14px;
+                color: #6b7280;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">Qur'ān Active</div>
+              <div style="
+                font-size: 52px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">${analytics.quranActiveUsers || 0}</div>
             </div>
           </div>
-          
+
+          <!-- Footer -->
           <div style="
-            border-top: 2px solid rgba(255,255,255,0.3);
-            padding-top: 30px;
-            opacity: 0.8;
-            font-size: 14px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px 40px;
+            border: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
           ">
-            Generated on ${formattedTime}
+            <div style="
+              text-align: left;
+            ">
+              <div style="
+                font-size: 24px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              ">RamadanBot</div>
+              <div style="
+                font-size: 13px;
+                color: #9ca3af;
+                margin-top: 2px;
+              ">www.ramadanbot.app</div>
+            </div>
+            <div style="
+              text-align: right;
+              color: #6b7280;
+              font-size: 13px;
+              line-height: 1.6;
+            ">
+              <div style="font-weight: 600;">${formattedDate}</div>
+              <div style="opacity: 0.7;">${formattedTime}</div>
+              <div style="opacity: 0.5; margin-top: 4px;">Generated Report</div>
+            </div>
           </div>
         </div>
       `;
@@ -245,10 +434,13 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
       container.innerHTML = content;
       document.body.appendChild(container);
 
-      // Convert to PNG
+      // Convert to PNG with higher quality
       const canvas = await html2canvas(container, {
-        backgroundColor: null,
-        scale: 2,
+        backgroundColor: '#ffffff',
+        scale: 3,
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
       });
 
       // Download
@@ -259,9 +451,11 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
       link.click();
       document.body.removeChild(link);
       document.body.removeChild(container);
+      
+      alert('✅ Analytics report downloaded successfully!');
     } catch (error) {
       console.error('Failed to download analytics PNG:', error);
-      alert('Failed to download analytics');
+      alert('Failed to download analytics. Please try again.');
     } finally {
       setDownloadingAnalytics(false);
     }
