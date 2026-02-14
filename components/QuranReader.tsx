@@ -100,7 +100,8 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   // Get page image URL
   const getPageImageUrl = (pageNum: number): string => {
     const paddedNum = String(pageNum).padStart(3, '0');
-    return `/${paddedNum}___Hafs39__DM.ai`;
+    // Attempt PNG first (converted format), will fallback if not found
+    return `/${paddedNum}___Hafs39__DM.png`;
   };
 
   const pageImageUrl = getPageImageUrl(currentPageNumber);
@@ -307,8 +308,20 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
                 }}
               />
               {pageLoadError && (
-                <div className={`text-center p-4 rounded-lg ${isDarkMode ? 'bg-red-900/30' : 'bg-red-50'}`}>
-                  <p className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{pageLoadError}</p>
+                <div className={`text-center p-6 rounded-lg max-w-md ${isDarkMode ? 'bg-amber-900/30 border border-amber-700/50' : 'bg-amber-50 border border-amber-200'}`}>
+                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-amber-400' : 'text-amber-900'} mb-2`}>
+                    📄 Pages Not Ready Yet
+                  </p>
+                  <p className={`text-xs ${isDarkMode ? 'text-amber-300/80' : 'text-amber-900/70'} mb-3 leading-relaxed`}>
+                    Your Quran pages need to be converted from .ai format to .png format for web display. This is a one-time setup!
+                  </p>
+                  <a href="/QURAN_PNG_CONVERSION_GUIDE.md" target="_blank" rel="noopener noreferrer" className={`inline-block px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                    isDarkMode 
+                      ? 'bg-amber-700 text-white hover:bg-amber-600' 
+                      : 'bg-amber-600 text-white hover:bg-amber-700'
+                  }`}>
+                    📖 View Setup Guide
+                  </a>
                 </div>
               )}
             </div>
