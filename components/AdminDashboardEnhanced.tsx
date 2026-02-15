@@ -821,21 +821,24 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                         </div>
                       </div>
 
-                      {/* Qur'ān Progress (if available) */}
+                      {/* Qur'ān Progress (Gamified Journey) */}
                       {user.quran_current_day && (
                         <div className="mb-4 p-3 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-xl border border-teal-200/50 dark:border-teal-800/30">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs text-teal-700 dark:text-teal-400 font-medium uppercase tracking-wide">Qur'ān Progress</p>
+                            <p className="text-xs text-teal-700 dark:text-teal-400 font-medium uppercase tracking-wide">📖 Qur'ān Journey</p>
                             <span className="text-xs font-bold text-teal-600 dark:text-teal-400">{quranProgress}%</span>
                           </div>
-                          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
                             <div 
                               className="h-full bg-gradient-to-r from-teal-500 to-emerald-600 transition-all duration-300"
                               style={{ width: `${quranProgress}%` }}
                             />
                           </div>
-                          <p className="text-xs text-teal-600 dark:text-teal-400 mt-2 font-semibold">
-                            Day {user.quran_current_day} of 29 • Phase {user.quran_current_phase || 0}
+                          <p className="text-xs text-teal-600 dark:text-teal-400 font-semibold">
+                            Day {user.quran_current_day}/29 • Phase {user.quran_current_phase || 1}/5
+                          </p>
+                          <p className="text-xs text-teal-600 dark:text-teal-400 font-medium mt-1">
+                            Phases: ? / 145 Completed
                           </p>
                         </div>
                       )}

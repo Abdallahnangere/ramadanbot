@@ -5,13 +5,13 @@
   "/api/quran/progress/route": "app/api/quran/progress/route.js",
   "/api/reader/route": "app/api/reader/route.js",
   "/contact/page": "app/contact/page.js",
-  "/page": "app/page.js",
-  "/privacy/page": "app/privacy/page.js",
   "/quran/[day]/[phase]/page": "app/quran/[day]/[phase]/page.js",
-  "/quran/[day]/page": "app/quran/[day]/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/page": "app/page.js",
   "/quran/page": "app/quran/page.js",
+  "/quran/[day]/page": "app/quran/[day]/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/api/user/route": "app/api/user/route.js",
-  "/app/page": "app/app/page.js",
-  "/app/admin/page": "app/app/admin/page.js"
+  "/app/admin/page": "app/app/admin/page.js",
+  "/app/page": "app/app/page.js"
 }
