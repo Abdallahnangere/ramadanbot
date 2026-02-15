@@ -1,10 +1,11 @@
 {
   "/_not-found": "app/_not-found.js",
   "/admin/page": "app/admin/page.js",
+  "/api/reader/route": "app/api/reader/route.js",
   "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
-  "/privacy/page": "app/privacy/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/privacy/page": "app/privacy/page.js",
   "/api/user/route": "app/api/user/route.js",
   "/app/admin/page": "app/app/admin/page.js",
   "/app/page": "app/app/page.js"

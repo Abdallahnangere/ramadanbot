@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  ChevronLeft, ChevronRight, X, BookOpen, Zap, CheckCircle2, ZoomIn, ZoomOut, HelpCircle, ChevronDown, Search,
+  ChevronLeft, ChevronRight, X, BookOpen, Zap, CheckCircle2, ZoomIn, ZoomOut, HelpCircle, ChevronDown, Search, Save,
 } from 'lucide-react';
 import { User } from '../types';
 import { completeQuranPhaseEnhanced, getCompletedQuranPhases } from '../app/actions';
@@ -38,6 +38,7 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   const [pageSearch, setPageSearch] = useState('');
   const [touchStartX, setTouchStartX] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   
   const daySelectRef = useRef<HTMLDivElement>(null);
   const phaseSelectRef = useRef<HTMLDivElement>(null);
@@ -45,9 +46,10 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   const readerRef = useRef<HTMLDivElement>(null);
 
   // Immediate reader state persistence - save to database on every page change
-  const saveReaderState = useCallback(async (day: number, phase: number, pageNum: number) => {
+  const saveReaderState = useCallback(async (day: number, phase: number, pageNum: number, showFeedback: boolean = false) => {
     try {
-      await fetch('/api/reader/state', {
+      if (showFeedback) setSaveStatus('saving');
+      const response = await fetch('/api/reader/state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -57,8 +59,19 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
           currentPhase: phase,
         }),
       });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      console.log(`✅ Reader state saved: Day ${day}, Phase ${phase}, Page ${pageNum}`);
+      if (showFeedback) {
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      }
     } catch (error) {
       console.error('Failed to save reader state:', error);
+      if (showFeedback) setSaveStatus('idle');
     }
   }, [user.id]);
 
@@ -68,10 +81,19 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
 
     const loadSavedState = async () => {
       try {
-        const response = await fetch(`/api/reader/state?userId=${user.id}`);
-        const data = await response.json();
+        console.log('📖 Loading saved reader state for user:', user.id);
+        const response = await fetch(`/api/reader/state?userId=${user.id}`, {
+          cache: 'no-store',
+        });
         
-        if (data.currentDay && data.currentPhase) {
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Retrieved state:', data);
+        
+        if (data.currentDay && data.currentPhase && data.currentPage) {
           setCurrentDay(data.currentDay);
           setCurrentPhase(data.currentPhase);
           
@@ -79,6 +101,9 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
           const range = getPhasePageRange(data.currentDay, data.currentPhase);
           const offset = Math.max(0, data.currentPage - range.start);
           setCurrentPageOffset(offset);
+          console.log(`✅ Restored reading position: Day ${data.currentDay}, Phase ${data.currentPhase}, Page ${data.currentPage}`);
+        } else {
+          console.log('No saved state found, using defaults');
         }
       } catch (error) {
         console.error('Failed to load reader state:', error);
@@ -127,6 +152,10 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
         setCompletedPhases([...completedPhases, { day: currentDay, phase: currentPhase }]);
         setCongratsMessage(`🎉 Phase ${currentPhase} of Day ${currentDay} Completed! 🎉`);
         setShowCongrats(true);
+        
+        // Backup: Record phase completion to database as last state
+        await saveReaderState(currentDay, currentPhase, currentPageNumber, false);
+        
         setTimeout(() => setShowCongrats(false), 4000);
         onProgressUpdate?.();
       }
@@ -274,6 +303,23 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
           </div>
 
           <div className="flex items-center gap-2">
+            <button 
+              onClick={() => saveReaderState(currentDay, currentPhase, currentPageNumber, true)} 
+              disabled={saveStatus === 'saving'}
+              className={`p-2 rounded-lg transition-all flex items-center gap-1.5 font-semibold text-xs ${
+                saveStatus === 'saved' 
+                  ? 'bg-emerald-500/30 text-emerald-400' 
+                  : saveStatus === 'saving'
+                  ? 'bg-blue-500/30 text-blue-400 animate-pulse'
+                  : isDarkMode 
+                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' 
+                  : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+              }`}
+              title="Manually save your reading position"
+            >
+              <Save size={18} />
+              {saveStatus === 'saved' ? 'Saved!' : saveStatus === 'saving' ? 'Saving...' : 'Save'}
+            </button>
             <button onClick={onClose} className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-900'} font-semibold`}>
               <X size={20} />
             </button>

@@ -2,11 +2,18 @@ import React from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: 'Ramadan Bot: Create Beautiful Ramadan Flyers with your name - Free AI Reflection Generator',
-  description: 'Free AI-powered Ramadan flyer generator with your name featured on every reflection. Create personalized Islamic content, beautiful Quranic flyers, and share with your community. No cost, pure spiritual growth.',
+  title: 'Ramadan Bot: AI Flyer Generator + Qur\'ān Reader - Free Personalized Ramadan Tools',
+  description: 'Free AI-powered Ramadan flyer generator with Qur\'ān reader (29-day plan, 604 pages, phase tracking). Create personalized Islamic content, beautiful Quranic flyers, read the full Qur\'ān during Ramadan, and share with your community. Auto-save reading progress, phase completion tracking, and spiritual growth tools.',
   metadataBase: new URL('https://www.ramadanbot.app'),
   keywords: [
     'Ramadan flyer generator',
+    'Qur\'ān reader',
+    'Ramadan Qur\'ān companion',
+    '29-day Qur\'ān plan',
+    '5 phases daily',
+    'complete Qur\'ān in 29 days',
+    'Qur\'ān tracker',
+    'Ramadan reading plan',
     'Create flyers with my name',
     'personalised Ramadan',
     'AI Ramadan generator',
@@ -32,16 +39,20 @@ export const metadata = {
     'religious reflections',
     'Ramadan decoration ideas',
     'social sharing Islamic content',
-    'personalized spiritual practice'
+    'personalized spiritual practice',
+    'Qur\'ān page viewer',
+    'Ramadan page tracking',
+    'phase completion tracker',
+    'dark mode Qur\'ān reader'
   ],
   authors: [{ name: 'Abdallah Nangere', url: 'https://www.ramadanbot.app/contact' }],
   creator: 'Abdallah Nangere',
   category: 'Productivity & Lifestyle',
-  applicationName: 'Ramadan Bot: Create Beautiful Ramadan Flyers with your name',
+  applicationName: 'Ramadan Bot: AI Flyer Generator + Qur\'ān Reader',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Ramadan Bot'
+    title: 'Ramadan Bot: Flyers + Reader'
   },
   openGraph: {
     type: 'website',
