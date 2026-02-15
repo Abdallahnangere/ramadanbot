@@ -10,7 +10,16 @@ import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
 import QuranReader from '../../components/QuranReader';
 import Toast from '../../components/Toast';
+import BroadcastToast from '../../components/BroadcastToast';
 import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
+
+interface BroadcastMessage {
+  id: string;
+  message: string;
+  action_text?: string;
+  action_url?: string;
+  created_at: string;
+}
 
 export default function HomeApp() {
   const [appState, setAppState] = useState<AppState>({ 
@@ -26,6 +35,7 @@ export default function HomeApp() {
   const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [broadcastMessages, setBroadcastMessages] = useState<BroadcastMessage[]>([]);
   
   // Initialize app: restore theme and persistent login
   useEffect(() => {
@@ -85,6 +95,32 @@ export default function HomeApp() {
 
     return () => clearInterval(pollInterval);
   }, [appState.currentUser?.id]);
+
+  // Fetch broadcast messages for display
+  useEffect(() => {
+    if (appState.view !== 'app') return;
+
+    const fetchBroadcastMessages = async () => {
+      try {
+        const res = await fetch('/api/broadcast/active');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.messages)) {
+            setBroadcastMessages(data.messages);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch broadcast messages:', error);
+      }
+    };
+
+    fetchBroadcastMessages();
+
+    // Poll for new messages every 30 seconds
+    const pollInterval = setInterval(fetchBroadcastMessages, 30000);
+
+    return () => clearInterval(pollInterval);
+  }, [appState.view]);
 
   const handleLogin = (user: User) => {
     // Save user to localStorage for persistent login
@@ -488,6 +524,13 @@ export default function HomeApp() {
           onClose={() => setToast(null)}
         />
       )}
+      
+      <BroadcastToast 
+        messages={broadcastMessages}
+        onDismiss={(id) => {
+          setBroadcastMessages(prev => prev.filter(m => m.id !== id));
+        }}
+      />
       
       <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] bg-white dark:bg-black md:rounded-[48px] md:shadow-[0_0_0_14px_#1f2937,0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden transition-colors duration-300 isolate">
         <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>

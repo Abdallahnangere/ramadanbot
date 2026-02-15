@@ -26,6 +26,13 @@ const FlyerPreview: React.FC<FlyerPreviewProps> = ({ message, formData, onReset,
     setTimeout(() => setNotification(null), 3500);
   };
 
+  // Scroll to top when loading starts
+  useEffect(() => {
+    if (isGenerating) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isGenerating]);
+
   useEffect(() => {
     // Prevent double generation
     if (hasGeneratedRef.current) return;

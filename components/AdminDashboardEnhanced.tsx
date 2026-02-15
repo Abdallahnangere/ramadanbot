@@ -17,7 +17,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   
   // Data State
-  const [activeTab, setActiveTab] = useState<'overview' | 'users'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'broadcast'>('overview');
   const [users, setUsers] = useState<User[]>([]);
   const [analytics, setAnalytics] = useState<any>(null);
   const [search, setSearch] = useState('');
@@ -28,6 +28,13 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [downloadingAnalytics, setDownloadingAnalytics] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const USERS_PER_PAGE = 49;
+
+  // Broadcast State
+  const [broadcastMessages, setBroadcastMessages] = useState<any[]>([]);
+  const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastActionText, setBroadcastActionText] = useState('');
+  const [broadcastActionUrl, setBroadcastActionUrl] = useState('');
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
 
   // --- LOGIN LOGIC ---
   const handleLogin = async (e: React.FormEvent) => {
@@ -119,6 +126,116 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
       } else {
         alert('Failed to reset Quran progress');
       }
+    }
+  };
+
+  // --- BROADCAST MESSAGE HANDLERS ---
+  const loadBroadcastMessages = async () => {
+    try {
+      const res = await fetch('/api/broadcast/active');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setBroadcastMessages(data.messages || []);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load broadcast messages:', error);
+    }
+  };
+
+  const handleCreateBroadcast = async () => {
+    if (!broadcastMessage.trim()) {
+      alert('Message cannot be empty');
+      return;
+    }
+
+    // First, get the current admin user ID (we'll use a placeholder)
+    const adminId = 'admin'; // In a real app, this would be the authenticated admin's ID
+    
+    setBroadcastLoading(true);
+    try {
+      const res = await fetch('/api/broadcast/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminId,
+          message: broadcastMessage.trim(),
+          actionText: broadcastActionText.trim() || null,
+          actionUrl: broadcastActionUrl.trim() || null
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setBroadcastMessage('');
+          setBroadcastActionText('');
+          setBroadcastActionUrl('');
+          alert('Broadcast message created successfully');
+          loadBroadcastMessages();
+        }
+      } else {
+        alert('Failed to create broadcast message');
+      }
+    } catch (error) {
+      console.error('Failed to create broadcast:', error);
+      alert('Error creating broadcast message');
+    } finally {
+      setBroadcastLoading(false);
+    }
+  };
+
+  const handleDeleteBroadcast = async (id: string) => {
+    if (confirm('Delete this message?')) {
+      try {
+        const adminId = 'admin';
+        const res = await fetch(`/api/broadcast/${id}?adminId=${adminId}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          loadBroadcastMessages();
+        } else {
+          alert('Failed to delete message');
+        }
+      } catch (error) {
+        console.error('Failed to delete broadcast:', error);
+      }
+    }
+  };
+
+  const handlePauseBroadcast = async (id: string) => {
+    try {
+      const adminId = 'admin';
+      const res = await fetch(`/api/broadcast/${id}/pause?adminId=${adminId}`, {
+        method: 'POST'
+      });
+
+      if (res.ok) {
+        loadBroadcastMessages();
+      } else {
+        alert('Failed to pause message');
+      }
+    } catch (error) {
+      console.error('Failed to pause broadcast:', error);
+    }
+  };
+
+  const handleResumeBroadcast = async (id: string) => {
+    try {
+      const adminId = 'admin';
+      const res = await fetch(`/api/broadcast/${id}/resume?adminId=${adminId}`, {
+        method: 'POST'
+      });
+
+      if (res.ok) {
+        loadBroadcastMessages();
+      } else {
+        alert('Failed to resume message');
+      }
+    } catch (error) {
+      console.error('Failed to resume broadcast:', error);
     }
   };
 
@@ -571,6 +688,16 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
             >
               Users
             </button>
+            <button 
+              onClick={() => setActiveTab('broadcast')}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === 'broadcast' 
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              Broadcast
+            </button>
           </div>
         </div>
       </div>
@@ -960,6 +1087,113 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
                   <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">Banned</p>
                   <p className="text-3xl font-bold text-red-600 dark:text-red-400">{bannedCount}</p>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'broadcast' && (
+            <div className="space-y-6">
+              {/* Header */}
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-500 flex items-center justify-center">
+                    <Zap size={24} className="text-white" strokeWidth={2} />
+                  </div>
+                  Broadcast Messages
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Send messages to all app users</p>
+              </div>
+
+              {/* Create Message Form */}
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Create New Message</h3>
+                
+                <input
+                  type="text"
+                  placeholder="Enter message text"
+                  value={broadcastMessage}
+                  onChange={(e) => setBroadcastMessage(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <textarea
+                  placeholder="Optional: Message details or full text"
+                  value={broadcastMessage}
+                  onChange={(e) => setBroadcastMessage(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Action button text (optional)"
+                    value={broadcastActionText}
+                    onChange={(e) => setBroadcastActionText(e.target.value)}
+                    className="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Action button URL (optional)"
+                    value={broadcastActionUrl}
+                    onChange={(e) => setBroadcastActionUrl(e.target.value)}
+                    className="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <button
+                  onClick={handleCreateBroadcast}
+                  disabled={broadcastLoading || !broadcastMessage.trim()}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg font-semibold transition-all active:scale-95"
+                >
+                  {broadcastLoading ? 'Creating...' : 'Send Message to All Users'}
+                </button>
+              </div>
+
+              {/* Active Messages List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Active Messages ({broadcastMessages.length})</h3>
+                
+                {broadcastMessages.length === 0 ? (
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 text-center">
+                    <p className="text-gray-600 dark:text-gray-400">No active messages</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {broadcastMessages.map((msg) => (
+                      <div key={msg.id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 space-y-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-gray-900 dark:text-white break-words">{msg.message}</p>
+                            {msg.action_text && (
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                Button: <span className="font-semibold">{msg.action_text}</span>
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full">
+                            {new Date(msg.created_at).toLocaleDateString()}
+                          </span>
+                          <button
+                            onClick={() => handlePauseBroadcast(msg.id)}
+                            className="text-sm px-3 py-1 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-all"
+                          >
+                            Pause
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBroadcast(msg.id)}
+                            className="text-sm px-3 py-1 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

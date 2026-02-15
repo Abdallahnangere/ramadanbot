@@ -39,6 +39,11 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
     if (!formData.topic) return;
     
     setIsLoading(true);
+    
+    // Scroll to top when starting generation
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     try {
       const response = await checkLimitAndGenerate(

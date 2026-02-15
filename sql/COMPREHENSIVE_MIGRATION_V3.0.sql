@@ -151,6 +151,21 @@ CREATE TABLE IF NOT EXISTS quran_reading_history (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Admin broadcast messages (v3.0+ feature)
+CREATE TABLE IF NOT EXISTS broadcast_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  admin_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  message TEXT NOT NULL,
+  action_text VARCHAR(50),
+  action_url TEXT,
+  status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'paused', 'archived', 'deleted')),
+  is_paused BOOLEAN DEFAULT FALSE,
+  paused_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  expires_at TIMESTAMPTZ
+);
+
 -- ====================================================================
 -- PART 3: Add Missing Columns (Idempotent)
 -- ====================================================================
@@ -221,6 +236,13 @@ CREATE INDEX IF NOT EXISTS idx_quran_reading_history_date ON quran_reading_histo
 
 CREATE INDEX IF NOT EXISTS idx_quran_reader_preferences_user_id ON quran_reader_preferences(user_id);
 
+-- Broadcast messages indexes
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_admin_id ON broadcast_messages(admin_id);
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_status ON broadcast_messages(status);
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_created_at ON broadcast_messages(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_is_paused ON broadcast_messages(is_paused);
+CREATE INDEX IF NOT EXISTS idx_broadcast_messages_active ON broadcast_messages(status, is_paused, expires_at DESC);
+
 -- ====================================================================
 -- PART 5: Views for Analytics and Admin Dashboard
 -- ====================================================================
@@ -272,6 +294,22 @@ FROM generations g
 LEFT JOIN quran_progress qp ON DATE(qp.completed_at) = DATE(g.created_at)
 GROUP BY DATE(g.created_at)
 ORDER BY DATE(g.created_at) DESC;
+
+-- Active broadcast messages view
+CREATE OR REPLACE VIEW active_broadcast_messages AS
+SELECT 
+  id,
+  admin_id,
+  message,
+  action_text,
+  action_url,
+  created_at,
+  updated_at
+FROM broadcast_messages
+WHERE status = 'active' 
+  AND is_paused = FALSE
+  AND (expires_at IS NULL OR expires_at > NOW())
+ORDER BY created_at DESC;
 
 -- ====================================================================
 -- PART 6: Stored Procedures (Optional but Recommended)
