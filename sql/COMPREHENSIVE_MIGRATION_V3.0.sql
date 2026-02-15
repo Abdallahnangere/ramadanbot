@@ -91,6 +91,18 @@ CREATE TABLE IF NOT EXISTS quran_pages (
 -- PART 2: v3.0+ Enhancement Tables
 -- ====================================================================
 
+-- Reader state persistence (current reading position)
+CREATE TABLE IF NOT EXISTS reader_state (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  current_page INT NOT NULL CHECK (current_page >= 1 AND current_page <= 604),
+  current_day INT NOT NULL CHECK (current_day >= 1 AND current_day <= 29),
+  current_phase INT NOT NULL CHECK (current_phase >= 1 AND current_phase <= 5),
+  last_read_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Reader preferences (zoom, dark mode, etc.)
 CREATE TABLE IF NOT EXISTS quran_reader_preferences (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -157,6 +169,10 @@ CREATE INDEX IF NOT EXISTS idx_generations_user_id ON generations(user_id);
 CREATE INDEX IF NOT EXISTS idx_generations_created_at ON generations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_generations_user_created ON generations(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_generations_topic ON generations(topic);
+
+-- Reader state indexes
+CREATE INDEX IF NOT EXISTS idx_reader_state_user_id ON reader_state(user_id);
+CREATE INDEX IF NOT EXISTS idx_reader_state_last_read ON reader_state(last_read_at DESC);
 
 -- Qur'ān progress indexes
 CREATE INDEX IF NOT EXISTS idx_quran_progress_user_id ON quran_progress(user_id);

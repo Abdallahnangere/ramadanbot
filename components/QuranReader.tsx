@@ -36,52 +36,74 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [pageSearch, setPageSearch] = useState('');
-  const [lastSaveTime, setLastSaveTime] = useState(Date.now());
   const [touchStartX, setTouchStartX] = useState(0);
-  const [lastNavigatedPage, setLastNavigatedPage] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const daySelectRef = useRef<HTMLDivElement>(null);
   const phaseSelectRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const readerRef = useRef<HTMLDivElement>(null);
 
-  // Optimized page saving - only save on navigation after 5 second cooldown
-  const savePagePosition = useCallback(async () => {
-    const now = Date.now();
-    if (now - lastSaveTime < 5000) return; // 5 second cooldown
-    
+  // Immediate reader state persistence - save to database on every page change
+  const saveReaderState = useCallback(async (day: number, phase: number, pageNum: number) => {
     try {
-      await fetch('/api/user', {
-        method: 'PUT',
+      await fetch('/api/reader/state', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: user.id,
-          quran_current_day: currentDay,
-          quran_current_phase: currentPhase,
-          quran_current_page: getPhasePageRange(currentDay, currentPhase).start + currentPageOffset,
+          userId: user.id,
+          currentPage: pageNum,
+          currentDay: day,
+          currentPhase: phase,
         }),
       });
-      setLastSaveTime(now);
     } catch (error) {
-      console.error('Failed to save page position:', error);
+      console.error('Failed to save reader state:', error);
     }
-  }, [user.id, currentDay, currentPhase, currentPageOffset, lastSaveTime]);
+  }, [user.id]);
+
+  // Load saved reader state on first open
+  useEffect(() => {
+    if (!isOpen || isInitialized) return;
+
+    const loadSavedState = async () => {
+      try {
+        const response = await fetch(`/api/reader/state?userId=${user.id}`);
+        const data = await response.json();
+        
+        if (data.currentDay && data.currentPhase) {
+          setCurrentDay(data.currentDay);
+          setCurrentPhase(data.currentPhase);
+          
+          // Calculate offset from page number
+          const range = getPhasePageRange(data.currentDay, data.currentPhase);
+          const offset = Math.max(0, data.currentPage - range.start);
+          setCurrentPageOffset(offset);
+        }
+      } catch (error) {
+        console.error('Failed to load reader state:', error);
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+
+    loadSavedState();
+  }, [isOpen, isInitialized, user.id]);
 
   // Calculate current page range and number
   const pageRange = useMemo(() => getPhasePageRange(currentDay, currentPhase), [currentDay, currentPhase]);
   const currentPageNumber = pageRange.start + currentPageOffset;
-
-  // Trigger save only when page changes
-  useEffect(() => {
-    if (isOpen && lastNavigatedPage !== currentPageNumber) {
-      savePagePosition();
-      setLastNavigatedPage(currentPageNumber);
-    }
-  }, [currentPageNumber, isOpen, savePagePosition]);
   const totalPages = 604;
   const isPhaseCompleted = completedPhases.some((p) => p.day === currentDay && p.phase === currentPhase);
   const isLastPageOfPhase = currentPageOffset === pageRange.count - 1;
 
+  // Save reader state immediately on page change
+  useEffect(() => {
+    if (!isOpen || !isInitialized) return;
+    saveReaderState(currentDay, currentPhase, currentPageNumber);
+  }, [currentPageNumber, isOpen, isInitialized, saveReaderState]);
+
+  // Load completed phases on open
   useEffect(() => {
     if (!user?.id || !isOpen) return;
     getCompletedQuranPhases(user.id).then((result) => {
@@ -94,13 +116,7 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
     return `/page${paddedNum}.png`;
   }, []);
 
-  // Auto-complete phase when reaching last page
-  useEffect(() => {
-    if (isLastPageOfPhase && !isPhaseCompleted && isOpen) {
-      handleAutoCompletePhase();
-    }
-  }, [isLastPageOfPhase, isPhaseCompleted, isOpen]);
-
+  // Auto-complete phase when LEAVING the final page to transition to next phase
   const handleAutoCompletePhase = async () => {
     if (isSubmitting || isPhaseCompleted) return;
     setIsSubmitting(true);
@@ -112,17 +128,6 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
         setCongratsMessage(`🎉 Phase ${currentPhase} of Day ${currentDay} Completed! 🎉`);
         setShowCongrats(true);
         setTimeout(() => setShowCongrats(false), 4000);
-        
-        // Auto-advance to next phase
-        if (currentPhase < 5) {
-          setCurrentPhase(currentPhase + 1);
-          setCurrentPageOffset(0);
-        } else if (currentDay < 29) {
-          setCurrentDay(currentDay + 1);
-          setCurrentPhase(1);
-          setCurrentPageOffset(0);
-        }
-        
         onProgressUpdate?.();
       }
     } catch (error) {
@@ -132,7 +137,19 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
     }
   };
 
-  const handleNextPage = useCallback(() => {
+  // Smart phase transition: checks if leaving last page, triggers completion, then transitions
+  const handlePhaseTransition = async () => {
+    if (!isPhaseCompleted && isLastPageOfPhase) {
+      await handleAutoCompletePhase();
+    }
+  };
+
+  const handleNextPage = useCallback(async () => {
+    // If at last page of current phase, trigger completion before advancing
+    if (isLastPageOfPhase && !isPhaseCompleted) {
+      await handleAutoCompletePhase();
+    }
+
     if (currentPageOffset < pageRange.count - 1) {
       setCurrentPageOffset(currentPageOffset + 1);
     } else if (currentPhase < QURAN_CONFIG.PHASES_PER_DAY) {
@@ -144,7 +161,7 @@ const QuranReader: React.FC<QuranReaderProps> = ({ isOpen, onClose, user, onProg
       setCurrentPageOffset(0);
     }
     setImageError(false);
-  }, [currentPageOffset, pageRange.count, currentPhase, currentDay]);
+  }, [currentPageOffset, pageRange.count, currentPhase, currentDay, isLastPageOfPhase, isPhaseCompleted, handleAutoCompletePhase]);
 
   const handlePrevPage = useCallback(() => {
     if (currentPageOffset > 0) {
