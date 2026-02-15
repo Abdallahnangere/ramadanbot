@@ -103,6 +103,28 @@ CREATE TABLE IF NOT EXISTS reader_state (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Gamified Qur'ān progress (29-day journey)
+CREATE TABLE IF NOT EXISTS quran_progress_gamified (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  current_day INT NOT NULL CHECK (current_day >= 1 AND current_day <= 29),
+  current_phase INT NOT NULL CHECK (current_phase >= 1 AND current_phase <= 5),
+  last_read_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Gamified completed phases (unlock tracking 145 total phases: 28*5 + 5 = 145)
+CREATE TABLE IF NOT EXISTS quran_completed_phases_gamified (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  day INT NOT NULL CHECK (day >= 1 AND day <= 29),
+  phase INT NOT NULL CHECK (phase >= 1 AND phase <= 5),
+  completed_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, day, phase)
+);
+
 -- Reader preferences (zoom, dark mode, etc.)
 CREATE TABLE IF NOT EXISTS quran_reader_preferences (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -173,6 +195,15 @@ CREATE INDEX IF NOT EXISTS idx_generations_topic ON generations(topic);
 -- Reader state indexes
 CREATE INDEX IF NOT EXISTS idx_reader_state_user_id ON reader_state(user_id);
 CREATE INDEX IF NOT EXISTS idx_reader_state_last_read ON reader_state(last_read_at DESC);
+
+-- Gamified progress indexes
+CREATE INDEX IF NOT EXISTS idx_quran_progress_gamified_user_id ON quran_progress_gamified(user_id);
+CREATE INDEX IF NOT EXISTS idx_quran_progress_gamified_day ON quran_progress_gamified(current_day);
+
+-- Gamified completed phases indexes
+CREATE INDEX IF NOT EXISTS idx_quran_completed_phases_gamified_user_id ON quran_completed_phases_gamified(user_id);
+CREATE INDEX IF NOT EXISTS idx_quran_completed_phases_gamified_day_phase ON quran_completed_phases_gamified(day, phase);
+CREATE INDEX IF NOT EXISTS idx_quran_completed_phases_gamified_completed_at ON quran_completed_phases_gamified(completed_at DESC);
 
 -- Qur'ān progress indexes
 CREATE INDEX IF NOT EXISTS idx_quran_progress_user_id ON quran_progress(user_id);

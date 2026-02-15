@@ -34,8 +34,10 @@ export interface DayPhaseInfo {
 
 /**
  * Calculate page range for a specific day and phase
- * Days 1-20: 4 pages per phase (20 pages/day)
- * Days 21-29: approximately 4.5 pages per phase (~22-23 pages/day)
+ * FIXED Distribution:
+ * - Days 1-20: EXACTLY 4 pages per phase (20 pages/day) = 400 pages total
+ * - Days 21-29: Remaining 204 pages distributed across 45 phases (~4-5 pages per phase)
+ * 
  * @param day - Ramadan day (1-29)
  * @param phase - Phase within day (1-5)
  * @returns Page range start and end
@@ -43,28 +45,44 @@ export interface DayPhaseInfo {
 export function getPhasePageRange(day: number, phase: number): PageRange {
   const { TOTAL_PAGES, PHASES_PER_DAY } = QURAN_CONFIG;
 
-  let pagesPerDay: number;
-  let firstPageOfDay: number;
-
-  // Days 1-20: 20 pages/day (4 per phase)
+  // Days 1-20: Exactly 4 pages per phase
   if (day <= 20) {
-    pagesPerDay = 20;
-    firstPageOfDay = (day - 1) * 20 + 1;
-  } else {
-    // Days 21-29: distribute remaining pages (604 - 400 = 204 pages for 9 days)
-    const remainingPages = TOTAL_PAGES - 400; // 204 pages
-    pagesPerDay = Math.ceil(remainingPages / 9); // ~22-23 pages per day
-    firstPageOfDay = 400 + (day - 21) * pagesPerDay + 1;
+    const firstPageOfDay = (day - 1) * 20 + 1; // Day 1 starts at page 1
+    const firstPageOfPhase = firstPageOfDay + (phase - 1) * 4;
+    const lastPageOfPhase = firstPageOfPhase + 4 - 1;
+
+    return {
+      start: firstPageOfPhase,
+      end: lastPageOfPhase,
+      count: 4,
+    };
   }
 
-  const pagesPerPhase = Math.ceil(pagesPerDay / PHASES_PER_DAY);
-  const firstPageOfPhase = firstPageOfDay + (phase - 1) * pagesPerPhase;
-  const lastPageOfPhase = Math.min(firstPageOfPhase + pagesPerPhase - 1, TOTAL_PAGES);
+  // Days 21-29: Distribute 204 remaining pages across 45 phases (9 days × 5 phases)
+  const pagesForDays21to29 = TOTAL_PAGES - 400; // 204 pages
+  const totalPhasesIn21to29 = 9 * PHASES_PER_DAY; // 45 phases
+  const basePagesPerPhase = Math.floor(pagesForDays21to29 / totalPhasesIn21to29); // 4 pages
+  const extraPages = pagesForDays21to29 % totalPhasesIn21to29; // 24 extra pages
+
+  // Calculate which phase this is in the 21-29 range
+  const phaseIndexIn21to29 = (day - 21) * PHASES_PER_DAY + (phase - 1);
+
+  // First 24 phases get 5 pages, remaining 21 phases get 4 pages
+  const pagesForThisPhase = phaseIndexIn21to29 < extraPages ? basePagesPerPhase + 1 : basePagesPerPhase;
+
+  // Calculate starting page of this phase
+  let firstPageOfPhase = 400 + 1; // Start after day 20
+  for (let i = 0; i < phaseIndexIn21to29; i++) {
+    const pagesInPhaseI = i < extraPages ? basePagesPerPhase + 1 : basePagesPerPhase;
+    firstPageOfPhase += pagesInPhaseI;
+  }
+
+  const lastPageOfPhase = Math.min(firstPageOfPhase + pagesForThisPhase - 1, TOTAL_PAGES);
 
   return {
-    start: Math.max(1, firstPageOfPhase),
-    end: Math.min(lastPageOfPhase, TOTAL_PAGES),
-    count: Math.min(lastPageOfPhase, TOTAL_PAGES) - Math.max(1, firstPageOfPhase) + 1,
+    start: firstPageOfPhase,
+    end: lastPageOfPhase,
+    count: lastPageOfPhase - firstPageOfPhase + 1,
   };
 }
 
