@@ -1,8 +1,8 @@
 {
   "/_not-found": "app/_not-found.js",
-  "/api/broadcast/[id]/resume/route": "app/api/broadcast/[id]/resume/route.js",
-  "/api/broadcast/[id]/pause/route": "app/api/broadcast/[id]/pause/route.js",
   "/admin/page": "app/admin/page.js",
+  "/api/broadcast/[id]/pause/route": "app/api/broadcast/[id]/pause/route.js",
+  "/api/broadcast/[id]/resume/route": "app/api/broadcast/[id]/resume/route.js",
   "/api/broadcast/[id]/route": "app/api/broadcast/[id]/route.js",
   "/api/broadcast/active/route": "app/api/broadcast/active/route.js",
   "/api/broadcast/create/route": "app/api/broadcast/create/route.js",

@@ -15,6 +15,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [adminId, setAdminId] = useState<string | null>(null);
   
   // Data State
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'broadcast'>('overview');
@@ -44,6 +45,11 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
     const res = await adminLogin(password);
     if (res.success) {
       setIsAuthenticated(true);
+      // Get the first admin user ID (typically the system admin)
+      const adminUser = users.find(u => u.role === 'admin');
+      if (adminUser) {
+        setAdminId(adminUser.id);
+      }
       loadData();
     } else {
       alert("Invalid Admin Password");
@@ -152,8 +158,10 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
       return;
     }
 
-    // First, get the current admin user ID (we'll use a placeholder)
-    const adminId = 'admin'; // In a real app, this would be the authenticated admin's ID
+    if (!adminId) {
+      alert('Admin ID not found. Please re-login.');
+      return;
+    }
     
     setBroadcastLoading(true);
     try {
@@ -179,7 +187,8 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
           loadBroadcastMessages();
         }
       } else {
-        alert('Failed to create broadcast message');
+        const errorData = await res.json();
+        alert(`Failed to create broadcast message: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Failed to create broadcast:', error);
@@ -192,7 +201,10 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const handleDeleteBroadcast = async (id: string) => {
     if (confirm('Delete this message?')) {
       try {
-        const adminId = 'admin';
+        if (!adminId) {
+          alert('Admin ID not found');
+          return;
+        }
         const res = await fetch(`/api/broadcast/${id}?adminId=${adminId}`, {
           method: 'DELETE'
         });
@@ -210,7 +222,10 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
 
   const handlePauseBroadcast = async (id: string) => {
     try {
-      const adminId = 'admin';
+      if (!adminId) {
+        alert('Admin ID not found');
+        return;
+      }
       const res = await fetch(`/api/broadcast/${id}/pause?adminId=${adminId}`, {
         method: 'POST'
       });
@@ -227,7 +242,10 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
 
   const handleResumeBroadcast = async (id: string) => {
     try {
-      const adminId = 'admin';
+      if (!adminId) {
+        alert('Admin ID not found');
+        return;
+      }
       const res = await fetch(`/api/broadcast/${id}/resume?adminId=${adminId}`, {
         method: 'POST'
       });
