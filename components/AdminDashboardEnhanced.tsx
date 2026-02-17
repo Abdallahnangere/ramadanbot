@@ -45,14 +45,35 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
     const res = await adminLogin(password);
     if (res.success) {
       setIsAuthenticated(true);
-      // Get the first admin user ID (typically the system admin)
-      const adminUser = users.find(u => u.role === 'admin');
-      if (adminUser) {
-        setAdminId(adminUser.id);
-      }
-      loadData();
+      // Load data first, then extract admin ID from loaded users
+      await loadDataAndSetAdminId();
     } else {
       alert("Invalid Admin Password");
+    }
+    setLoading(false);
+  };
+
+  // Load data and extract admin ID from users
+  const loadDataAndSetAdminId = async () => {
+    setLoading(true);
+    setCurrentPage(1);
+    try {
+      const [usersData, analyticsData] = await Promise.all([
+        fetchAllUsers(),
+        getEnhancedAnalytics()
+      ]);
+      setUsers(usersData);
+      setAnalytics(analyticsData);
+      
+      // Find and set the first admin user
+      const adminUser = usersData.find(u => u.role === 'admin');
+      if (adminUser) {
+        setAdminId(adminUser.id);
+      } else {
+        console.warn('No admin user found in database');
+      }
+    } catch (error) {
+      console.error("Failed to load admin data", error);
     }
     setLoading(false);
   };

@@ -21,8 +21,8 @@ export default function QuranJourneyPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get user ID from session/auth
-    const user = localStorage.getItem('user');
+    // Get user ID from session/auth - check ramadanbot_user key used in /app
+    const user = localStorage.getItem('ramadanbot_user');
     if (user) {
       try {
         const userData = JSON.parse(user);
