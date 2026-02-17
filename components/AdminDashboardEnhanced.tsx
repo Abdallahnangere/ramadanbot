@@ -32,6 +32,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   // Broadcast State
   const [broadcastMessages, setBroadcastMessages] = useState<any[]>([]);
   const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastDetails, setBroadcastDetails] = useState('');
   const [broadcastActionText, setBroadcastActionText] = useState('');
   const [broadcastActionUrl, setBroadcastActionUrl] = useState('');
   const [broadcastLoading, setBroadcastLoading] = useState(false);
@@ -145,7 +146,8 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   };
 
   const handleCreateBroadcast = async () => {
-    if (!broadcastMessage.trim()) {
+    const finalMessage = broadcastDetails.trim() || broadcastMessage.trim();
+    if (!broadcastMessage.trim() || !finalMessage) {
       alert('Message cannot be empty');
       return;
     }
@@ -160,7 +162,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           adminId,
-          message: broadcastMessage.trim(),
+          message: finalMessage,
           actionText: broadcastActionText.trim() || null,
           actionUrl: broadcastActionUrl.trim() || null
         })
@@ -170,6 +172,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
         const data = await res.json();
         if (data.success) {
           setBroadcastMessage('');
+          setBroadcastDetails('');
           setBroadcastActionText('');
           setBroadcastActionUrl('');
           alert('Broadcast message created successfully');
@@ -1118,8 +1121,8 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
 
                 <textarea
                   placeholder="Optional: Message details or full text"
-                  value={broadcastMessage}
-                  onChange={(e) => setBroadcastMessage(e.target.value)}
+                  value={broadcastDetails}
+                  onChange={(e) => setBroadcastDetails(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
                 />

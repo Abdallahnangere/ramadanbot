@@ -8,7 +8,8 @@ import LoginScreen from '../../components/LoginScreen';
 import AdminDashboard from '../../components/AdminDashboardEnhanced';
 import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
-import QuranReader from '../../components/QuranReader';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Toast from '../../components/Toast';
 import BroadcastToast from '../../components/BroadcastToast';
 import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
@@ -261,27 +262,21 @@ export default function HomeApp() {
 
     return (
         <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#000000] dark:via-[#0a0a0a] dark:to-[#000000] transition-colors duration-300">
-            {/* Quran Reader */}
-            <QuranReader
-                isOpen={activeTab === 'quran'}
-                onClose={() => setActiveTab('flyer')}
-                user={user}
-                onProgressUpdate={() => {
-                  if (appState.currentUser?.id) {
-                    fetch(`/api/user?id=${appState.currentUser.id}`)
-                      .then(res => res.json())
-                      .then(json => {
-                        if (json.user) {
-                          setAppState(prev => ({ ...prev, currentUser: json.user }));
-                          try {
-                            localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
-                          } catch (e) {}
-                        }
-                      })
-                      .catch(e => console.error(e));
-                  }
-                }}
-            />
+            {/* Gamified Quran Reader */}
+            {activeTab === 'quran' && (
+              <Link href="/quran" className="block h-full w-full">
+                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80">
+                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 text-center max-w-md mx-4 shadow-2xl">
+                    <h2 className="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Qur'ān Journey</h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">29 Days • 145 Phases</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">Click to start your gamified reading experience</p>
+                    <div className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all">
+                      Begin Reading →
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            )}
 
             <Sidebar 
                 isOpen={isSidebarOpen}
