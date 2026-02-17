@@ -112,15 +112,15 @@ export default function QuranReaderNew({ day, phase, userId, onComplete }: Quran
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto flex items-center justify-center p-4 md:p-6">
+        <div className="flex-1 overflow-auto flex items-center justify-center p-4 md:p-6 bg-white">
           {imageError ? (
             <div className="text-center">
-              <p className="text-gray-400 text-lg">Failed to load page image</p>
+              <p className="text-gray-600 text-lg">Failed to load page image</p>
             </div>
           ) : (
             <div className="relative w-full h-full flex items-center justify-center">
               {isImageLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-800/50">
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
                   <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
                 </div>
               )}

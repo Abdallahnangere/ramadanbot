@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
 
+// Mark this route as dynamic to allow query parameters
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/quran/progress?userId=...
  * Retrieve user's gamified Qur'ān progress and completed phases
