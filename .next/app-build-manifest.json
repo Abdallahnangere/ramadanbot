@@ -31,6 +31,13 @@
       "static/chunks/703-6db139bc5e7838c8.js",
       "static/chunks/app/contact/page-896d7035911fb48f.js"
     ],
+    "/quran/[day]/[phase]/page": [
+      "static/chunks/webpack-9f2e49969705b9bd.js",
+      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
+      "static/chunks/69-065a9d4e4cc23e89.js",
+      "static/chunks/main-app-dec312ca399cbaa3.js",
+      "static/chunks/app/quran/[day]/[phase]/page-efa793d9ef671112.js"
+    ],
     "/page": [
       "static/chunks/webpack-9f2e49969705b9bd.js",
       "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
@@ -40,20 +47,6 @@
       "static/chunks/703-6db139bc5e7838c8.js",
       "static/chunks/app/page-eaab799bd1484b20.js"
     ],
-    "/privacy/page": [
-      "static/chunks/webpack-9f2e49969705b9bd.js",
-      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
-      "static/chunks/69-065a9d4e4cc23e89.js",
-      "static/chunks/main-app-dec312ca399cbaa3.js",
-      "static/chunks/app/privacy/page-d179ebbfc7de4819.js"
-    ],
-    "/quran/[day]/[phase]/page": [
-      "static/chunks/webpack-9f2e49969705b9bd.js",
-      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
-      "static/chunks/69-065a9d4e4cc23e89.js",
-      "static/chunks/main-app-dec312ca399cbaa3.js",
-      "static/chunks/app/quran/[day]/[phase]/page-efa793d9ef671112.js"
-    ],
     "/quran/[day]/page": [
       "static/chunks/webpack-9f2e49969705b9bd.js",
       "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
@@ -62,6 +55,13 @@
       "static/chunks/807-a996b5af2e0e90d7.js",
       "static/chunks/app/quran/[day]/page-a79ffb24b2ae680a.js"
     ],
+    "/privacy/page": [
+      "static/chunks/webpack-9f2e49969705b9bd.js",
+      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
+      "static/chunks/69-065a9d4e4cc23e89.js",
+      "static/chunks/main-app-dec312ca399cbaa3.js",
+      "static/chunks/app/privacy/page-d179ebbfc7de4819.js"
+    ],
     "/quran/page": [
       "static/chunks/webpack-9f2e49969705b9bd.js",
       "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
@@ -69,6 +69,15 @@
       "static/chunks/main-app-dec312ca399cbaa3.js",
       "static/chunks/807-a996b5af2e0e90d7.js",
       "static/chunks/app/quran/page-eb8a973c0347eae3.js"
+    ],
+    "/app/admin/page": [
+      "static/chunks/webpack-9f2e49969705b9bd.js",
+      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
+      "static/chunks/69-065a9d4e4cc23e89.js",
+      "static/chunks/main-app-dec312ca399cbaa3.js",
+      "static/chunks/ad2866b8-68fa31bd392fa949.js",
+      "static/chunks/517-49646b7746c65341.js",
+      "static/chunks/app/app/admin/page-649cd7bd27a34445.js"
     ],
     "/app/layout": [
       "static/chunks/webpack-9f2e49969705b9bd.js",
@@ -84,19 +93,9 @@
       "static/chunks/69-065a9d4e4cc23e89.js",
       "static/chunks/main-app-dec312ca399cbaa3.js",
       "static/chunks/ad2866b8-68fa31bd392fa949.js",
-      "static/chunks/807-a996b5af2e0e90d7.js",
-      "static/chunks/239-1714b8b036079c13.js",
+      "static/chunks/461-444444bb1ec56053.js",
       "static/chunks/517-49646b7746c65341.js",
-      "static/chunks/app/app/page-b4ca1710a4c5471c.js"
-    ],
-    "/app/admin/page": [
-      "static/chunks/webpack-9f2e49969705b9bd.js",
-      "static/chunks/fd9d1056-8bc4317b1c12f2e6.js",
-      "static/chunks/69-065a9d4e4cc23e89.js",
-      "static/chunks/main-app-dec312ca399cbaa3.js",
-      "static/chunks/ad2866b8-68fa31bd392fa949.js",
-      "static/chunks/517-49646b7746c65341.js",
-      "static/chunks/app/app/admin/page-649cd7bd27a34445.js"
+      "static/chunks/app/app/page-2b50e07dc26bc9b0.js"
     ]
   }
 }
