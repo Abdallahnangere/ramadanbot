@@ -14,7 +14,7 @@ export default function ReaderPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('ramadanbot_user');
     if (user) {
       try {
         const userData = JSON.parse(user);

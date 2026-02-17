@@ -264,7 +264,7 @@ export default function HomeApp() {
         <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#000000] dark:via-[#0a0a0a] dark:to-[#000000] transition-colors duration-300">
             {/* Gamified Quran Reader */}
             {activeTab === 'quran' && (
-              <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80">
+              <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80 pointer-events-auto" onClick={() => {}}>
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 text-center max-w-md mx-4 shadow-2xl">
                   <h2 className="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Qur'ān Journey</h2>
                   <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">29 Days • 145 Phases</p>

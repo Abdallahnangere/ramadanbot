@@ -21,7 +21,7 @@ export default function DayPhasesPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('ramadanbot_user');
     if (user) {
       try {
         const userData = JSON.parse(user);
