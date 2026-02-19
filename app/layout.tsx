@@ -1,5 +1,6 @@
 import React from 'react';
 import './globals.css';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: 'Ramadan Bot: AI Flyer Generator + Qur\'ān Reader - Free Personalized Ramadan Tools',
@@ -200,6 +201,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased bg-white text-slate-900">
         {children}
+        <Analytics />
       </body>
     </html>
   );
