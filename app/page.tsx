@@ -35,287 +35,298 @@ export default function HomePage() {
   };
 
   return (
-    <div className="apple-theme" style={{ 
-      backgroundColor: 'var(--bg-main)', 
+    <div className="premium-theme" style={{ 
+      backgroundColor: 'var(--bg-base)', 
       color: 'var(--text-primary)',
       minHeight: '100vh',
       overflowX: 'hidden',
-      transition: 'background-color 0.4s ease, color 0.4s ease'
+      transition: 'background-color 0.5s ease, color 0.5s ease'
     }}>
       <style dangerouslySetInnerHTML={{ __html: getGlobalCSS() }} />
 
       {/* ════════════════════════════════════════════════
-          PREMIUM NAVIGATION
+          PREMIUM NAVIGATION (FLOATING FROSTED GLASS)
       ════════════════════════════════════════════════ */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        height: '64px',
-        background: scrollPosition > 20 ? 'var(--nav-bg)' : 'transparent',
-        backdropFilter: scrollPosition > 20 ? 'saturate(180%) blur(20px)' : 'none',
-        WebkitBackdropFilter: scrollPosition > 20 ? 'saturate(180%) blur(20px)' : 'none',
-        borderBottom: scrollPosition > 20 ? '1px solid var(--divider)' : '1px solid transparent',
-        transition: 'all 0.4s ease'
-      }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
-          
-          {/* Logo */}
-          <Link href="" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-            <div className="relative w-7 h-7">
-              <Image src="/logo.png" alt="Ramadan Bot Logo" fill className="object-contain" priority />
-            </div>
-            <span style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>RamadanBot</span>
-          </Link>
-
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex gap-8 items-center" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-            <li><Link href="" className="nav-link">Home</Link></li>
-            <li><button onClick={() => scrollToSection('features')} className="nav-link bg-transparent border-none cursor-pointer">Features</button></li>
-            <li><button onClick={() => scrollToSection('showcase')} className="nav-link bg-transparent border-none cursor-pointer">Showcase</button></li>
-            <li><Link href="/prayer" className="nav-link">Prayer Times</Link></li>
-            <li><Link href="/privacy" className="nav-link">Privacy</Link></li>
-            <li><Link href="/contact" className="nav-link">Contact</Link></li>
-          </ul>
-
-          {/* CTA & Menu Toggle */}
-          <div className="flex items-center gap-4">
-            <Link href="/app" className="btn-primary hidden sm:flex items-center gap-1">
-              Launch App
-            </Link>
+      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${scrollPosition > 20 ? 'py-3' : 'py-5'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="glass-nav rounded-2xl px-6 h-16 flex justify-between items-center border border-[var(--border-subtle)]">
             
-            <button
-              className="md:hidden bg-transparent border-none cursor-pointer"
-              style={{ color: 'var(--text-primary)' }}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Logo */}
+            <Link href="" className="flex items-center gap-3 group" style={{ textDecoration: 'none' }}>
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-[var(--surface-raised)] border border-[var(--border-subtle)] group-hover:border-[var(--text-primary)] transition-colors">
+                 <Image src="/logo.png" alt="Ramadan Bot Logo" fill className="object-contain p-1" priority />
+              </div>
+              <span className="font-semibold tracking-tight text-[17px]">RamadanBot</span>
+            </Link>
+
+            {/* Desktop Nav */}
+            <ul className="hidden md:flex gap-8 items-center m-0 p-0 list-none">
+              <li><Link href="" className="nav-link">Home</Link></li>
+              <li><button onClick={() => scrollToSection('features')} className="nav-link">Features</button></li>
+              <li><button onClick={() => scrollToSection('showcase')} className="nav-link">Showcase</button></li>
+              <li><Link href="/prayer" className="nav-link">Prayer Times</Link></li>
+              <li><Link href="/privacy" className="nav-link">Privacy</Link></li>
+            </ul>
+
+            {/* CTA & Menu Toggle */}
+            <div className="flex items-center gap-4">
+              <Link href="/app" className="btn-primary hidden sm:flex items-center gap-2 h-10 px-5">
+                Launch App <ArrowRight size={16} />
+              </Link>
+              
+              <button
+                className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-hover)]"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mobile Menu Dropdown */}
-        <div style={{
-          position: 'absolute', top: '64px', left: 0, right: 0,
-          background: 'var(--nav-bg)',
-          backdropFilter: 'saturate(180%) blur(20px)',
-          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-          borderBottom: '1px solid var(--divider)',
-          overflow: 'hidden',
-          transition: 'max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease',
-          maxHeight: isMenuOpen ? '400px' : '0',
-          opacity: isMenuOpen ? 1 : 0,
-        }}>
-          <div className="px-4 py-4 flex flex-col gap-4">
+        <div className={`absolute top-[80px] left-4 right-4 rounded-2xl glass-panel border border-[var(--border-subtle)] overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMenuOpen ? 'max-h-[500px] opacity-100 p-2' : 'max-h-0 opacity-0 p-0 border-none'}`}>
+          <div className="flex flex-col gap-1 p-2">
             <Link href="" className="nav-link-mobile">Home</Link>
             <button onClick={() => scrollToSection('features')} className="nav-link-mobile text-left">Features</button>
             <button onClick={() => scrollToSection('showcase')} className="nav-link-mobile text-left">Showcase</button>
             <Link href="/prayer" className="nav-link-mobile">Prayer Times</Link>
             <Link href="/privacy" className="nav-link-mobile">Privacy</Link>
             <Link href="/contact" className="nav-link-mobile">Contact</Link>
-            <Link href="/app" className="btn-primary text-center mt-2">Launch App</Link>
+            <Link href="/app" className="btn-primary w-full justify-center mt-4 h-12">Launch App</Link>
           </div>
         </div>
       </nav>
 
       <main>
         {/* ════════════════════════════════════════════════
-            HERO SECTION
+            HERO SECTION (SILICON VALLEY STYLE)
         ════════════════════════════════════════════════ */}
-        <section className="pt-40 pb-24 px-4 relative flex flex-col items-center justify-center text-center min-h-[90vh]">
-          {/* Ambient Background Blur */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <section className="relative pt-48 pb-32 px-4 flex flex-col items-center justify-center text-center min-h-[100vh] overflow-hidden">
+          {/* Ambient Glows */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--glow-primary)] rounded-full blur-[120px] opacity-20 pointer-events-none animate-pulse-slow" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--glow-secondary)] rounded-full blur-[150px] opacity-20 pointer-events-none" />
 
-          <div className="max-w-4xl mx-auto space-y-8 relative z-10 animate-slide-up">
-            <div className="space-y-4">
-              <h1 className="hero-title">
-                Your Ramadan <br />
-                <span style={{ color: 'var(--text-secondary)' }}>Companion.</span>
-              </h1>
-              <p className="hero-subtitle max-w-2xl mx-auto mt-6">
-                Generate authentic Islamic reflections, create beautiful personalized flyers, and read the Qur'ān with a seamless, professional interface.
-              </p>
+          <div className="max-w-5xl mx-auto relative z-10 flex flex-col items-center">
+            {/* Pill Badge */}
+            <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] backdrop-blur-md">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">Introducing RamadanBot 3.0</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-              <Link href="/app" className="btn-primary flex items-center justify-center gap-2 text-lg px-8 py-4">
-                Start Free <ArrowRight size={20} />
+            <h1 className="hero-title animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+              Elevate your <br className="hidden sm:block" />
+              <span className="text-gradient">Ramadan journey.</span>
+            </h1>
+            
+            <p className="hero-subtitle max-w-2xl mx-auto mt-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              The ultimate digital companion. Generate profound AI reflections, read the Qur'ān with a seamless interface, and create stunning personalized flyers instantly.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-12 animate-fade-in-up w-full sm:w-auto" style={{ animationDelay: '0.3s' }}>
+              <Link href="/app" className="btn-primary flex items-center justify-center gap-2 text-[17px] px-8 h-14 w-full sm:w-auto">
+                Start for free <ArrowRight size={18} />
               </Link>
-              <button onClick={() => scrollToSection('showcase')} className="btn-secondary text-lg px-8 py-4">
-                See In Action
+              <button onClick={() => scrollToSection('showcase')} className="btn-secondary flex items-center justify-center text-[17px] px-8 h-14 w-full sm:w-auto">
+                See it in action
               </button>
             </div>
           </div>
 
-          <div className="absolute bottom-12 flex justify-center w-full animate-bounce">
-            <ChevronDown size={24} color="var(--text-secondary)" />
+          <div className="absolute bottom-12 flex justify-center w-full animate-bounce text-[var(--text-tertiary)]">
+            <ChevronDown size={24} />
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════
-            FEATURES (BENTO GRID)
+            FEATURES (REFINED BENTO GRID)
         ════════════════════════════════════════════════ */}
-        <section id="features" className="py-24 px-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="section-title">Everything you need.</h2>
-              <p className="section-subtitle">Powerful features designed for your spiritual journey.</p>
+        <section id="features" className="py-32 px-4 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="section-title">Everything you need. <br/><span className="text-[var(--text-tertiary)]">Nothing you don't.</span></h2>
             </div>
 
             <div className="bento-grid">
               {/* Feature 1 */}
-              <div className="bento-item col-span-1 md:col-span-2 bg-gradient-to-br from-[var(--glass-bg)] to-transparent">
-                <div className="text-4xl mb-4">🤖</div>
-                <h3 className="bento-title">AI Reflections</h3>
-                <p className="bento-desc">Quranic-based spiritual reflections powered by advanced AI. Generated instantly and deeply personalized for your daily growth.</p>
+              <div className="premium-card col-span-1 md:col-span-2 group">
+                <div className="card-content">
+                  <div className="icon-box mb-6 group-hover:scale-110 transition-transform">🤖</div>
+                  <h3 className="card-title">AI Reflections</h3>
+                  <p className="card-desc max-w-md">Quranic-based spiritual reflections powered by advanced AI. Generated instantly and deeply personalized for your daily growth.</p>
+                </div>
+                <div className="absolute right-0 bottom-0 w-64 h-64 bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none transition-opacity group-hover:opacity-100 opacity-50"></div>
               </div>
 
               {/* Feature 2 */}
-              <div className="bento-item col-span-1">
-                <div className="text-4xl mb-4">📖</div>
-                <h3 className="bento-title">Qur'ān Reader</h3>
-                <p className="bento-desc">Professional 604-page reader with automatic progress saving.</p>
+              <div className="premium-card col-span-1 group">
+                <div className="card-content">
+                  <div className="icon-box mb-6 group-hover:scale-110 transition-transform">📖</div>
+                  <h3 className="card-title">Qur'ān Reader</h3>
+                  <p className="card-desc">Professional 604-page reader with automatic progress saving.</p>
+                </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="bento-item col-span-1">
-                <div className="text-4xl mb-4">✨</div>
-                <h3 className="bento-title">Featured Name</h3>
-                <p className="bento-desc">Every 1080px high-res flyer beautifully embeds your name.</p>
+              <div className="premium-card col-span-1 group">
+                <div className="card-content">
+                  <div className="icon-box mb-6 group-hover:scale-110 transition-transform">✨</div>
+                  <h3 className="card-title">Featured Name</h3>
+                  <p className="card-desc">Every 1080px high-res flyer beautifully embeds your name.</p>
+                </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="bento-item col-span-1">
-                <div className="text-4xl mb-4">📤</div>
-                <h3 className="bento-title">Easy Sharing</h3>
-                <p className="bento-desc">One-tap export to WhatsApp, Instagram, and X.</p>
+              <div className="premium-card col-span-1 group">
+                <div className="card-content">
+                  <div className="icon-box mb-6 group-hover:scale-110 transition-transform">📤</div>
+                  <h3 className="card-title">Easy Sharing</h3>
+                  <p className="card-desc">One-tap stunning export to WhatsApp, Instagram, and X.</p>
+                </div>
               </div>
 
               {/* Feature 5 */}
-              <div className="bento-item col-span-1 md:col-span-2 bg-gradient-to-tr from-[var(--glass-bg)] to-transparent">
-                <div className="text-4xl mb-4">🔥</div>
-                <h3 className="bento-title">Streak Tracking</h3>
-                <p className="bento-desc">Build and maintain your daily reflection streak. A beautiful visual representation of your consistency and accountability.</p>
+              <div className="premium-card col-span-1 md:col-span-2 group">
+                <div className="card-content">
+                  <div className="icon-box mb-6 group-hover:scale-110 transition-transform">🔥</div>
+                  <h3 className="card-title">Streak Tracking</h3>
+                  <p className="card-desc max-w-md">Build and maintain your daily reflection streak. A beautiful visual representation of your consistency and accountability.</p>
+                </div>
+                <div className="absolute left-0 top-0 w-64 h-64 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none transition-opacity group-hover:opacity-100 opacity-50"></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════
-            QUR'AN READER DETAILS
+            QUR'AN READER (ARCHITECTURAL LAYOUT)
         ════════════════════════════════════════════════ */}
-        <section className="py-24 px-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
-          
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="section-title">Qur'ān Reader v3.0</h2>
-              <p className="section-subtitle">A meticulously designed interface for structured reading.</p>
-            </div>
+        <section className="py-32 px-4 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              
+              <div className="space-y-12">
+                <div>
+                  <h2 className="section-title text-left">Structured reading, <br/><span className="text-[var(--text-secondary)]">beautifully designed.</span></h2>
+                  <p className="section-subtitle mt-6 text-left max-w-lg">
+                    A meticulously crafted interface that transforms your daily reading into a seamless, focus-driven habit.
+                  </p>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <div className="bento-item">
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">📖</div>
-                  <div>
-                    <h3 className="bento-title mb-2">29-Day Structure</h3>
-                    <p className="bento-desc">Complete the full 604-page Qur'ān over Ramadan with perfectly balanced daily assignments ensuring spiritual progression.</p>
+                <div className="space-y-8">
+                  <div className="flex gap-5">
+                    <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)]">
+                      <span className="font-semibold text-sm">01</span>
+                    </div>
+                    <div>
+                      <h4 className="text-[19px] font-semibold tracking-tight text-[var(--text-primary)]">29-Day Structure</h4>
+                      <p className="mt-2 text-[var(--text-secondary)] leading-relaxed">Complete the 604 pages with balanced daily assignments ensuring perfect progression.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-5">
+                    <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)]">
+                      <span className="font-semibold text-sm">02</span>
+                    </div>
+                    <div>
+                      <h4 className="text-[19px] font-semibold tracking-tight text-[var(--text-primary)]">5 Daily Phases</h4>
+                      <p className="mt-2 text-[var(--text-secondary)] leading-relaxed">Read aligned with prayer times: Fajr, Dhuhr, Asr, Maghrib, Isha. Optimized for 10 minutes.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-5">
+                    <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-full bg-[var(--surface-raised)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)]">
+                      <span className="font-semibold text-sm">03</span>
+                    </div>
+                    <div>
+                      <h4 className="text-[19px] font-semibold tracking-tight text-[var(--text-primary)]">Cloud Sync Saving</h4>
+                      <p className="mt-2 text-[var(--text-secondary)] leading-relaxed">Position saves automatically every 5 seconds. Resume exactly where you left off.</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bento-item">
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">🎯</div>
-                  <div>
-                    <h3 className="bento-title mb-2">5 Daily Phases</h3>
-                    <p className="bento-desc">Read aligned with prayer times: Fajr, Dhuhr, Asr, Maghrib, Isha. Each phase is optimized for 10-15 minutes.</p>
+              {/* Stats Card */}
+              <div className="premium-card h-full flex flex-col justify-center border border-[var(--border-subtle)] bg-[var(--surface-base)] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[80px]" />
+                <h3 className="text-2xl font-semibold mb-8 text-[var(--text-primary)] tracking-tight">Distribution Metrics</h3>
+                
+                <div className="space-y-6">
+                  <div className="p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)]">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-4">Days 1-20: Standard Pace</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center pb-3 border-b border-[var(--border-subtle)]">
+                        <span className="text-[var(--text-secondary)] text-sm">Daily Quota</span>
+                        <span className="font-medium text-[var(--text-primary)]">20 pages</span>
+                      </div>
+                      <div className="flex justify-between items-center pb-3 border-b border-[var(--border-subtle)]">
+                        <span className="text-[var(--text-secondary)] text-sm">Per Phase</span>
+                        <span className="font-medium text-[var(--text-primary)]">4 pages</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[var(--text-secondary)] text-sm">Total Range</span>
+                        <span className="font-medium text-[var(--text-primary)]">400 pages</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border-subtle)]">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-4">Days 21-29: Final Push</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center pb-3 border-b border-[var(--border-subtle)]">
+                        <span className="text-[var(--text-secondary)] text-sm">Daily Quota</span>
+                        <span className="font-medium text-[var(--text-primary)]">22-23 pages</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[var(--text-secondary)] text-sm">Per Phase</span>
+                        <span className="font-medium text-[var(--text-primary)]">5 pages</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bento-item">
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">💾</div>
-                  <div>
-                    <h3 className="bento-title mb-2">Auto-Saving</h3>
-                    <p className="bento-desc">Your reading position saves automatically every 5 seconds. Resume exactly where you left off across all devices.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bento-item">
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">🎨</div>
-                  <div>
-                    <h3 className="bento-title mb-2">Professional UI</h3>
-                    <p className="bento-desc">Dark mode, zoom controls, swipe navigation, and intuitive dropdowns. Optimized for phones, tablets, and desktops.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bento-item border border-[var(--divider)]">
-              <h3 className="text-2xl font-semibold mb-6 text-center">Reading Distribution</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="p-6 rounded-2xl" style={{ backgroundColor: 'var(--bg-main)' }}>
-                  <h4 className="font-semibold mb-3">Days 1-20: Standard Pace</h4>
-                  <ul className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    <li className="flex justify-between border-b border-[var(--divider)] pb-2"><span>Daily Quota</span> <span style={{ color: 'var(--text-primary)' }}>20 pages</span></li>
-                    <li className="flex justify-between border-b border-[var(--divider)] pb-2"><span>Per Phase</span> <span style={{ color: 'var(--text-primary)' }}>4 pages</span></li>
-                    <li className="flex justify-between"><span>Total Range</span> <span style={{ color: 'var(--text-primary)' }}>400 pages</span></li>
-                  </ul>
-                </div>
-                <div className="p-6 rounded-2xl" style={{ backgroundColor: 'var(--bg-main)' }}>
-                  <h4 className="font-semibold mb-3">Days 21-29: Final Push</h4>
-                  <ul className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    <li className="flex justify-between border-b border-[var(--divider)] pb-2"><span>Daily Quota</span> <span style={{ color: 'var(--text-primary)' }}>22-23 pages</span></li>
-                    <li className="flex justify-between border-b border-[var(--divider)] pb-2"><span>Per Phase</span> <span style={{ color: 'var(--text-primary)' }}>5 pages</span></li>
-                    <li className="flex justify-between"><span>Total Range</span> <span style={{ color: 'var(--text-primary)' }}>204 pages</span></li>
-                  </ul>
-                </div>
-              </div>
             </div>
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════
-            SHOWCASE (APPLE-STYLE HARDWARE MOCKUPS)
+            SHOWCASE (ULTRA-PREMIUM HARDWARE MOCKUPS)
         ════════════════════════════════════════════════ */}
-        <section id="showcase" className="py-24" style={{ backgroundColor: 'var(--bg-secondary)', overflow: 'hidden' }}>
+        <section id="showcase" className="py-32 overflow-hidden border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
+            <div className="text-center mb-20">
               <h2 className="section-title">See it in action.</h2>
-              <p className="section-subtitle">A stunning experience on every device.</p>
+              <p className="section-subtitle mt-4">A stunning, native-feeling experience across all your devices.</p>
             </div>
 
-            {/* Horizontal scroll container for phones */}
-            <div className="phone-gallery-container flex md:justify-center overflow-x-auto snap-x snap-mandatory gap-8 pb-12 pt-4 px-4 -mx-4">
+            <div className="phone-gallery-container flex md:justify-center overflow-x-auto snap-x snap-mandatory gap-10 pb-16 pt-8 px-8 -mx-8">
               {[
                 { title: 'Dashboard', image: '/login.png', desc: 'Stats & Streaks' },
                 { title: 'AI Generator', image: '/generate.png', desc: 'Instant Creation' },
                 { title: 'Share Hub', image: '/share.png', desc: 'High-Res Export' },
-                { title: 'Qur\'ān Guide', image: '/Guide.jpg', desc: '29-Day Plan' },
                 { title: 'Reader UI', image: '/Interface.jpg', desc: 'Smooth Navigation' }
               ].map((screen, idx) => (
-                <div key={idx} className="flex-shrink-0 snap-center flex flex-col items-center">
+                <div key={idx} className="flex-shrink-0 snap-center flex flex-col items-center group">
                   
-                  {/* CSS iPhone Frame */}
-                  <div className="iphone-mockup mb-8 shadow-2xl transition-transform duration-500 hover:-translate-y-2">
+                  {/* Premium CSS iPhone Frame */}
+                  <div className="premium-iphone-mockup mb-8 transition-all duration-700 ease-out group-hover:-translate-y-4 group-hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
+                    <div className="hardware-buttons"></div>
                     <div className="dynamic-island" />
-                    <div className="iphone-screen">
-                      {/* Using filler color if image isn't available, but standard Next Image tags are here */}
+                    <div className="iphone-screen bg-[var(--surface-base)]">
                       <Image 
                         src={screen.image} 
                         alt={screen.title} 
                         width={300} 
                         height={650} 
-                        className="w-full h-full object-cover"
-                        style={{ backgroundColor: 'var(--bg-secondary)' }}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                        style={{ backgroundColor: 'var(--surface-base)' }}
                       />
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{screen.title}</h3>
-                  <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{screen.desc}</p>
+                  <h3 className="text-[17px] font-semibold tracking-tight text-[var(--text-primary)]">{screen.title}</h3>
+                  <p className="text-[15px] mt-2 text-[var(--text-secondary)]">{screen.desc}</p>
                 </div>
               ))}
             </div>
@@ -323,29 +334,29 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════
-            WHY CHOOSE US
+            WHY CHOOSE US (MINIMALIST GRID)
         ════════════════════════════════════════════════ */}
-        <section id="why" className="py-24 px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="section-title">Built for your journey.</h2>
+        <section id="why" className="py-32 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-20">
+              <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-[var(--text-primary)]">Built for focus.<br/><span className="text-[var(--text-tertiary)]">Engineered for peace.</span></h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
               {[
-                { title: 'Authentically Islamic', desc: 'Grounded in Quranic verses and teachings, not generic AI content.' },
-                { title: 'Private & Secure', desc: 'Just your name and PIN. No ads, no tracking. Privacy guaranteed.' },
-                { title: 'Always Free', desc: 'Full access to all features. No premium tiers, forever free.' },
-                { title: 'Community Focused', desc: 'Share your journey, inspire others, build accountability.' },
-                { title: 'Premium Design', desc: 'Professional 1080px flyers with your name elegantly featured.' },
-                { title: 'Offline Capable', desc: 'Install as a PWA. Works offline, syncs when connected.' }
+                { title: 'Authentically Islamic', desc: 'Grounded in Quranic verses and teachings, eliminating generic AI hallucinations.' },
+                { title: 'Absolute Privacy', desc: 'Just your name and PIN. Zero tracking, zero ads. Your data never leaves your control.' },
+                { title: 'Always Free', desc: 'Full unlimited access to all features. No premium tiers, no paywalls, forever.' },
+                { title: 'Community Driven', desc: 'Share your reflections, inspire your circle, and build collective accountability.' },
+                { title: 'Premium Export', desc: 'Studio-quality 1080px typographic flyers with your name elegantly embedded.' },
+                { title: 'PWA Ready', desc: 'Install instantly to your home screen. Works flawlessly offline and syncs in the background.' }
               ].map((item, idx) => (
-                <div key={idx} className="flex flex-col">
-                  <div className="w-12 h-12 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--row-today)', color: 'var(--accent)' }}>
-                    <Plus size={20} />
+                <div key={idx} className="flex flex-col group">
+                  <div className="w-10 h-10 mb-6 flex items-center justify-center text-[var(--text-primary)] border border-[var(--border-subtle)] rounded-lg bg-[var(--surface-raised)] transition-colors group-hover:bg-[var(--text-primary)] group-hover:text-[var(--bg-base)]">
+                    <Plus size={18} />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
+                  <h3 className="text-[19px] font-semibold mb-3 tracking-tight text-[var(--text-primary)]">{item.title}</h3>
+                  <p className="text-[15px] leading-relaxed text-[var(--text-secondary)]">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -353,28 +364,32 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════
-            FAQ
+            FAQ (SMOOTH ACCORDION)
         ════════════════════════════════════════════════ */}
-        <section id="faq" className="py-24 px-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <section id="faq" className="py-32 px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="section-title">Frequently asked.</h2>
+              <h2 className="section-title">Common questions.</h2>
             </div>
 
-            <div className="space-y-0">
+            <div className="space-y-4">
               {[
-                { q: 'How does the AI generate reflections?', a: 'We use advanced AI trained on Islamic knowledge to generate authentic Quranic-based reflections. Each one is unique, meaningful, and spiritually resonant.' },
-                { q: 'Can I preview before sharing?', a: 'Yes. The flyer preview shows exactly how it will look. You can regenerate if you want a different reflection.' },
-                { q: 'How do I install as an app?', a: 'Visit our site on your mobile browser. Tap "Add to Home Screen" in your share menu, and it installs like a native app.' },
-                { q: 'Will my personal info appear on flyers?', a: 'Only your name appears. No email, phone, or sensitive data is included. Your privacy is paramount.' },
-                { q: 'Is there a cost involved?', a: 'No. Ramadan Bot is completely free. Unlimited sharing and beautiful designs without any premium paywalls.' }
+                { q: 'How does the AI generate reflections?', a: 'We leverage advanced LLMs exclusively prompted with authenticated Islamic knowledge and Tafsir to generate profound, contextually accurate Quranic reflections.' },
+                { q: 'Can I preview before sharing?', a: 'Absolutely. The studio preview renders exactly how your 1080px flyer will export. You can regenerate infinitely until it resonates with you.' },
+                { q: 'How do I install the app?', a: 'Simply open RamadanBot in Safari or Chrome on your mobile device, tap "Share", and select "Add to Home Screen". It functions identically to a native app.' },
+                { q: 'Is my personal data secure?', a: 'We collect zero sensitive data. Only your display name is stored locally or via encrypted sync to render your flyers. Privacy is our architectural foundation.' },
+                { q: 'Are there hidden costs?', a: 'RamadanBot is a 100% free utility built for the ummah. Unlimited generations, unlimited reading, zero cost.' }
               ].map((item, idx) => (
-                <details key={idx} className="group py-6 border-b" style={{ borderColor: 'var(--divider)', cursor: 'pointer' }}>
-                  <summary className="flex justify-between items-center font-medium list-none outline-none">
-                    <span className="text-lg">{item.q}</span>
-                    <span className="transition-transform duration-300 group-open:rotate-45 text-2xl" style={{ color: 'var(--text-secondary)' }}>+</span>
+                <details key={idx} className="faq-item group bg-[var(--surface-raised)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden transition-all duration-300">
+                  <summary className="flex justify-between items-center font-medium p-6 cursor-pointer list-none outline-none">
+                    <span className="text-[17px] tracking-tight text-[var(--text-primary)]">{item.q}</span>
+                    <span className="transform transition-transform duration-300 group-open:rotate-45 flex items-center justify-center w-8 h-8 rounded-full bg-[var(--surface-base)] text-[var(--text-secondary)]">
+                      <Plus size={16} />
+                    </span>
                   </summary>
-                  <p className="mt-4 text-base leading-relaxed animate-fadeIn" style={{ color: 'var(--text-secondary)' }}>{item.a}</p>
+                  <div className="px-6 pb-6 pt-0 text-[15px] leading-relaxed text-[var(--text-secondary)]">
+                    {item.a}
+                  </div>
                 </details>
               ))}
             </div>
@@ -384,47 +399,44 @@ export default function HomePage() {
         {/* ════════════════════════════════════════════════
             FINAL CTA
         ════════════════════════════════════════════════ */}
-        <section className="py-32 px-4 text-center">
-          <div className="max-w-3xl mx-auto space-y-8 animate-slide-up">
-            <h2 className="text-5xl sm:text-7xl font-semibold tracking-tight">
-              Start your journey.
+        <section className="py-40 px-4 text-center relative overflow-hidden border-t border-[var(--border-subtle)] bg-[var(--surface-raised)]">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUwLDE1MCwxNTAsMC4xKSIvPjwvc3ZnPg==')] opacity-50" />
+          
+          <div className="max-w-3xl mx-auto relative z-10 flex flex-col items-center">
+            <h2 className="text-5xl sm:text-7xl font-semibold tracking-tighter text-[var(--text-primary)] mb-6">
+              Begin your <br/> spiritual <span className="text-gradient">sprint.</span>
             </h2>
-            <p className="text-xl max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-              Create your first reflection today. Free to use, no account required.
+            <p className="text-xl max-w-xl mx-auto text-[var(--text-secondary)] mb-12 font-medium">
+              Start building your streak today. Zero friction, instant access.
             </p>
-            <div className="pt-8">
-              <Link href="/app" className="btn-primary flex items-center justify-center gap-2 text-lg px-10 py-5 mx-auto w-max">
-                Launch App Now <ArrowUpRight size={20} />
-              </Link>
-            </div>
+            <Link href="/app" className="btn-primary flex items-center justify-center gap-2 text-lg px-10 h-16 w-max shadow-2xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-shadow">
+              Launch App <ArrowUpRight size={20} />
+            </Link>
           </div>
         </section>
       </main>
 
       {/* ════════════════════════════════════════════════
-          PREMIUM FOOTER
+          MINIMALIST FOOTER
       ════════════════════════════════════════════════ */}
-      <footer style={{
-        borderTop: '1px solid var(--divider)',
-        padding: '60px 24px 40px',
-        background: 'var(--footer-bg)',
-        position: 'relative', zIndex: 10,
-      }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-            <div>
-              <div className="flex items-center gap-2 mb-6">
-                <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
-                <span className="font-semibold text-lg">RamadanBot</span>
+      <footer className="border-t border-[var(--border-subtle)] pt-20 pb-10 px-6 bg-[var(--bg-base)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="relative w-6 h-6 rounded flex items-center justify-center bg-[var(--text-primary)]">
+                  <Image src="/logo.png" alt="Logo" width={16} height={16} className="object-contain invert dark:invert-0" />
+                </div>
+                <span className="font-semibold tracking-tight text-[17px]">RamadanBot</span>
               </div>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                Your ultimate companion for spiritual growth, authentic reflections, and seamless Qur'ān reading.
+              <p className="text-[15px] leading-relaxed text-[var(--text-secondary)] max-w-sm">
+                The modern digital companion for spiritual growth, authentic reflections, and seamless Qur'ān reading.
               </p>
             </div>
 
             <div>
-              <p className="font-semibold mb-4 text-sm tracking-wide">Product</p>
-              <ul className="space-y-3 text-sm flex flex-col" style={{ color: 'var(--text-secondary)' }}>
+              <p className="font-medium mb-6 text-[15px] text-[var(--text-primary)]">Product</p>
+              <ul className="space-y-4 text-[14px] flex flex-col text-[var(--text-secondary)]">
                 <li><Link href="/app" className="footer-link">Launch App</Link></li>
                 <li><button onClick={() => scrollToSection('features')} className="footer-link">Features</button></li>
                 <li><Link href="/prayer" className="footer-link">Prayer Times</Link></li>
@@ -432,29 +444,31 @@ export default function HomePage() {
             </div>
 
             <div>
-              <p className="font-semibold mb-4 text-sm tracking-wide">Company</p>
-              <ul className="space-y-3 text-sm flex flex-col" style={{ color: 'var(--text-secondary)' }}>
+              <p className="font-medium mb-6 text-[15px] text-[var(--text-primary)]">Company</p>
+              <ul className="space-y-4 text-[14px] flex flex-col text-[var(--text-secondary)]">
                 <li><Link href="" className="footer-link">Home</Link></li>
-                <li><Link href="/contact" className="footer-link">Contact Us</Link></li>
-                <li><Link href="/privacy" className="footer-link">Privacy Policy</Link></li>
+                <li><Link href="/contact" className="footer-link">Contact</Link></li>
+                <li><Link href="/privacy" className="footer-link">Privacy</Link></li>
               </ul>
             </div>
 
             <div>
-              <p className="font-semibold mb-4 text-sm tracking-wide">Connect</p>
-              <ul className="space-y-3 text-sm flex flex-col" style={{ color: 'var(--text-secondary)' }}>
-                <li><a href="" target="_blank" rel="noopener noreferrer" className="footer-link">X (Twitter)</a></li>
-                <li><a href="" target="_blank" rel="noopener noreferrer" className="footer-link">TikTok</a></li>
+              <p className="font-medium mb-6 text-[15px] text-[var(--text-primary)]">Connect</p>
+              <ul className="space-y-4 text-[14px] flex flex-col text-[var(--text-secondary)]">
+                <li><a href="" target="_blank" rel="noopener noreferrer" className="footer-link flex items-center gap-1">X (Twitter) <ArrowUpRight size={12}/></a></li>
+                <li><a href="" target="_blank" rel="noopener noreferrer" className="footer-link flex items-center gap-1">TikTok <ArrowUpRight size={12}/></a></li>
               </ul>
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid var(--divider)', paddingTop: '24px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-              Built with love for the ummah by Abdallah Nangere
+          <div className="border-t border-[var(--border-subtle)] pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-[13px] text-[var(--text-tertiary)]">
+              Designed & Built by Abdallah Nangere
             </p>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-              Copyright © {new Date().getFullYear()} RamadanBot. All rights reserved.
+            <p className="text-[13px] text-[var(--text-tertiary)] flex items-center gap-2">
+              <span>© {new Date().getFullYear()} RamadanBot.</span>
+              <span className="w-1 h-1 rounded-full bg-[var(--border-subtle)]"></span>
+              <span>All rights reserved.</span>
             </p>
           </div>
         </div>
@@ -463,165 +477,310 @@ export default function HomePage() {
   );
 }
 
-// Universal Apple CSS variables & styles
+// Universal Silicon Valley Premium CSS variables & styles
 function getGlobalCSS() {
   return `
     @import url('');
 
     :root {
-      /* Apple Light Mode Variables */
-      --bg-main: #F5F5F7;
-      --bg-secondary: #FFFFFF;
-      --text-primary: #1D1D1F;
-      --text-secondary: #86868B;
-      --glass-bg: rgba(255, 255, 255, 0.65);
-      --glass-border: rgba(0, 0, 0, 0.08);
-      --accent: #0071E3;
-      --nav-bg: rgba(255, 255, 255, 0.72);
-      --footer-bg: #F5F5F7;
-      --divider: rgba(0, 0, 0, 0.08);
-      --row-today: rgba(0, 113, 227, 0.08);
-      --device-frame: #E5E5EA;
+      /* Silicon Valley Light Mode - Ultra Clean */
+      --bg-base: #FFFFFF;
+      --surface-base: #FAFAFA;
+      --surface-raised: #FFFFFF;
+      --surface-hover: #F4F4F5;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --text-primary: #111827;
+      --text-secondary: #4B5563;
+      --text-tertiary: #9CA3AF;
       
-      --sf-pro: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+      --glow-primary: rgba(16, 185, 129, 0.15); /* Emerald */
+      --glow-secondary: rgba(59, 130, 246, 0.15); /* Blue */
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        /* Apple Dark Mode Variables */
-        --bg-main: #000000;
-        --bg-secondary: #1C1C1E;
-        --text-primary: #F5F5F7;
-        --text-secondary: #86868B;
-        --glass-bg: rgba(28, 28, 30, 0.65);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --accent: #0A84FF;
-        --nav-bg: rgba(0, 0, 0, 0.72);
-        --footer-bg: #111111;
-        --divider: rgba(255, 255, 255, 0.1);
-        --row-today: rgba(10, 132, 255, 0.15);
-        --device-frame: #333336;
+        /* Silicon Valley Dark Mode - Linear/Vercel Inspired */
+        --bg-base: #000000;
+        --surface-base: #0A0A0A;
+        --surface-raised: #111111;
+        --surface-hover: #1A1A1A;
+        --border-subtle: rgba(255, 255, 255, 0.1);
+        --text-primary: #F9FAFB;
+        --text-secondary: #9CA3AF;
+        --text-tertiary: #4B5563;
+        
+        --glow-primary: rgba(16, 185, 129, 0.2);
+        --glow-secondary: rgba(59, 130, 246, 0.2);
       }
     }
 
     *, *::before, *::after { box-sizing: border-box; }
     
     body { 
-      font-family: var(--sf-pro);
+      font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background: var(--bg-main);
+      background: var(--bg-base);
     }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(134, 134, 139, 0.4); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(134, 134, 139, 0.6); }
+    ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
-    /* Typography Overrides */
-    .hero-title { font-size: clamp(48px, 8vw, 80px); font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; }
-    .hero-subtitle { font-size: clamp(20px, 4vw, 28px); font-weight: 500; letter-spacing: -0.01em; color: var(--text-secondary); }
-    .section-title { font-size: clamp(36px, 5vw, 56px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
-    .section-subtitle { font-size: clamp(18px, 3vw, 24px); color: var(--text-secondary); letter-spacing: -0.01em; }
+    /* Premium Typography */
+    .hero-title { 
+      font-size: clamp(56px, 8vw, 96px); 
+      font-weight: 700; 
+      letter-spacing: -0.05em; 
+      line-height: 1.05; 
+    }
+    .hero-subtitle { 
+      font-size: clamp(18px, 3vw, 22px); 
+      font-weight: 400; 
+      letter-spacing: -0.01em; 
+      line-height: 1.6;
+      color: var(--text-secondary); 
+    }
+    .section-title { 
+      font-size: clamp(40px, 5vw, 56px); 
+      font-weight: 600; 
+      letter-spacing: -0.04em; 
+      line-height: 1.1; 
+    }
+    .section-subtitle { 
+      font-size: clamp(18px, 3vw, 22px); 
+      color: var(--text-secondary); 
+      letter-spacing: -0.01em; 
+      font-weight: 400;
+    }
+    .text-gradient {
+      background: linear-gradient(to right, var(--text-primary), var(--text-tertiary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-    /* Buttons */
+    /* Premium Buttons */
     .btn-primary {
       background: var(--text-primary);
-      color: var(--bg-main);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 980px;
+      color: var(--bg-base);
+      border: 1px solid transparent;
+      border-radius: 9999px;
       font-weight: 500;
-      font-size: 15px;
       cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
     }
-    .btn-primary:active { transform: scale(0.97); opacity: 0.8; }
+    .btn-primary:hover { 
+      transform: scale(1.02); 
+      opacity: 0.9; 
+    }
+    .btn-primary:active { 
+      transform: scale(0.98); 
+    }
     
     .btn-secondary {
-      background: transparent;
+      background: var(--surface-raised);
       color: var(--text-primary);
-      border: 1px solid var(--text-primary);
-      padding: 10px 20px;
-      border-radius: 980px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
       font-weight: 500;
-      font-size: 15px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
     }
-    .btn-secondary:active { transform: scale(0.97); background: var(--text-primary); color: var(--bg-main); }
+    .btn-secondary:hover { 
+      background: var(--surface-hover);
+      border-color: var(--text-tertiary);
+    }
+    .btn-secondary:active { 
+      transform: scale(0.98); 
+    }
 
-    /* Links */
-    .nav-link { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 400; transition: color 0.2s ease; }
+    /* Navigation */
+    .glass-nav {
+      background: rgba(var(--surface-raised-rgb), 0.7);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+    }
+    .glass-panel {
+      background: var(--surface-raised);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    
+    .nav-link { 
+      color: var(--text-secondary); 
+      text-decoration: none; 
+      font-size: 14px; 
+      font-weight: 500; 
+      transition: color 0.2s ease; 
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
     .nav-link:hover { color: var(--text-primary); }
-    .nav-link-mobile { color: var(--text-primary); text-decoration: none; font-size: 20px; font-weight: 500; padding: 8px 0; border-bottom: 1px solid var(--divider); }
-    .footer-link { background: transparent; border: none; padding: 0; cursor: pointer; text-align: left; transition: color 0.2s ease; }
+    .nav-link-mobile { 
+      color: var(--text-secondary); 
+      text-decoration: none; 
+      font-size: 16px; 
+      font-weight: 500; 
+      padding: 12px 16px; 
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      transition: all 0.2s;
+    }
+    .nav-link-mobile:hover { 
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .footer-link { 
+      background: transparent; 
+      border: none; 
+      padding: 0; 
+      cursor: pointer; 
+      text-align: left; 
+      transition: color 0.2s ease; 
+    }
     .footer-link:hover { color: var(--text-primary); }
 
-    /* Bento Grid System */
+    /* Advanced Bento Grid */
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(1, 1fr);
-      gap: 20px;
+      gap: 24px;
     }
     @media (min-width: 768px) {
       .bento-grid { grid-template-columns: repeat(3, 1fr); }
     }
-    .bento-item {
-      background: var(--bg-main);
+    .premium-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-subtle);
       border-radius: 32px;
-      padding: 32px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      overflow: hidden;
+      padding: 40px;
       position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    .bento-item:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-    .bento-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
-    .bento-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+    .premium-card:hover { 
+      border-color: rgba(255,255,255,0.2); 
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); 
+    }
+    /* Inner subtle glow border trick */
+    .premium-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      padding: 1px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .card-content { position: relative; z-index: 10; }
+    .icon-box {
+      font-size: 28px;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+    }
+    .card-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.02em; color: var(--text-primary); }
+    .card-desc { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
 
-    /* Custom CSS iPhone Mockup */
-    .iphone-mockup {
+    /* Ultra-Premium CSS iPhone Mockup (Inspired by Apple/Linear) */
+    .premium-iphone-mockup {
       position: relative;
-      width: 260px;
-      height: 560px;
-      border: 12px solid var(--device-frame);
-      border-radius: 48px;
-      background: var(--bg-main);
-      overflow: hidden;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.1);
+      width: 300px;
+      height: 620px;
+      border-radius: 56px;
+      background: var(--surface-raised);
+      padding: 12px;
+      box-shadow: 
+        inset 0 0 0 1px var(--border-subtle),
+        inset 0 4px 10px rgba(255,255,255,0.05),
+        0 20px 40px -20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Outer metal rim highlight */
+    .premium-iphone-mockup::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 57px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 20%, rgba(255,255,255,0) 80%, rgba(255,255,255,0.1) 100%);
+      z-index: -1;
+    }
+    .hardware-buttons {
+      position: absolute;
+      left: -2px;
+      top: 120px;
+      width: 3px;
+      height: 30px;
+      background: var(--border-subtle);
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 50px 0 0 var(--border-subtle), 0 100px 0 0 var(--border-subtle);
     }
     .dynamic-island {
       position: absolute;
-      top: 10px;
+      top: 24px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
-      height: 24px;
+      width: 100px;
+      height: 30px;
       background: #000;
       border-radius: 20px;
       z-index: 20;
+      box-shadow: inset 0 -1px 2px rgba(255,255,255,0.1);
     }
     .iphone-screen {
       width: 100%;
       height: 100%;
-      border-radius: 36px;
+      border-radius: 44px;
       overflow: hidden;
       position: relative;
+      border: 1px solid var(--border-subtle);
     }
 
-    /* Scroll Snapping for Mobile Gallery */
+    /* Scroll Snapping */
     .phone-gallery-container {
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
     .phone-gallery-container::-webkit-scrollbar { display: none; }
 
+    /* FAQ details native styling removal */
+    .faq-item summary::-webkit-details-marker { display: none; }
+    
     /* Animations */
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .animate-slide-up { animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeInUp { 
+      from { opacity: 0; transform: translateY(24px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    @keyframes pulseSlow {
+      0%, 100% { opacity: 0.15; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(1.05); }
+    }
+    .animate-fade-in-up { 
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
+    .animate-pulse-slow {
+      animation: pulseSlow 8s ease-in-out infinite;
+    }
   `;
 }
