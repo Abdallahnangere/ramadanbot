@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS quran_reading_history (
 -- Admin broadcast messages (v3.0+ feature)
 CREATE TABLE IF NOT EXISTS broadcast_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  admin_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  admin_id UUID REFERENCES users(id) ON DELETE SET NULL,
   message TEXT NOT NULL,
   action_text VARCHAR(50),
   action_url TEXT,

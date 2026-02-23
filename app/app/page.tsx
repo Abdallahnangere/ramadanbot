@@ -150,13 +150,12 @@ export default function HomeApp() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const ua = navigator.userAgent || '';
-    // Check for Android OS - broader detection that works on mobile and desktop Android
+    const ua = navigator.userAgent;
     const isAndroid = /android/i.test(ua);
-    // Only skip if it's a native app webview (not a browser)
-    const isNativeWebView = /wv/.test(ua) && !/Chrome|Firefox|Safari/.test(ua);
+    const isWebView = /wv/.test(ua) || /Version\/[\d.]+.*Chrome\/[\d.]+ Mobile/.test(ua);
+    const shouldRedirect = isAndroid && !isWebView;
 
-    if (!isAndroid || isNativeWebView) return;
+    if (!shouldRedirect) return;
 
     const intentUrl = 'intent://ramadanbot.app/app#Intent;scheme=https;package=app.ramadanbot.twa;end';
     const playUrl = 'https://play.google.com/store/apps/details?id=app.ramadanbot.twa';
