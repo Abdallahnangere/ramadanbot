@@ -112,6 +112,7 @@
     .rb-hero-glow-sec{position:absolute;bottom:5%;left:0;width:380px;height:380px;background:radial-gradient(circle,var(--em-dim) 0%,transparent 70%);pointer-events:none;border-radius:50%;}
 
     .rb-hero-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:start;position:relative;z-index:2;}
+    @media(min-width:768px){.rb-hero-grid{grid-template-columns:1fr 1fr;gap:40px;align-items:center;}}
     @media(min-width:1024px){.rb-hero-grid{grid-template-columns:1fr 1fr;gap:56px;align-items:center;}}
 
     .rb-hero-text{display:flex;flex-direction:column;align-items:flex-start;gap:20px;}

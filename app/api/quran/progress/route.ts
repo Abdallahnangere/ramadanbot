@@ -48,9 +48,18 @@ export async function GET(request: NextRequest) {
     const totalPhases = 145; // 29 days × 5 phases = 145
     const completionPercentage = Math.round((totalCompletedPhases / totalPhases) * 100);
 
+    // Calculate current day based on completed phases (always recalculate, don't use stored value)
+    let calculatedCurrentDay = 1;
+    if (completedPhases.length > 0) {
+      const uniqueDays = new Set(completedPhases.map(p => p.day));
+      const maxCompletedDay = Math.max(...Array.from(uniqueDays));
+      // Current day is the next day after all completed days, or 29 if all done
+      calculatedCurrentDay = Math.min(maxCompletedDay + 1, 29);
+    }
+
     return NextResponse.json({
       success: true,
-      currentDay: progress.current_day,
+      currentDay: calculatedCurrentDay,
       currentPhase: progress.current_phase,
       lastReadAt: progress.last_read_at,
       completedPhases,

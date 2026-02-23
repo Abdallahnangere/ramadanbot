@@ -9,9 +9,10 @@ export async function POST(request: NextRequest) {
     let finalAdminId = adminId;
     
     if (!finalAdminId) {
+      // Look for admin or super users
       const adminLookup = await pool.query(
-        'SELECT id FROM users WHERE role = $1 LIMIT 1',
-        ['admin']
+        `SELECT id FROM users WHERE role = $1 OR role = $2 ORDER BY created_at ASC LIMIT 1`,
+        ['admin', 'super']
       );
       
       if (adminLookup.rows && adminLookup.rows.length > 0) {
@@ -21,18 +22,26 @@ export async function POST(request: NextRequest) {
 
     if (!finalAdminId) {
       return NextResponse.json(
-        { success: false, error: 'No admin user found in database' },
+        { success: false, error: 'No admin user found in database. Please ensure at least one admin user exists.' },
         { status: 400 }
       );
     }
 
-    // Verify the user is actually an admin
+    // Verify the user exists and has proper role
     const adminCheck = await pool.query(
-      'SELECT role FROM users WHERE id = $1',
+      `SELECT id, role FROM users WHERE id = $1`,
       [finalAdminId]
     );
 
-    if (!adminCheck.rows || adminCheck.rows[0]?.role !== 'admin') {
+    if (!adminCheck.rows || adminCheck.rows.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Admin user not found. Please verify the user exists.' },
+        { status: 403 }
+      );
+    }
+
+    const adminRole = adminCheck.rows[0].role;
+    if (adminRole !== 'admin' && adminRole !== 'super') {
       return NextResponse.json(
         { success: false, error: 'Unauthorized: Admin access required' },
         { status: 403 }

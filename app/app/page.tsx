@@ -151,10 +151,12 @@ export default function HomeApp() {
     if (typeof window === 'undefined') return;
 
     const ua = navigator.userAgent || '';
+    // Check for Android OS - broader detection that works on mobile and desktop Android
     const isAndroid = /android/i.test(ua);
-    const isWebView = /wv/.test(ua);
+    // Only skip if it's a native app webview (not a browser)
+    const isNativeWebView = /wv/.test(ua) && !/Chrome|Firefox|Safari/.test(ua);
 
-    if (!isAndroid || isWebView) return;
+    if (!isAndroid || isNativeWebView) return;
 
     const intentUrl = 'intent://ramadanbot.app/app#Intent;scheme=https;package=app.ramadanbot.twa;end';
     const playUrl = 'https://play.google.com/store/apps/details?id=app.ramadanbot.twa';

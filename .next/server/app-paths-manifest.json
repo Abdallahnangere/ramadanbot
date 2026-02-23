@@ -1,6 +1,5 @@
 {
   "/_not-found": "app/_not-found.js",
-  "/admin/page": "app/admin/page.js",
   "/api/broadcast/[id]/pause/route": "app/api/broadcast/[id]/pause/route.js",
   "/api/broadcast/[id]/route": "app/api/broadcast/[id]/route.js",
   "/api/broadcast/[id]/resume/route": "app/api/broadcast/[id]/resume/route.js",
@@ -8,6 +7,7 @@
   "/api/quran/complete-phase/route": "app/api/quran/complete-phase/route.js",
   "/api/broadcast/create/route": "app/api/broadcast/create/route.js",
   "/api/reader/route": "app/api/reader/route.js",
+  "/admin/page": "app/admin/page.js",
   "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
   "/prayer/page": "app/prayer/page.js",
@@ -18,6 +18,6 @@
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/api/quran/progress/route": "app/api/quran/progress/route.js",
   "/api/user/route": "app/api/user/route.js",
-  "/app/page": "app/app/page.js",
-  "/app/admin/page": "app/app/admin/page.js"
+  "/app/admin/page": "app/app/admin/page.js",
+  "/app/page": "app/app/page.js"
 }

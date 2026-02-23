@@ -28,7 +28,7 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [tempName, setTempName] = useState<string>('');
   const [downloadingAnalytics, setDownloadingAnalytics] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const USERS_PER_PAGE = 49;
+  const USERS_PER_PAGE = 50;
 
   // Broadcast State
   const [broadcastMessages, setBroadcastMessages] = useState<any[]>([]);
