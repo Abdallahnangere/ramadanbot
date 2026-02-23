@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, ArrowRight, ArrowUpRight, ChevronDown, Plus } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowUpRight, ChevronDown, Plus, Globe, Apple, Smartphone } from 'lucide-react';
 
 // ─── Prayer times for Damaturu, Nigeria (Ramadan 1447) ────────────────────────
 const PRAYER_TIMES = [
@@ -684,11 +684,28 @@ export default function HomePage() {
             <p className="rb-cta-sub">Join thousands of Muslims building meaningful daily habits this Ramadan. Zero friction, instant access, completely free.</p>
             <div className="rb-cta-actions">
               <div className="rb-cta-btn-group">
-                <Link href="/app" className="rb-btn-primary rb-btn-xl">Launch App — Free <ArrowUpRight size={18} /></Link>
+                <Link href="/app" className="rb-launch-btn rb-launch-btn--web">
+                  <div className="rb-launch-icon"><Globe size={20} /></div>
+                  <div className="rb-launch-label">
+                    <div className="rb-launch-title">Launch on Web</div>
+                    <div className="rb-launch-desc">Browser version</div>
+                  </div>
+                </Link>
+                <Link href="/app" className="rb-launch-btn rb-launch-btn--ios">
+                  <div className="rb-launch-icon"><Apple size={20} /></div>
+                  <div className="rb-launch-label">
+                    <div className="rb-launch-title">Launch on iOS</div>
+                    <div className="rb-launch-desc">iPhone & iPad</div>
+                  </div>
+                </Link>
+                <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-launch-btn rb-launch-btn--android">
+                  <div className="rb-launch-icon"><Smartphone size={20} /></div>
+                  <div className="rb-launch-label">
+                    <div className="rb-launch-title">Launch on Android</div>
+                    <div className="rb-launch-desc">Play Store</div>
+                  </div>
+                </a>
               </div>
-              <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-cta-play-badge-link">
-                <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="rb-cta-play-badge" />
-              </a>
             </div>
           </div>
         </section>
@@ -1272,7 +1289,19 @@ function getGlobalCSS() {
     .rb-cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,9vw,84px);font-weight:700;letter-spacing:-0.03em;line-height:1.02;color:var(--t1);}
     .rb-cta-sub{font-size:clamp(14px,2vw,17px);color:var(--t2);font-weight:300;line-height:1.72;max-width:500px;}
     .rb-cta-actions{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:center;margin-top:16px;}
-    .rb-cta-btn-group{display:flex;gap:12px;}
+    .rb-cta-btn-group{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+    .rb-launch-btn{display:flex;align-items:center;gap:16px;padding:16px 24px;background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;text-decoration:none;color:inherit;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;}
+    .rb-launch-btn::before{content:'';position:absolute;inset:-1px;border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,0.5) 0%,transparent 50%);pointer-events:none;opacity:0;transition:opacity 0.3s;}
+    .rb-launch-btn:hover{border-color:var(--gold-brd);background:var(--sf2);box-shadow:0 8px 24px rgba(0,0,0,0.08);transform:translateY(-2px);}
+    .rb-launch-btn:hover::before{opacity:1;}
+    .rb-launch-icon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;flex-shrink:0;position:relative;z-index:1;}
+    .rb-launch-btn--web .rb-launch-icon{background:rgba(59,130,246,0.1);color:#3b82f6;}
+    .rb-launch-btn--ios .rb-launch-icon{background:rgba(0,0,0,0.05);color:var(--t1);}
+    .rb-launch-btn--android .rb-launch-icon{background:rgba(34,197,94,0.1);color:#22c55e;}
+    .rb-launch-label{display:flex;flex-direction:column;align-items:flex-start;gap:2px;position:relative;z-index:1;}
+    .rb-launch-title{font-weight:600;font-size:14px;color:var(--t1);letter-spacing:-0.01em;}
+    .rb-launch-desc{font-size:12px;color:var(--t2);font-weight:400;}
+    @media(max-width:767px){.rb-launch-btn{padding:14px 16px;gap:12px;}.rb-launch-icon{width:40px;height:40px;}.rb-launch-title{font-size:13px;}.rb-launch-desc{font-size:11px;}}
     .rb-cta-play-badge-link{display:inline-block;transition:transform 0.3s,filter 0.3s;}
     .rb-cta-play-badge-link:hover{transform:scale(1.08);filter:brightness(1.15);}
     .rb-cta-play-badge{height:80px;width:auto;object-fit:contain;}

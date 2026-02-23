@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AdminPanelPremium from '../../../components/AdminPanelPremium';
+import Admin100 from '../../../components/Admin100';
 import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
@@ -9,7 +9,7 @@ export default function AdminPage() {
 
   return (
     <div className="h-screen w-full">
-      <AdminPanelPremium onBack={() => router.push('/app')} />
+      <Admin100 onBack={() => router.push('/app')} />
     </div>
   );
 }
