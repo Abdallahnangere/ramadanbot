@@ -3,7 +3,7 @@ import pool from '../../../../lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, actionText, actionUrl, expiresAt } = await request.json();
+    const { message, actionText, actionUrl } = await request.json();
 
     if (!message || message.trim().length === 0) {
       return NextResponse.json(
@@ -12,19 +12,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the broadcast message directly without admin lookup or validation
+    // Use a default admin ID for broadcasts (can be updated later)
+    const adminId = 'admin-broadcast-system';
+
+    // Create the broadcast message
     const result = await pool.query(`
       INSERT INTO broadcast_messages 
-      (message, action_text, action_url, status, is_paused, expires_at)
+      (title, message, action_label, action_link, status, created_by)
       VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, message, action_text, action_url, status, created_at, updated_at, expires_at
+      RETURNING id, title, message, action_label, action_link, status, created_at, updated_at
     `, [
       message.trim(),
-      actionText || null,
+      message.trim(),
+      actionText || 'Learn More',
       actionUrl || null,
       'active',
-      false,
-      expiresAt || null
+      adminId
     ]);
 
     if (!result.rows || result.rows.length === 0) {

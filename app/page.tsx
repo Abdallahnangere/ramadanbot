@@ -210,7 +210,7 @@ export default function HomePage() {
           <div className="rb-nav-inner">
             <Link href="" className="rb-logo-link">
               <div className="rb-logo-mark">
-                <Image src="/logo.png" alt="RamadanBot" fill className="object-contain p-1" priority />
+                <Image src="/logo.png" alt="RamadanBot" width={29} height={29} className="object-contain p-1" priority />
               </div>
               <span className="rb-logo-text">RamadanBot</span>
             </Link>
@@ -281,10 +281,40 @@ export default function HomePage() {
               </p>
 
               <div className="rb-hero-ctas">
-                <Link href="/app" className="rb-btn-primary rb-btn-lg">Start for free <ArrowRight size={17} /></Link>
-                <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-play-badge-link">
-                  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="rb-play-badge" />
-                </a>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Link href="/app" className="rb-btn-primary rb-btn-lg">Start for free <ArrowRight size={17} /></Link>
+                    <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-play-badge-link">
+                      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="rb-play-badge" />
+                    </a>
+                  </div>
+                  <div className="rb-cta-btn-group" style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginTop: '8px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-alt)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Or choose your platform:</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px' }}>
+                      <Link href="/app" className="rb-launch-btn rb-launch-btn--web">
+                        <div className="rb-launch-icon"><Globe size={20} /></div>
+                        <div className="rb-launch-label">
+                          <div className="rb-launch-title">Web</div>
+                          <div className="rb-launch-desc">Browser</div>
+                        </div>
+                      </Link>
+                      <Link href="/app" className="rb-launch-btn rb-launch-btn--ios">
+                        <div className="rb-launch-icon"><Apple size={20} /></div>
+                        <div className="rb-launch-label">
+                          <div className="rb-launch-title">iOS</div>
+                          <div className="rb-launch-desc">iPhone & iPad</div>
+                        </div>
+                      </Link>
+                      <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-launch-btn rb-launch-btn--android">
+                        <div className="rb-launch-icon"><Smartphone size={20} /></div>
+                        <div className="rb-launch-label">
+                          <div className="rb-launch-title">Android</div>
+                          <div className="rb-launch-desc">Play Store</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="rb-trust-bar">
@@ -683,28 +713,9 @@ export default function HomePage() {
             <h2 className="rb-cta-title">Begin your<br /><em className="rb-gold-text">spiritual sprint.</em></h2>
             <p className="rb-cta-sub">Join thousands of Muslims building meaningful daily habits this Ramadan. Zero friction, instant access, completely free.</p>
             <div className="rb-cta-actions">
-              <div className="rb-cta-btn-group">
-                <Link href="/app" className="rb-launch-btn rb-launch-btn--web">
-                  <div className="rb-launch-icon"><Globe size={20} /></div>
-                  <div className="rb-launch-label">
-                    <div className="rb-launch-title">Launch on Web</div>
-                    <div className="rb-launch-desc">Browser version</div>
-                  </div>
-                </Link>
-                <Link href="/app" className="rb-launch-btn rb-launch-btn--ios">
-                  <div className="rb-launch-icon"><Apple size={20} /></div>
-                  <div className="rb-launch-label">
-                    <div className="rb-launch-title">Launch on iOS</div>
-                    <div className="rb-launch-desc">iPhone & iPad</div>
-                  </div>
-                </Link>
-                <a href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa" target="_blank" rel="noopener noreferrer" className="rb-launch-btn rb-launch-btn--android">
-                  <div className="rb-launch-icon"><Smartphone size={20} /></div>
-                  <div className="rb-launch-label">
-                    <div className="rb-launch-title">Launch on Android</div>
-                    <div className="rb-launch-desc">Play Store</div>
-                  </div>
-                </a>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '14px', color: 'var(--text-alt)', marginBottom: '16px' }}>Have questions? Need help?</p>
+                <Link href="/contact" className="rb-btn-secondary">Contact Us <ArrowRight size={17} /></Link>
               </div>
             </div>
           </div>

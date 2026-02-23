@@ -7,15 +7,15 @@ export async function GET(request: NextRequest) {
     const result = await pool.query(`
       SELECT 
         id,
+        title,
         message,
-        action_text,
-        action_url,
+        action_label,
+        action_link,
+        status,
         created_at,
         updated_at
       FROM broadcast_messages
-      WHERE status = 'active' 
-        AND is_paused = FALSE
-        AND (expires_at IS NULL OR expires_at > NOW())
+      WHERE status = 'active'
       ORDER BY created_at DESC
     `);
 
