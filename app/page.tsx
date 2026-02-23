@@ -580,41 +580,27 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ═══ SHOWCASE — 5 PHONES (Premium Staggered) ═════════════════════════ */}
-        <section id="showcase" className="rb-showcase-section">
-          <div className="rb-sc-glow-l" /><div className="rb-sc-glow-r" />
+        {/* ═══ HIGHLIGHTS GRID — Feature Benefits ═══════════════════════════════ */}
+        <section id="showcase" className="rb-highlights-section">
+          <div className="rb-h-glow-l" /><div className="rb-h-glow-r" />
           <div className="rb-container" style={{ position:'relative', zIndex:2 }}>
             <div className="rb-section-header rb-sh--center">
-              <div className="rb-eyebrow"><span className="rb-dot rb-dot--gold" />App Showcase</div>
-              <h2 className="rb-section-title">See it in action.</h2>
-              <p className="rb-section-sub" style={{ maxWidth:'440px', margin:'0 auto' }}>Five powerful screens. One sacred companion.</p>
+              <div className="rb-eyebrow"><span className="rb-dot rb-dot--gold" />Core Capabilities</div>
+              <h2 className="rb-section-title">Everything you need for a<br /><span className="rb-muted">transformative Ramadan.</span></h2>
             </div>
-            <div className="rb-showcase-grid">
+            <div className="rb-highlights-grid">
               {[
-                { title:'Dashboard',    src:'/login.png',     desc:'Stats & Streaks',    pos:'left-0 top-12', delay:'0s' },
-                { title:'AI Generator', src:'/generate.png',  desc:'Instant Reflection', pos:'left-1/4 top-0 scale-105 z-20', delay:'0.15s' },
-                { title:'Reader UI',    src:'/Interface.jpg', desc:'Smooth Navigation',  pos:'left-1/2 -translate-x-1/2 top-20 scale-110 z-30', delay:'0.3s' },
-                { title:'Share Hub',    src:'/share.png',     desc:'High-Res Export',    pos:'right-1/4 top-0 scale-105 z-20', delay:'0.15s' },
-                { title:'Guide',        src:'/guide.jpg',     desc:'Daily Guidance',     pos:'right-0 top-12', delay:'0s' },
-              ].map((s, i) => (
-                <div key={i} className={`rb-sc-card rb-sc-card-${i} fade-in-on-scroll`} style={{ '--delay': s.delay } as React.CSSProperties}>
-                  <div className="rb-sc-frame">
-                    <div className="rb-sc-rim" />
-                    <div className="rb-sc-vol-up" /><div className="rb-sc-vol-down" />
-                    <div className="rb-sc-power" />
-                    <div className="rb-sc-inner">
-                      <div className="rb-sc-island" />
-                      <div className="rb-sc-screen">
-                        <div className="rb-sc-sheen" />
-                        <Image src={s.src} alt={s.title} fill className="object-cover object-top" />
-                      </div>
-                    </div>
-                    <div className="rb-sc-speaker" />
-                  </div>
-                  <div className="rb-sc-label">
-                    <span className="rb-sc-label-t">{s.title}</span>
-                    <span className="rb-sc-label-s">{s.desc}</span>
-                  </div>
+                { icon: '✨', title: 'AI Reflections', desc: 'Quranic wisdom meets advanced LLM. Authentic, personalized daily insights grounded in Tafsir.', color: 'gold' },
+                { icon: '📖', title: 'Complete Qur\'ān', desc: '604 pages, 29 days, 5 prayer-aligned sessions. Auto-save every 5 seconds, resume anywhere.', color: 'emerald' },
+                { icon: '🎨', title: '1080px Flyers', desc: 'Studio-quality export with your name perfectly embedded. Share to WhatsApp, Instagram, X instantly.', color: 'amber' },
+                { icon: '🔥', title: 'Streak Tracking', desc: 'Visual daily accountability that builds momentum. Watch consistency compound over Ramadan.', color: 'blue' },
+                { icon: '🛡️', title: 'Absolute Privacy', desc: 'Zero tracking, zero ads, zero data sold. Your name and PIN only. Your journey, yours alone.', color: 'purple' },
+                { icon: '⚡', title: '100% Free', desc: 'Unlimited reflections, unlimited reading, premium exports—completely free, forever. No paywalls.', color: 'emerald' },
+              ].map((item, i) => (
+                <div key={i} className="rb-highlight-card fade-in-on-scroll">
+                  <div className={`rb-h-icon rb-h-icon--${item.color}`}>{item.icon}</div>
+                  <h3 className="rb-h-title">{item.title}</h3>
+                  <p className="rb-h-desc">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -869,8 +855,8 @@ function getGlobalCSS() {
     .rb-hero-sub{font-size:clamp(14px,2vw,17px);font-weight:300;line-height:1.75;color:var(--t2);max-width:460px;}
     .rb-hero-ctas{display:flex;flex-wrap:wrap;gap:16px;align-items:center;}
     .rb-play-badge-link{display:inline-block;transition:transform 0.3s,filter 0.3s;}
-    .rb-play-badge-link:hover{transform:scale(1.05);filter:brightness(1.1);}
-    .rb-play-badge{height:48px;width:auto;object-fit:contain;}
+    .rb-play-badge-link:hover{transform:scale(1.08);filter:brightness(1.15);}
+    .rb-play-badge{height:72px;width:auto;object-fit:contain;}
     .rb-trust-bar{display:flex;align-items:center;gap:0;padding-top:22px;border-top:1px solid var(--bd);flex-wrap:wrap;row-gap:12px;}
     .rb-trust-row{display:flex;align-items:center;gap:0;}
     .rb-trust-item{display:flex;flex-direction:column;gap:2px;padding-right:20px;}
@@ -1210,36 +1196,21 @@ function getGlobalCSS() {
     .rb-dist-row span:first-child{color:var(--t2);}.rb-dist-row span:last-child{color:var(--t1);font-weight:500;}
     .rb-dist-row--last{border-bottom:none;margin-bottom:0;padding-bottom:0;}
 
-    /* SHOWCASE - Premium Staggered Grid */
-    .rb-showcase-grid{position:relative;height:620px;margin-top:48px;perspective:1200px;}
-    .rb-sc-card{position:absolute;display:flex;flex-direction:column;align-items:center;gap:18px;opacity:0;animation:fadeInUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards;animation-delay:var(--delay,0s);}
-    .rb-sc-card-0{left:0;top:80px;z-index:10;}
-    .rb-sc-card-1{left:calc(20% - 80px);top:20px;z-index:20;transform:scale(1.05);}
-    .rb-sc-card-2{left:50%;top:0;z-index:30;transform:translateX(-50%) scale(1.12);}
-    .rb-sc-card-3{right:calc(20% - 80px);top:20px;z-index:20;transform:scale(1.05);}
-    .rb-sc-card-4{right:0;top:80px;z-index:10;}
-    @media(max-width:1024px){
-      .rb-showcase-grid{height:500px;}
-      .rb-sc-card-0{left:8%;top:100px;}
-      .rb-sc-card-1{left:28%;top:40px;transform:scale(0.95);}
-      .rb-sc-card-2{left:50%;top:10px;transform:translateX(-50%) scale(1.05);}
-      .rb-sc-card-3{right:28%;top:40px;transform:scale(0.95);}
-      .rb-sc-card-4{right:8%;top:100px;}
-    }
-    @media(max-width:768px){
-      .rb-showcase-grid{height:420px;margin-top:32px;}
-      .rb-sc-card-0{display:none;}
-      .rb-sc-card-1{left:12%;}
-      .rb-sc-card-2{left:50%;transform:translateX(-50%) scale(1);}
-      .rb-sc-card-3{right:12%;}
-      .rb-sc-card-4{display:none;}
-      .rb-sc-frame{width:160px;height:340px;border-radius:32px;}
-    }
-    .rb-sc-card:hover{transform:translateY(-12px) !important;z-index:40 !important;}
-    .rb-sc-frame{position:relative;width:195px;height:410px;border-radius:40px;background:var(--phone-frame);padding:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.13),0 28px 70px -10px rgba(0,0,0,0.15),0 0 40px -15px var(--gold-dim);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);}
-    [data-theme="dark"] .rb-sc-frame{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06),0 28px 70px -10px rgba(0,0,0,0.8),0 0 40px -15px rgba(212,168,83,0.1);}
-    .rb-sc-card:hover .rb-sc-frame{box-shadow:0 40px 90px -10px rgba(0,0,0,0.2),0 0 60px -10px var(--gold-dim);}
-    [data-theme="dark"] .rb-sc-card:hover .rb-sc-frame{box-shadow:0 40px 90px -10px rgba(0,0,0,0.9),0 0 60px -10px rgba(212,168,83,0.2);}
+    /* HIGHLIGHTS GRID - Feature Benefits */
+    .rb-highlights-section{background:var(--bg-alt);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:96px 0 120px;position:relative;overflow:hidden;}
+    .rb-h-glow-l{position:absolute;top:25%;left:-5%;width:320px;height:480px;background:radial-gradient(ellipse,var(--em-dim) 0%,transparent 70%);pointer-events:none;}
+    .rb-h-glow-r{position:absolute;top:20%;right:-5%;width:400px;height:480px;background:radial-gradient(ellipse,var(--gold-dim) 0%,transparent 70%);pointer-events:none;}
+    .rb-highlights-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:56px;}
+    @media(min-width:640px){.rb-highlights-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(min-width:1024px){.rb-highlights-grid{grid-template-columns:repeat(3,1fr);}}
+    .rb-highlight-card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);box-shadow:var(--card-sh);}
+    .rb-highlight-card::after{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;background:linear-gradient(140deg,rgba(255,255,255,0.06) 0%,transparent 55%);}
+    [data-theme="light"] .rb-highlight-card::after{background:linear-gradient(140deg,rgba(255,255,255,0.7) 0%,transparent 50%);}
+    .rb-highlight-card:hover{border-color:var(--gold-brd);box-shadow:var(--card-hover);transform:translateY(-4px);}
+    .rb-h-icon{font-size:42px;display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:16px;position:relative;z-index:1;}
+    .rb-h-icon--gold{background:var(--gold-dim);}.rb-h-icon--emerald{background:var(--em-dim);}.rb-h-icon--amber{background:var(--am-dim);}.rb-h-icon--blue{background:var(--bl-dim);}.rb-h-icon--purple{background:var(--pu-dim);}
+    .rb-h-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;letter-spacing:-0.01em;color:var(--t1);position:relative;z-index:1;}
+    .rb-h-desc{font-size:13.5px;line-height:1.72;color:var(--t2);font-weight:300;position:relative;z-index:1;}
     .rb-sc-rim{position:absolute;inset:-1px;border-radius:41px;pointer-events:none;z-index:20;background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 30%,transparent 70%,rgba(255,255,255,0.06) 100%);}
     .rb-sc-vol-up,.rb-sc-vol-down{position:absolute;left:-2.5px;width:2.5px;border-radius:2px 0 0 2px;background:var(--phone-btn);}
     .rb-sc-vol-up{top:72px;height:35px;}.rb-sc-vol-down{top:118px;height:35px;}
@@ -1302,8 +1273,8 @@ function getGlobalCSS() {
     .rb-cta-actions{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:center;margin-top:16px;}
     .rb-cta-btn-group{display:flex;gap:12px;}
     .rb-cta-play-badge-link{display:inline-block;transition:transform 0.3s,filter 0.3s;}
-    .rb-cta-play-badge-link:hover{transform:scale(1.05);filter:brightness(1.1);}
-    .rb-cta-play-badge{height:56px;width:auto;object-fit:contain;}
+    .rb-cta-play-badge-link:hover{transform:scale(1.08);filter:brightness(1.15);}
+    .rb-cta-play-badge{height:80px;width:auto;object-fit:contain;}
 
     /* FOOTER */
     .rb-footer{border-top:1px solid var(--bd);background:var(--bg);padding:72px 0 32px;}

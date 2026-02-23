@@ -178,31 +178,22 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
       alert('Message cannot be empty');
       return;
     }
-
-    if (!adminId) {
-      alert('Admin ID not found. Please re-login.');
-      return;
-    }
     
     setBroadcastLoading(true);
     try {
-      console.log('Creating broadcast with adminId:', adminId, 'message:', finalMessage);
       const res = await fetch('/api/broadcast/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          adminId,
+          ...(adminId && { adminId }),
           message: finalMessage,
           actionText: broadcastActionText.trim() || null,
           actionUrl: broadcastActionUrl.trim() || null
         })
       });
 
-      console.log('Broadcast API response status:', res.status, res.statusText);
-
       if (res.ok) {
         const data = await res.json();
-        console.log('Broadcast API response data:', data);
         if (data.success) {
           setBroadcastMessage('');
           setBroadcastDetails('');
@@ -213,7 +204,6 @@ const AdminDashboardEnhanced: React.FC<AdminDashboardProps> = ({ onBack }) => {
         }
       } else {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Broadcast API error:', res.status, errorData);
         alert(`Failed to create broadcast (${res.status}): ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {

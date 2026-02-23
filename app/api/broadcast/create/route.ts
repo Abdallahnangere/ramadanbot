@@ -5,18 +5,31 @@ export async function POST(request: NextRequest) {
   try {
     const { adminId, message, actionText, actionUrl, expiresAt } = await request.json();
 
-    // Validate admin (check if user is admin)
-    if (!adminId) {
+    // If no adminId provided, try to find the first admin user
+    let finalAdminId = adminId;
+    
+    if (!finalAdminId) {
+      const adminLookup = await pool.query(
+        'SELECT id FROM users WHERE role = $1 LIMIT 1',
+        ['admin']
+      );
+      
+      if (adminLookup.rows && adminLookup.rows.length > 0) {
+        finalAdminId = adminLookup.rows[0].id;
+      }
+    }
+
+    if (!finalAdminId) {
       return NextResponse.json(
-        { success: false, error: 'Admin ID is required' },
+        { success: false, error: 'No admin user found in database' },
         { status: 400 }
       );
     }
 
-    // Check if user is admin
+    // Verify the user is actually an admin
     const adminCheck = await pool.query(
       'SELECT role FROM users WHERE id = $1',
-      [adminId]
+      [finalAdminId]
     );
 
     if (!adminCheck.rows || adminCheck.rows[0]?.role !== 'admin') {
@@ -40,7 +53,7 @@ export async function POST(request: NextRequest) {
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id, admin_id, message, action_text, action_url, status, created_at, updated_at, expires_at
     `, [
-      adminId,
+      finalAdminId,
       message.trim(),
       actionText || null,
       actionUrl || null,

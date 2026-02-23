@@ -179,7 +179,7 @@ export async function getAnalytics(): Promise<AnalyticsData> {
 export async function fetchAllUsers() {
   const client = await pool.connect();
   try {
-    // Fetch users with their last generation topic
+    // Fetch all users with their last generation topic (no limit)
     const res = await client.query(`
       SELECT 
         u.*,
@@ -192,7 +192,6 @@ export async function fetchAllUsers() {
         ORDER BY user_id, created_at DESC
       ) g ON u.id = g.user_id
       ORDER BY u.last_login DESC
-      LIMIT 100
     `);
     return res.rows.map(row => ({
       ...safeUser(row),
