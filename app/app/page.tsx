@@ -37,6 +37,8 @@ export default function HomeApp() {
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const [broadcastMessages, setBroadcastMessages] = useState<BroadcastMessage[]>([]);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [bannerWasDismissed, setBannerWasDismissed] = useState(false);
   
   // Initialize app: restore theme and persistent login
   useEffect(() => {
@@ -62,6 +64,57 @@ export default function HomeApp() {
 
         setIsHydrated(true);
     }
+  }, []);
+
+  // Android Intent + Install Banner flow
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      if (localStorage.getItem('bannerDismissed') === 'true') {
+        setBannerWasDismissed(true);
+        return;
+      }
+    } catch (e) {
+      // ignore localStorage errors
+    }
+
+    const ua = navigator.userAgent || '';
+    const isAndroid = /android/i.test(ua);
+    const isWebView = /wv/.test(ua);
+
+    if (!isAndroid || isWebView) return;
+
+    const intentUrl = 'intent://ramadanbot.app/app#Intent;scheme=https;package=app.ramadanbot.twa;end';
+    const playUrl = 'https://play.google.com/store/apps/details?id=app.ramadanbot.twa';
+
+    // Try opening the app via intent URL
+    try {
+      window.location.href = intentUrl;
+    } catch (e) {
+      // ignore
+    }
+
+    // After 1.2s show the banner with Play Store button
+    const showTimer = window.setTimeout(() => {
+      setShowInstallBanner(true);
+    }, 1200);
+
+    // After 1.2s + 8s = 9200ms, if banner wasn't dismissed, hard-redirect to Play Store
+    const redirectTimer = window.setTimeout(() => {
+      try {
+        if (localStorage.getItem('bannerDismissed') !== 'true') {
+          window.location.href = playUrl;
+        }
+      } catch (e) {
+        window.location.href = playUrl;
+      }
+    }, 9200);
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(redirectTimer);
+    };
   }, []);
 
   // Load completed Quran phases on app initialization
@@ -539,6 +592,42 @@ export default function HomeApp() {
         <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>
         {isHydrated ? renderContent() : <LoginScreen onLogin={handleLogin} />}
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1.5 bg-black/30 dark:bg-white/30 rounded-full pointer-events-none z-50"></div>
+
+        {showInstallBanner && !bannerWasDismissed && (
+          <div className="fixed left-0 right-0 bottom-0 z-50 flex items-center justify-center px-4 pb-4 md:pb-6">
+            <div className="w-full max-w-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-t-xl shadow-lg flex items-center gap-4 p-3 md:p-4">
+              <div className="flex-1 text-sm text-gray-900 dark:text-gray-100">
+                Open RamadanBot in the app for the best experience.
+              </div>
+              <a
+                href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+                onClick={() => {
+                  try { localStorage.setItem('bannerDismissed', 'true'); } catch (e) {}
+                }}
+              >
+                <img
+                  src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                  alt="Get it on Google Play"
+                  height="40"
+                  className="h-10"
+                />
+              </a>
+              <button
+                className="ml-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                onClick={() => {
+                  try { localStorage.setItem('bannerDismissed', 'true'); } catch (e) {}
+                  setShowInstallBanner(false);
+                  setBannerWasDismissed(true);
+                }}
+              >
+                Continue in browser
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
