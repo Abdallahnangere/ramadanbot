@@ -13,6 +13,86 @@ import Toast from '../../components/Toast';
 import BroadcastToast from '../../components/BroadcastToast';
 import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
 
+function getAppCSS() {
+  return `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+    
+    /* ── Light Theme (default) ──────────────────────────── */
+    [data-app-theme="light"], :root {
+      --app-bg: #FAFAF7;
+      --app-bg-alt: #F3F2EE;
+      --app-sf: #FFFFFF;
+      --app-sf2: #F0EFE9;
+      --app-bd: rgba(0,0,0,0.08);
+      --app-bd-med: rgba(0,0,0,0.13);
+      --app-t1: #0F0E0C;
+      --app-t2: #5B5955;
+      --app-t3: #9C9990;
+      --app-gold: #B8900A;
+      --app-gold-b: #D4A830;
+      --app-gold-dim: rgba(184,144,10,0.1);
+      --app-gold-brd: rgba(184,144,10,0.22);
+      --app-emerald: #047857;
+      --app-em-dim: rgba(4,120,87,0.08);
+      --app-em-brd: rgba(4,120,87,0.18);
+      --app-purple: #6D28D9;
+      --app-pu-dim: rgba(109,40,217,0.08);
+      --app-pu-brd: rgba(109,40,217,0.18);
+      --app-amber: #B45309;
+    }
+    
+    /* ── Dark Theme ─────────────────────────────────────── */
+    [data-app-theme="dark"] {
+      --app-bg: #07080F;
+      --app-bg-alt: #0C0D1A;
+      --app-sf: #111320;
+      --app-sf2: #181A2C;
+      --app-bd: rgba(255,255,255,0.07);
+      --app-bd-med: rgba(255,255,255,0.12);
+      --app-t1: #EDE8DC;
+      --app-t2: #8A93AE;
+      --app-t3: #424B64;
+      --app-gold: #D4A853;
+      --app-gold-b: #F0C060;
+      --app-gold-dim: rgba(212,168,83,0.12);
+      --app-gold-brd: rgba(212,168,83,0.22);
+      --app-emerald: #34D399;
+      --app-em-dim: rgba(52,211,153,0.12);
+      --app-em-brd: rgba(52,211,153,0.22);
+      --app-purple: #A78BFA;
+      --app-pu-dim: rgba(167,139,250,0.12);
+      --app-pu-brd: rgba(167,139,250,0.22);
+      --app-amber: #F59E0B;
+    }
+
+    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .app-header { background: var(--app-sf); border-bottom: 1px solid var(--app-bd); }
+    .app-header.dark { background: var(--app-sf); }
+    .app-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 700; color: var(--app-t1); }
+    .app-greeting { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 700; color: var(--app-t1); line-height: 1.1; }
+    .app-subtext { font-size: 15px; font-weight: 400; color: var(--app-t2); }
+    .app-card { background: var(--app-sf); border: 1px solid var(--app-bd); border-radius: 18px; padding: 24px; transition: all 0.25s ease; }
+    .app-card:hover { border-color: var(--app-gold-brd); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .app-card.dark { background: var(--app-sf); }
+    .app-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--app-t3); }
+    .app-card-value { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 48px; font-weight: 700; color: var(--app-t1); line-height: 1; }
+    .app-card-sublabel { font-size: 13px; font-weight: 500; color: var(--app-t2); margin-top: 4px; }
+    .app-progress-bar { height: 6px; background: var(--app-bd); border-radius: 3px; overflow: hidden; }
+    .app-progress-fill { height: 100%; background: linear-gradient(90deg, var(--app-gold-b), var(--app-gold)); border-radius: 3px; transition: width 0.6s ease-out; }
+    .app-btn-primary { background: linear-gradient(135deg, var(--app-gold-b), var(--app-gold)); color: #0A0800; border: none; border-radius: 12px; padding: 14px 28px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.25s ease; }
+    .app-btn-primary:hover { transform: scale(1.03); filter: brightness(1.08); box-shadow: 0 8px 24px rgba(184,144,10,0.3); }
+    .app-btn-secondary { background: var(--app-sf2); border: 1px solid var(--app-bd-med); color: var(--app-t1); border-radius: 12px; padding: 12px 20px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .app-btn-secondary:hover { border-color: var(--app-gold-brd); background: var(--app-bg-alt); }
+    .app-infobox { background: var(--app-gold-dim); border: 1px solid var(--app-gold-brd); border-radius: 14px; padding: 16px; }
+    .app-infobox-title { font-weight: 600; font-size: 13px; color: var(--app-t1); margin-bottom: 6px; }
+    .app-infobox-text { font-size: 12px; line-height: 1.6; color: var(--app-t2); }
+    .app-nav-bottom { background: var(--app-sf); border-top: 1px solid var(--app-bd); }
+    .app-nav-btn { padding: 12px 16px; border-radius: 12px; border: none; background: var(--app-sf2); color: var(--app-t2); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .app-nav-btn.active { background: linear-gradient(135deg, var(--app-purple), var(--app-purple)); color: white; }
+    .app-nav-btn:hover:not(.active) { background: var(--app-bg-alt); color: var(--app-t1); }
+  `;
+}
+
 interface BroadcastMessage {
   id: string;
   message: string;
@@ -300,24 +380,26 @@ export default function HomeApp() {
     const user = appState.currentUser!;
 
     return (
-        <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-[#000000] dark:via-[#0a0a0a] dark:to-[#000000] transition-colors duration-300">
-            {/* Gamified Quran Reader */}
+        <div className="flex flex-col h-full" style={{ backgroundColor: `var(--app-bg)`, color: `var(--app-t1)` }} data-app-theme={appState.isDarkMode ? 'dark' : 'light'}>
+            <style dangerouslySetInnerHTML={{ __html: getAppCSS() }} />
+            
+            {/* Gamified Quran Reader Modal */}
             {activeTab === 'quran' && (
-              <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80 pointer-events-auto" onClick={() => {}}>
-                <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 text-center max-w-md mx-4 shadow-2xl">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Qur'ān Journey</h2>
-                  <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">29 Days • 145 Phases</p>
-                  <div className="space-y-3 mb-6">
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      📖 <span className="font-medium">5–10 minutes after each prayer</span>
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Complete the entire Qur'ān in Ramadan with daily short sessions designed to fit your prayer routine.
-                    </p>
+              <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm pointer-events-auto">
+                <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 text-center max-w-md mx-4 shadow-2xl border border-gray-200 dark:border-gray-800 space-y-6">
+                  <div className="space-y-3">
+                    <h2 className="app-greeting" style={{ fontSize: '28px' }}>Qur'ān Journey</h2>
+                    <p className="app-subtext" style={{ fontSize: '16px', fontWeight: '600', color: `var(--app-gold)` }}>29 Days • 145 Phases</p>
                   </div>
+                  
+                  <div className="space-y-3">
+                    <p className="app-subtext">📖 <span style={{ fontWeight: '500' }}>5–10 minutes after each prayer</span></p>
+                    <p className="app-subtext" style={{ fontSize: '14px' }}>Complete the entire Qur'ān in Ramadan with daily short sessions designed to fit your prayer routine.</p>
+                  </div>
+                  
                   <button 
                     onClick={() => router.push('/quran')}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all active:scale-95"
+                    className="app-btn-primary w-full"
                   >
                     Begin Your Journey →
                   </button>
@@ -328,7 +410,7 @@ export default function HomeApp() {
             <Sidebar 
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
-                user={user}
+                user={appState.currentUser!}
                 onLogout={handleLogout}
                 onAdmin={() => {
                     setAppState(prev => ({ ...prev, view: 'admin' }));
@@ -340,40 +422,38 @@ export default function HomeApp() {
                 }}
             />
 
-            {/* Header - Polished Apple Style */}
-            <header className="relative flex-shrink-0 px-5 py-4 bg-white/80 dark:bg-black/60 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 z-40">
-                <div className="flex items-center justify-between">
+            {/* Header - Premium Design */}
+            <header className="app-header flex-shrink-0 px-5 py-4 border-b" style={{ backgroundColor: `var(--app-sf)`, borderColor: `var(--app-bd)` }}>
+                <div className="flex items-center justify-between max-w-2xl mx-auto">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
+                        style={{ backgroundColor: `var(--app-sf2)` }}
                         aria-label="Open Menu"
                     >
-                        <Menu size={20} className="text-gray-700 dark:text-gray-200" />
+                        <Menu size={20} color={`var(--app-t1)`} />
                     </button>
 
-                    <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
-                        <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
-                            🌙 RamadanBot
-                        </h1>
-                    </div>
+                    <h1 className="app-title">🌙 RamadanBot</h1>
 
                     <button
                         onClick={toggleTheme}
-                        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
+                        style={{ backgroundColor: `var(--app-sf2)` }}
                         aria-label="Toggle Theme"
                     >
                         {appState.isDarkMode ? (
-                            <Sun size={20} className="text-yellow-500" />
+                            <Sun size={20} style={{ color: '#F59E0B' }} />
                         ) : (
-                            <Moon size={20} className="text-gray-600" />
+                            <Moon size={20} style={{ color: `var(--app-t2)` }} />
                         )}
                     </button>
                 </div>
             </header>
 
-            {/* Main Content Area - Scrollable on Short Displays */}
+            {/* Main Content Area - Scrollable */}
             <main className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <div className="px-5 py-6 space-y-6 pb-28">
+                <div className="px-5 py-6 space-y-6 pb-28 max-w-2xl mx-auto">
                     {activeTab === 'flyer' ? (
                         <>
                             {generatedData ? (
@@ -388,64 +468,45 @@ export default function HomeApp() {
                                 </div>
                             ) : (
                                 <div className="animate-fade-in-up space-y-6">
-                                    <div className="space-y-1">
-                                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                            Salam, {user.name.split(' ')[0]} 👋
-                                        </h2>
-                                        <p className="text-base text-gray-600 dark:text-gray-400">
-                                            Ready for today's reflection?
-                                        </p>
+                                    {/* Greeting */}
+                                    <div className="space-y-2">
+                                        <h2 className="app-greeting">{user.name.split(' ')[0]}'s Reflection</h2>
+                                        <p className="app-subtext">Ready for today's spiritual journey?</p>
                                     </div>
 
-                                    <RamadanForm 
-                                        onSuccess={handleSuccess} 
-                                        initialName={user.name} 
-                                        userId={user.id}
-                                        disabled={hasDownloadedToday}
-                                        countdownTime={countdownTime}
-                                        hasLimitReached={hasDownloadedToday}
-                                    />
+                                    {/* Form Section */}
+                                    <div className="app-card">
+                                        <RamadanForm 
+                                            onSuccess={handleSuccess} 
+                                            initialName={user.name} 
+                                            userId={user.id}
+                                            disabled={hasDownloadedToday}
+                                            countdownTime={countdownTime}
+                                            hasLimitReached={hasDownloadedToday}
+                                        />
+                                    </div>
 
-                                    {/* Premium Streak & Limit Cards - Apple Standard */}
-                                    <div className="grid grid-cols-2 gap-4 pt-2">
+                                    {/* Premium Cards Grid */}
+                                    <div className="grid grid-cols-2 gap-4">
                                       {/* Streak Card */}
-                                      <div className="group relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
-                                        {/* Animated background gradient */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        
-                                        <div className="relative p-6 flex flex-col h-full justify-between">
-                                          {/* Top section */}
-                                          <div>
-                                            {/* Icon */}
-                                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
-                                              <span className="text-2xl">🔥</span>
-                                            </div>
-                                            
-                                            {/* Label */}
-                                            <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
-                                              Streak
-                                            </p>
-                                            
-                                            {/* Value */}
-                                            <div className="space-y-1">
-                                              <p className="text-5xl font-black text-white tracking-tight">
-                                                {user.streak}
-                                              </p>
-                                              <p className="text-xs text-white/60 font-medium">
-                                                day{user.streak !== 1 ? 's' : ''} on fire
-                                              </p>
-                                            </div>
+                                      <div className="app-card" style={{ backgroundColor: `var(--app-gold-dim)`, borderColor: `var(--app-gold-brd)` }}>
+                                        <div className="space-y-3">
+                                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: `var(--app-gold-dim)` }}>
+                                            🔥
                                           </div>
-                                          
-                                          {/* Progress bar */}
-                                          <div className="mt-4 space-y-2">
-                                            <div className="flex items-center justify-between text-xs">
-                                              <span className="text-white/50 font-medium">Progress to 30 days</span>
-                                              <span className="text-white font-bold">{Math.min(100, Math.round((user.streak/30)*100))}%</span>
+                                          <div>
+                                            <p className="app-card-label">Streak</p>
+                                            <p className="app-card-value">{user.streak}</p>
+                                            <p className="app-card-sublabel">day{user.streak !== 1 ? 's' : ''} on fire</p>
+                                          </div>
+                                          <div className="pt-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="app-card-label" style={{ color: `var(--app-t3)` }}>Goal Progress</span>
+                                              <span style={{ fontSize: '12px', fontWeight: '700', color: `var(--app-t1)` }}>{Math.min(100, Math.round((user.streak/30)*100))}%</span>
                                             </div>
-                                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                            <div className="app-progress-bar">
                                               <div 
-                                                className="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-orange-500/50" 
+                                                className="app-progress-fill" 
                                                 style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
                                               />
                                             </div>
@@ -454,44 +515,28 @@ export default function HomeApp() {
                                       </div>
 
                                       {/* Daily Limit Card */}
-                                      <div className="group relative bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
-                                        {/* Animated background */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        
-                                        <div className="relative p-6 flex flex-col h-full justify-between">
-                                          {/* Top section */}
-                                          <div>
-                                            {/* Icon */}
-                                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:bg-white/30 transition-all duration-300">
-                                              <Sparkles size={24} className="text-white" />
-                                            </div>
-                                            
-                                            {/* Label */}
-                                            <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">
-                                              Daily Limit
-                                            </p>
-                                            
-                                            {/* Value */}
-                                            <div className="space-y-1">
-                                              <p className="text-5xl font-black text-white tracking-tight">
-                                                {typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}
-                                              </p>
-                                              <p className="text-xs text-white/60 font-medium">
-                                                generation{(user.remaining || 3) !== 1 ? 's' : ''} left today
-                                              </p>
-                                            </div>
+                                      <div className="app-card" style={{ backgroundColor: `var(--app-em-dim)`, borderColor: `var(--app-em-brd)` }}>
+                                        <div className="space-y-3">
+                                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: `var(--app-em-dim)` }}>
+                                            ✨
                                           </div>
-                                          
-                                          {/* Progress bar */}
-                                          <div className="mt-4 space-y-2">
-                                            <div className="flex items-center justify-between text-xs">
-                                              <span className="text-white/50 font-medium">Daily usage</span>
-                                              <span className="text-white font-bold">{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
+                                          <div>
+                                            <p className="app-card-label">Daily Limit</p>
+                                            <p className="app-card-value">{typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}</p>
+                                            <p className="app-card-sublabel">generation{(user.remaining || 3) !== 1 ? 's' : ''} left</p>
+                                          </div>
+                                          <div className="pt-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="app-card-label" style={{ color: `var(--app-t3)` }}>Daily Usage</span>
+                                              <span style={{ fontSize: '12px', fontWeight: '700', color: `var(--app-t1)` }}>{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
                                             </div>
-                                            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                            <div className="app-progress-bar">
                                               <div 
-                                                className="bg-gradient-to-r from-lime-300 via-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-emerald-500/50" 
-                                                style={{ width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` }} 
+                                                className="app-progress-fill" 
+                                                style={{ 
+                                                  background: `linear-gradient(90deg, var(--app-emerald), var(--app-emerald))`,
+                                                  width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` 
+                                                }} 
                                               />
                                             </div>
                                           </div>
@@ -499,24 +544,12 @@ export default function HomeApp() {
                                       </div>
                                     </div>
 
-                                    <div className="bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-200 dark:border-gray-800">
-                                        <div className="flex gap-3">
-                                            <div className="flex-shrink-0">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                                    <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-xs font-medium text-gray-900 dark:text-white mb-1">
-                                                    Daily Reflection Tips
-                                                </p>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                                                    Choose a topic that resonates with your current spiritual journey. Add specific verses or Hadith for more personalized content.
-                                                </p>
-                                            </div>
-                                        </div>
+                                    {/* Tips Box */}
+                                    <div className="app-infobox">
+                                        <p className="app-infobox-title">💡 Daily Reflection Tips</p>
+                                        <p className="app-infobox-text">
+                                            Choose a topic that resonates with your spiritual journey. Add specific verses or Hadith for more personalized content.
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -525,27 +558,19 @@ export default function HomeApp() {
                 </div>
             </main>
 
-            {/* Bottom Navigation - Fixed and Always Visible */}
-            <nav className="fixed bottom-0 left-0 right-0 flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl px-5 py-3 md:max-w-[400px] md:left-1/2 md:-translate-x-1/2 md:rounded-t-3xl z-40">
-              <div className="flex gap-3">
+            {/* Bottom Navigation */}
+            <nav className="app-nav-bottom fixed bottom-0 left-0 right-0 flex-shrink-0 px-5 py-3 z-40" style={{ backgroundColor: `var(--app-sf)`, borderColor: `var(--app-bd)` }}>
+              <div className="flex gap-3 max-w-2xl mx-auto">
                 <button
                   onClick={() => setActiveTab('flyer')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
-                    activeTab === 'flyer'
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                  }`}
+                  className={`app-nav-btn flex-1 flex items-center justify-center gap-2 ${activeTab === 'flyer' ? 'active' : ''}`}
                 >
                   <Sparkles size={18} />
                   <span>Flyer</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('quran')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${
-                    activeTab === 'quran'
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                  }`}
+                  className={`app-nav-btn flex-1 flex items-center justify-center gap-2 ${activeTab === 'quran' ? 'active' : ''}`}
                 >
                   <BookOpen size={18} />
                   <span>Quran</span>
@@ -557,7 +582,7 @@ export default function HomeApp() {
   };
 
   return (
-    <div className={`relative w-full h-full flex justify-center items-center p-0 md:p-8 ${appState.isDarkMode ? 'dark' : ''}`}>
+    <div className={`relative w-full h-full flex justify-center items-center p-0 md:p-8`} data-app-theme={appState.isDarkMode ? 'dark' : 'light'}>
       {toast && (
         <Toast
           type={toast.type}
@@ -574,17 +599,17 @@ export default function HomeApp() {
         }}
       />
       
-      <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] bg-white dark:bg-black md:rounded-[48px] md:shadow-[0_0_0_14px_#1f2937,0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden transition-colors duration-300 isolate">
+      <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] overflow-hidden transition-colors duration-300 isolate md:rounded-[48px]" style={{ backgroundColor: `var(--app-bg)` }}>
         <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>
         {isHydrated ? renderContent() : <LoginScreen onLogin={handleLogin} />}
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1.5 bg-black/30 dark:bg-white/30 rounded-full pointer-events-none z-50"></div>
 
         {showInstallBanner && (
           <div data-android-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl shadow-2xl flex flex-col items-center gap-6 p-8 max-w-sm mx-4">
+            <div className="rounded-3xl shadow-2xl flex flex-col items-center gap-6 p-8 max-w-sm mx-4 app-card">
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Get RamadanBot App</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Install from Google Play for the best experience</p>
+                <h2 className="app-greeting" style={{ fontSize: '24px' }}>Get RamadanBot App</h2>
+                <p className="app-subtext">Install from Google Play for the best experience</p>
               </div>
               
               <a
@@ -602,7 +627,7 @@ export default function HomeApp() {
               </a>
 
               <button
-                className="w-full px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="app-btn-secondary w-full"
                 onClick={() => setShowInstallBanner(false)}
               >
                 Continue in Browser

@@ -18,6 +18,6 @@
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/api/quran/progress/route": "app/api/quran/progress/route.js",
   "/api/user/route": "app/api/user/route.js",
-  "/app/admin/page": "app/app/admin/page.js",
-  "/app/page": "app/app/page.js"
+  "/app/page": "app/app/page.js",
+  "/app/admin/page": "app/app/admin/page.js"
 }
