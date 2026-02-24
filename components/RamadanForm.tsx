@@ -25,7 +25,7 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
     hint: '',
   });
 
-  // Prayer times for Damaturu, Nigeria (Ramadan 1447)
+  // Prayer times for Damaturu, Nigeria (Ramadan 1447 - from /prayer page)
   const PRAYER_TIMES = [
     { day: 1, maghrib: "18:21" }, { day: 2, maghrib: "18:21" }, { day: 3, maghrib: "18:21" },
     { day: 4, maghrib: "18:21" }, { day: 5, maghrib: "18:22" }, { day: 6, maghrib: "18:22" },
@@ -43,31 +43,41 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
   useEffect(() => {
     const updateCountdown = () => {
       try {
-        const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
-        const ramadanStart = new Date(2026, 1, 18); // Feb 18, 2026
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false, timeZone: 'Africa/Lagos'
+        });
+        const parts = formatter.formatToParts(new Date());
+        const year = +(parts.find(p => p.type === 'year')?.value || 2026);
+        const month = +(parts.find(p => p.type === 'month')?.value || 1);
+        const day = +(parts.find(p => p.type === 'day')?.value || 1);
+        const hour = +(parts.find(p => p.type === 'hour')?.value || 0);
+        const minute = +(parts.find(p => p.type === 'minute')?.value || 0);
+        const second = +(parts.find(p => p.type === 'second')?.value || 0);
         
+        const now = new Date(year, month - 1, day, hour, minute, second);
+        const ramadanStart = new Date(2026, 1, 18);
         const diffMs = now.getTime() - ramadanStart.getTime();
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
         const ramadanDay = Math.max(1, Math.min(30, diffDays));
         
         const todayPrayer = PRAYER_TIMES.find(p => p.day === ramadanDay);
-        const maghribTime = todayPrayer?.maghrib || PRAYER_TIMES[0].maghrib;
+        const maghribTime = todayPrayer?.maghrib || "18:21";
         const [maghribH, maghribM] = maghribTime.split(':').map(Number);
         
-        const iftarDate = new Date(now);
-        iftarDate.setHours(maghribH, maghribM, 0, 0);
-        
-        if (iftarDate < now) {
+        const iftarDate = new Date(year, month - 1, day, maghribH, maghribM, 0);
+        if (iftarDate <= now) {
           iftarDate.setDate(iftarDate.getDate() + 1);
         }
         
         const msUntilIftar = iftarDate.getTime() - now.getTime();
         const totalSecs = Math.max(0, Math.floor(msUntilIftar / 1000));
-        const hours = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
-        const mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
-        const secs = String(totalSecs % 60).padStart(2, '0');
+        const h = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
+        const m = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
+        const s = String(totalSecs % 60).padStart(2, '0');
         
-        setIftarCountdown({ h: hours, m: mins, s: secs, day: ramadanDay });
+        setIftarCountdown({ h, m, s, day: ramadanDay });
       } catch (e) {
         // Fallback if timezone conversion fails
         setIftarCountdown({ h: '00', m: '00', s: '00', day: 1 });
@@ -127,42 +137,45 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
   return (
     <div className="w-full space-y-4">
       
-      {/* Compact Iftar Countdown - Smart Status Card */}
-      <div className="bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50 rounded-2xl border border-orange-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+      {/* Premium Apple-Style Iftar Countdown - Real-time with Seconds */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
         <div className="p-4">
-          <div className="grid grid-cols-3 gap-3 items-center">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <Clock size={18} className="text-gray-700" strokeWidth={2.5} />
+              <span className="text-sm font-semibold text-gray-900">Iftar Countdown</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 rounded-full">
+              <MapPin size={14} className="text-rose-600" strokeWidth={2.5} />
+              <span className="text-xs font-semibold text-rose-700">Damaturu</span>
+            </div>
+          </div>
+
+          {/* 4-Column Real-Time Display */}
+          <div className="grid grid-cols-4 gap-2.5">
+            {/* Hours */}
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/60 border border-blue-100/50 px-2 py-4">
+              <span className="text-lg font-bold text-blue-600 font-mono tracking-tight">{iftarCountdown.h}</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-1">h</span>
+            </div>
+
+            {/* Minutes */}
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/60 border border-purple-100/50 px-2 py-4">
+              <span className="text-lg font-bold text-purple-600 font-mono tracking-tight">{iftarCountdown.m}</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-1">m</span>
+            </div>
+
+            {/* Seconds */}
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/60 border border-indigo-100/50 px-2 py-4">
+              <span className="text-lg font-bold text-indigo-600 font-mono tracking-tight">{iftarCountdown.s}</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-1">s</span>
+            </div>
+
             {/* Ramadan Day */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Moon size={16} className="text-orange-600" strokeWidth={2} />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Day</span>
-              </div>
-              <p className="text-2xl font-bold text-orange-600">{iftarCountdown.day}</p>
-              <p className="text-xs text-gray-500 font-medium">Ramadan</p>
-            </div>
-
-            {/* Countdown to Iftar */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Clock size={16} className="text-rose-600" strokeWidth={2} />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Iftar in</span>
-              </div>
-              <div className="flex items-baseline gap-0.5">
-                <span className="text-xl font-bold text-rose-600 font-mono">{iftarCountdown.h}</span>
-                <span className="text-xs text-gray-400 font-medium">:</span>
-                <span className="text-xl font-bold text-rose-600 font-mono">{iftarCountdown.m}</span>
-              </div>
-              <p className="text-xs text-gray-500 font-medium">hours : minutes</p>
-            </div>
-
-            {/* Location */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <MapPin size={16} className="text-amber-600" strokeWidth={2} />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Location</span>
-              </div>
-              <p className="text-sm font-bold text-amber-700 leading-tight">Damaturu</p>
-              <p className="text-xs text-gray-500 font-medium">Nigeria</p>
+            <div className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-rose-500 px-2 py-4">
+              <span className="text-lg font-bold text-white font-mono tracking-tight">{iftarCountdown.day}</span>
+              <span className="text-xs font-semibold text-orange-100 uppercase tracking-wider mt-1">day</span>
             </div>
           </div>
         </div>
