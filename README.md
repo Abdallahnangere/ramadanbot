@@ -252,7 +252,7 @@ Have suggestions? Found a bug? Want to contribute? Get in touch:
 - **Website**: [www.ramadanbot.app](https://www.ramadanbot.app)
 - **App**: [app.ramadanbot.app](https://www.ramadanbot.app/app)
 - **GitHub**: [github.com/Abdallahnangere/ramadanbot](https://github.com/Abdallahnangere/ramadanbot)
-- **Email**: abdallahnangere@gmail.com
+- **Email**: founder@ramadanbot.app
 - **WhatsApp**: [+234 816 413 5836](https://wa.me/2348164135836)
 
 ## ✅ Upcoming Features

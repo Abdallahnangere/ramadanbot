@@ -386,11 +386,11 @@ export default function PrivacyPolicy() {
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-2">Contact Information</p>
                       <div className="space-y-2">
-                        <a href="mailto:abdallahnangere@gmail.com" className="flex items-center gap-3 text-blue-600 hover:text-blue-700 transition-colors">
+                        <a href="mailto:founder@ramadanbot.app" className="flex items-center gap-3 text-blue-600 hover:text-blue-700 transition-colors">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
-                          <span className="font-medium">abdallahnangere@gmail.com</span>
+                          <span className="font-medium">founder@ramadanbot.app</span>
                         </a>
                         <a href="https://wa.me/2348164135836" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-green-600 hover:text-green-700 transition-colors">
                           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

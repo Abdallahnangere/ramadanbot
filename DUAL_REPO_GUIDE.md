@@ -129,7 +129,7 @@ See the main website: https://www.ramadanbot.app
 
 ## Contact
 
-- Email: abdallahnangere@gmail.com
+- Email: founder@ramadanbot.app
 - WhatsApp: +234 816 413 5836
 - Website: https://www.ramadanbot.app
 ```

@@ -51,8 +51,8 @@ export default function ContactPage() {
             </div>
             <h3 className="text-xl font-bold mb-2">Email</h3>
             <p className="text-slate-600 text-sm mb-6">Reach out anytime. I reply within 24 hours.</p>
-            <a href="mailto:abdallahnangere@gmail.com" className="text-blue-600 font-medium hover:underline text-sm">
-              abdallahnangere@gmail.com
+            <a href="mailto:founder@ramadanbot.app" className="text-blue-600 font-medium hover:underline text-sm">
+              founder@ramadanbot.app
             </a>
           </div>
 

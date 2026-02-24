@@ -162,7 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, user, onLogout, onAd
                     </p>
                     
                     <a 
-                      href="mailto:abdallahnangere@gmail.com"
+                      href="mailto:founder@ramadanbot.app"
                       className="flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl hover:shadow-md transition-all duration-200 group border border-red-100"
                     >
                       <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm">
@@ -170,7 +170,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, user, onLogout, onAd
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-800">Email</p>
-                        <p className="text-xs text-red-600 font-medium">abdallahnangere@gmail.com</p>
+                        <p className="text-xs text-red-600 font-medium">founder@ramadanbot.app</p>
                       </div>
                     </a>
 
