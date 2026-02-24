@@ -338,7 +338,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                   border: '1px solid #e5e7eb',
                   borderRadius: '12px',
                   fontSize: '14px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  background: 'white',
+                  color: '#1F2937',
+                  caretColor: '#047857'
                 }}
                 required
               />
@@ -656,7 +659,7 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                                 type="text"
                                 value={editName}
                                 onChange={(e) => setEditName(e.target.value)}
-                                style={{ padding: '6px 8px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px', width: '140px' }}
+                                style={{ padding: '6px 8px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px', width: '140px', background: 'white', color: '#1F2937', caretColor: '#047857' }}
                               />
                             ) : (
                               <span style={{ fontWeight: '500', color: '#111827' }}>{user.name}</span>
@@ -1188,7 +1191,6 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                         background: 'white',
                         color: '#1F2937',
                         caretColor: '#047857'
-                      }}
                       }}
                     />
                     <button
