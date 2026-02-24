@@ -54,9 +54,31 @@ async function main() {
   );
   fs.renameSync(bgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
 
-  // If a new background was uploaded as new.png, compress it and replace the ramadan background
+  // If a new background was uploaded as final.png, compress it and replace the ramadan background
+  const finalBgPath = '/workspaces/ramadanbot/public/final.png';
+  if (fs.existsSync(finalBgPath)) {
+    const finalBgTemp = '/workspaces/ramadanbot/public/ramadan-background-final-temp.png';
+    await compressImage(
+      finalBgPath,
+      finalBgTemp,
+      80,
+      { width: 1200, height: 1200 }
+    );
+    fs.renameSync(finalBgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
+
+    // Also create a 1080x1080 export for flyer previews
+    const final1080Path = '/workspaces/ramadanbot/public/final-1080.png';
+    await compressImage(
+      finalBgPath,
+      final1080Path,
+      85,
+      { width: 1080, height: 1080 }
+    );
+  }
+
+  // Also check for new.png (legacy backup)
   const newBgPath = '/workspaces/ramadanbot/public/new.png';
-  if (fs.existsSync(newBgPath)) {
+  if (fs.existsSync(newBgPath) && !fs.existsSync(finalBgPath)) {
     const newBgTemp = '/workspaces/ramadanbot/public/ramadan-background-new-temp.png';
     await compressImage(
       newBgPath,

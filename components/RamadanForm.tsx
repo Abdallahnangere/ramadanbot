@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FormData } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import { checkLimitAndGenerate } from '../app/actions'; // Use Server Action
-import { Send, Target, ChevronDown, Check, Info, Lightbulb, AlertCircle } from 'lucide-react';
+import { Send, Target, ChevronDown, Check, Info, Lightbulb, AlertCircle, Clock, MapPin, Moon } from 'lucide-react';
 
 interface RamadanFormProps {
   onSuccess: (data: { text: string; formData: FormData }) => void;
@@ -16,6 +16,7 @@ interface RamadanFormProps {
 const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialName, userId, countdownTime = '00:00:00', hasLimitReached = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDayOpen, setIsDayOpen] = useState(false);
+  const [iftarCountdown, setIftarCountdown] = useState<{ h: string; m: string; s: string; day: number }>({ h: '00', m: '00', s: '00', day: 1 });
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const [formData, setFormData] = useState<FormData>({
@@ -23,6 +24,60 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
     day: 1,
     hint: '',
   });
+
+  // Prayer times for Damaturu, Nigeria (Ramadan 1447)
+  const PRAYER_TIMES = [
+    { day: 1, maghrib: "18:21" }, { day: 2, maghrib: "18:21" }, { day: 3, maghrib: "18:21" },
+    { day: 4, maghrib: "18:21" }, { day: 5, maghrib: "18:22" }, { day: 6, maghrib: "18:22" },
+    { day: 7, maghrib: "18:22" }, { day: 8, maghrib: "18:22" }, { day: 9, maghrib: "18:22" },
+    { day: 10, maghrib: "18:22" }, { day: 11, maghrib: "18:23" }, { day: 12, maghrib: "18:23" },
+    { day: 13, maghrib: "18:23" }, { day: 14, maghrib: "18:23" }, { day: 15, maghrib: "18:23" },
+    { day: 16, maghrib: "18:23" }, { day: 17, maghrib: "18:23" }, { day: 18, maghrib: "18:23" },
+    { day: 19, maghrib: "18:23" }, { day: 20, maghrib: "18:23" }, { day: 21, maghrib: "18:23" },
+    { day: 22, maghrib: "18:24" }, { day: 23, maghrib: "18:24" }, { day: 24, maghrib: "18:24" },
+    { day: 25, maghrib: "18:24" }, { day: 26, maghrib: "18:24" }, { day: 27, maghrib: "18:24" },
+    { day: 28, maghrib: "18:24" }, { day: 29, maghrib: "18:24" }, { day: 30, maghrib: "18:24" },
+  ];
+
+  // Calculate current Ramadan day and time until iftar
+  useEffect(() => {
+    const updateCountdown = () => {
+      try {
+        const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+        const ramadanStart = new Date(2026, 1, 18); // Feb 18, 2026
+        
+        const diffMs = now.getTime() - ramadanStart.getTime();
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+        const ramadanDay = Math.max(1, Math.min(30, diffDays));
+        
+        const todayPrayer = PRAYER_TIMES.find(p => p.day === ramadanDay);
+        const maghribTime = todayPrayer?.maghrib || PRAYER_TIMES[0].maghrib;
+        const [maghribH, maghribM] = maghribTime.split(':').map(Number);
+        
+        const iftarDate = new Date(now);
+        iftarDate.setHours(maghribH, maghribM, 0, 0);
+        
+        if (iftarDate < now) {
+          iftarDate.setDate(iftarDate.getDate() + 1);
+        }
+        
+        const msUntilIftar = iftarDate.getTime() - now.getTime();
+        const totalSecs = Math.max(0, Math.floor(msUntilIftar / 1000));
+        const hours = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
+        const secs = String(totalSecs % 60).padStart(2, '0');
+        
+        setIftarCountdown({ h: hours, m: mins, s: secs, day: ramadanDay });
+      } catch (e) {
+        // Fallback if timezone conversion fails
+        setIftarCountdown({ h: '00', m: '00', s: '00', day: 1 });
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,22 +127,42 @@ const RamadanForm: React.FC<RamadanFormProps> = ({ onSuccess, disabled, initialN
   return (
     <div className="w-full space-y-4">
       
-      {/* How It Works - Apple Premium Info Card */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 overflow-hidden shadow-sm">
+      {/* Compact Iftar Countdown - Smart Status Card */}
+      <div className="bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50 rounded-2xl border border-orange-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
         <div className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center">
-                <Info className="w-5 h-5 text-blue-600" strokeWidth={2} />
+          <div className="grid grid-cols-3 gap-3 items-center">
+            {/* Ramadan Day */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Moon size={16} className="text-orange-600" strokeWidth={2} />
+                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Day</span>
               </div>
+              <p className="text-2xl font-bold text-orange-600">{iftarCountdown.day}</p>
+              <p className="text-xs text-gray-500 font-medium">Ramadan</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">
-                How It Works
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Share a spiritual theme like "Patience" or "Gratitude" and we'll craft a personalized Ramadan reflection flyer for you.
-              </p>
+
+            {/* Countdown to Iftar */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Clock size={16} className="text-rose-600" strokeWidth={2} />
+                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Iftar in</span>
+              </div>
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-xl font-bold text-rose-600 font-mono">{iftarCountdown.h}</span>
+                <span className="text-xs text-gray-400 font-medium">:</span>
+                <span className="text-xl font-bold text-rose-600 font-mono">{iftarCountdown.m}</span>
+              </div>
+              <p className="text-xs text-gray-500 font-medium">hours : minutes</p>
+            </div>
+
+            {/* Location */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <MapPin size={16} className="text-amber-600" strokeWidth={2} />
+                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Location</span>
+              </div>
+              <p className="text-sm font-bold text-amber-700 leading-tight">Damaturu</p>
+              <p className="text-xs text-gray-500 font-medium">Nigeria</p>
             </div>
           </div>
         </div>
