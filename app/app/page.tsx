@@ -423,61 +423,149 @@ export default function HomeApp() {
                 }}
             />
 
-            {/* Premium Elegant Header - Sophisticated Design */}
+            {/* ⭐ Enhanced Premium Header with Brilliant Design */}
             <header className="app-header flex-shrink-0 sticky top-0 z-40" style={{
-                background: `linear-gradient(180deg, color-mix(in srgb, var(--app-sf) 95%, transparent) 0%, color-mix(in srgb, var(--app-sf) 80%, transparent) 100%)`,
-                borderBottom: `1px solid ${`color-mix(in srgb, var(--app-bd) 40%, transparent)`}`,
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                padding: '0 24px',
-                height: '60px',
+                background: `linear-gradient(180deg, color-mix(in srgb, var(--app-sf) 98%, transparent) 0%, color-mix(in srgb, var(--app-sf) 85%, transparent) 100%)`,
+                borderBottom: `1px solid ${`color-mix(in srgb, var(--app-bd) 35%, transparent)`}`,
+                backdropFilter: 'blur(25px)',
+                WebkitBackdropFilter: 'blur(25px)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)',
+                padding: '0 16px',
+                minHeight: '72px',
                 display: 'flex',
                 alignItems: 'center'
             }}>
-                <div className="flex items-center justify-between w-full max-w-2xl mx-auto">
-                    {/* Menu Button - Sophisticated */}
-                    <button
-                        onClick={() => setIsSidebarOpen(true)}
-                        className="flex items-center justify-center transition-all duration-300 relative group"
-                        style={{
-                            width: '44px',
-                            height: '44px',
-                            borderRadius: '12px',
-                            backgroundColor: `color-mix(in srgb, var(--app-sf2) 80%, transparent)`,
-                            border: `1px solid ${`color-mix(in srgb, var(--app-bd) 30%, transparent)`}`,
-                            cursor: 'pointer'
-                        }}
-                        aria-label="Open Menu"
-                        title="Menu"
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 95%, transparent)`;
-                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.12)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 80%, transparent)`;
-                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.06)';
-                        }}
-                    >
-                        <Menu size={22} color={`var(--app-t1)`} strokeWidth={1.6} style={{ opacity: 0.85 }} />
-                    </button>
+                <div className="flex items-center justify-between w-full max-w-6xl mx-auto">
+                    {/* Left Section - Menu + Profile */}
+                    <div className="flex items-center gap-3">
+                        {/* Menu Button */}
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="flex items-center justify-center transition-all duration-300 hover:scale-105"
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '12px',
+                                backgroundColor: `color-mix(in srgb, var(--app-gold-dim) 1, transparent)`,
+                                border: `1px solid ${`color-mix(in srgb, var(--app-bd) 25%, transparent)`}`,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                            aria-label="Open Menu"
+                            title="Menu"
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-gold-dim) 8, transparent)`;
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(184,144,10,0.15)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-gold-dim) 1, transparent)`;
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <Menu size={20} color={`var(--app-t1)`} strokeWidth={1.8} />
+                        </button>
 
-                    {/* Premium Title - Center */}
-                    <h1 className="app-title flex-1 text-center px-6 absolute left-1/2 transform -translate-x-1/2" style={{
-                        fontSize: '20px',
-                        fontWeight: '700',
-                        letterSpacing: '-0.5px',
-                        color: `var(--app-t1)`,
-                        background: `linear-gradient(135deg, var(--app-t1) 0%, color-mix(in srgb, var(--app-t1) 85%, transparent) 100%)`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
-                    }}>
-                        RamadanBot
-                    </h1>
+                        {/* Profile Info Card */}
+                        <div className="hidden sm:flex items-center gap-3 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, var(--app-gold-dim) 3, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, var(--app-gold-brd) 15%, transparent)`}`,
+                            borderRadius: '12px'
+                        }}>
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm" style={{
+                                background: `linear-gradient(135deg, var(--app-gold-b), var(--app-gold))`,
+                                color: '#0A0800'
+                            }}>
+                                {user?.name?.[0]?.toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                                <p style={{ fontSize: '12px', fontWeight: '600', color: `var(--app-t1)`, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {user?.name?.split(' ')[0]}
+                                </p>
+                                <p style={{ fontSize: '11px', color: `var(--app-t3)`, margin: 0, marginTop: '2px' }}>Ready</p>
+                            </div>
+                        </div>
+                    </div>
 
-                    {/* Right Spacer - Balanced */}
-                    <div style={{ width: '44px', height: '44px' }} />
+                    {/* Center - Branding */}
+                    <div className="flex-1 flex justify-center px-4">
+                        <h1 className="app-title" style={{
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            letterSpacing: '-0.5px',
+                            background: `linear-gradient(135deg, #D4A830 0%, var(--app-gold) 50%, var(--app-t1) 100%)`,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            🌙 RamadanBot
+                        </h1>
+                    </div>
+
+                    {/* Right Section - Quick Stats */}
+                    <div className="hidden sm:flex items-center gap-2">
+                        {/* Streak Badge */}
+                        <div className="flex items-center gap-1.5 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, #FFA500 10%, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, #FFA500 20%, transparent)`}`,
+                            borderRadius: '10px'
+                        }}>
+                            <span style={{ fontSize: '12px' }}>🔥</span>
+                            <span style={{ fontSize: '11px', fontWeight: '600', color: `var(--app-t1)` }}>{user?.streak || 0}</span>
+                        </div>
+
+                        {/* Daily Limit Badge - Real-time from API */}
+                        <div className="flex items-center gap-1.5 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, var(--app-emerald) 10%, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, var(--app-emerald) 20%, transparent)`}`,
+                            borderRadius: '10px'
+                        }}>
+                            <span style={{ fontSize: '12px' }}>✨</span>
+                            <span style={{ fontSize: '11px', fontWeight: '600', color: `var(--app-t1)` }}>{typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}</span>
+                        </div>
+
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={() => {
+                                const newDarkMode = !appState.isDarkMode;
+                                setAppState(prev => ({ ...prev, isDarkMode: newDarkMode }));
+                                if (newDarkMode) {
+                                    document.documentElement.classList.add('dark');
+                                    localStorage.theme = 'dark';
+                                } else {
+                                    document.documentElement.classList.remove('dark');
+                                    localStorage.theme = 'light';
+                                }
+                            }}
+                            className="flex items-center justify-center transition-all duration-300 hover:scale-110"
+                            style={{
+                                width: '38px',
+                                height: '38px',
+                                borderRadius: '10px',
+                                backgroundColor: `color-mix(in srgb, var(--app-sf2) 70%, transparent)`,
+                                border: `1px solid ${`color-mix(in srgb, var(--app-bd) 25%, transparent)`}`,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                            aria-label="Toggle dark mode"
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 85%, transparent)`;
+                                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.1)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 70%, transparent)`;
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <span style={{ fontSize: '18px' }}>{appState.isDarkMode ? '☀️' : '🌙'}</span>
+                        </button>
+                    </div>
+
+                    {/* Mobile Right Spacer */}
+                    <div className="sm:hidden" style={{ width: '40px', height: '40px' }} />
                 </div>
             </header>
 
