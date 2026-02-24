@@ -231,6 +231,67 @@ export async function updateUserLimit(userId: string, newLimit: number) {
   finally { client.release(); }
 }
 
+// Get all users with custom limits
+export async function getAllLimits() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT id, name, role, rate_limit_override as custom_limit, created_at
+      FROM users
+      ORDER BY created_at DESC
+    `);
+    return { success: true, limits: result.rows };
+  } catch (e) {
+    console.error('Get limits error:', e);
+    return { success: false, limits: [] };
+  } finally {
+    client.release();
+  }
+}
+
+// Set a custom limit for a user
+export async function setUserLimit(userId: string, limit: number) {
+  const client = await pool.connect();
+  try {
+    if (limit < 0) {
+      return { success: false, error: 'Limit must be non-negative' };
+    }
+    const result = await client.query(
+      'UPDATE users SET rate_limit_override = $1 WHERE id = $2 RETURNING id, name, rate_limit_override',
+      [limit, userId]
+    );
+    if (!result.rows.length) {
+      return { success: false, error: 'User not found' };
+    }
+    return { success: true, user: result.rows[0] };
+  } catch (e) {
+    console.error('Set limit error:', e);
+    return { success: false, error: 'Failed to set limit' };
+  } finally {
+    client.release();
+  }
+}
+
+// Remove/reset a user's custom limit
+export async function removeUserLimit(userId: string) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      'UPDATE users SET rate_limit_override = NULL WHERE id = $1 RETURNING id, name, rate_limit_override',
+      [userId]
+    );
+    if (!result.rows.length) {
+      return { success: false, error: 'User not found' };
+    }
+    return { success: true, user: result.rows[0], message: 'Limit removed. User will use default limit.' };
+  } catch (e) {
+    console.error('Remove limit error:', e);
+    return { success: false, error: 'Failed to remove limit' };
+  } finally {
+    client.release();
+  }
+}
+
 export async function toggleUserBan(userId: string, status: boolean) {
   const client = await pool.connect();
   try {

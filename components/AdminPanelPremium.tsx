@@ -5,7 +5,7 @@ import { User } from '../types';
 import { 
   fetchAllUsers, updateUserLimit, toggleUserBan, getAnalytics, adminLogin, 
   deleteUser, updateUserName, resetAllStreaks, getEnhancedAnalytics, 
-  resetAllQuranProgress 
+  resetAllQuranProgress, getAllLimits, setUserLimit, removeUserLimit
 } from '../app/actions';
 import { 
   LogOut, Menu, X, BarChart3, Users, Zap, Search, Edit2, Save, Trash2, 
@@ -18,7 +18,7 @@ interface AdminPanelProps {
   onBack: () => void;
 }
 
-type AdminTab = 'dashboard' | 'users' | 'broadcast';
+type AdminTab = 'dashboard' | 'users' | 'broadcast' | 'limits';
 
 const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,6 +47,12 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [downloadingAnalytics, setDownloadingAnalytics] = useState(false);
 
+  // Limits management
+  const [allLimits, setAllLimits] = useState<any[]>([]);
+  const [limitsSearch, setLimitsSearch] = useState('');
+  const [editingLimitId, setEditingLimitId] = useState<string | null>(null);
+  const [editingLimitValue, setEditingLimitValue] = useState(0);
+
   const USERS_PER_PAGE = 50;
 
   // Login
@@ -63,6 +69,13 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
     }
     setLoading(false);
   };
+
+  // Load limits when tab is selected
+  useEffect(() => {
+    if (activeTab === 'limits' && isAuthenticated) {
+      loadAllLimits();
+    }
+  }, [activeTab, isAuthenticated]);
 
   // Load data
   const loadData = async () => {
@@ -247,6 +260,37 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
     }
   };
 
+  // Limits management - CRUD operations
+  const loadAllLimits = async () => {
+    const result = await getAllLimits();
+    if (result.success) {
+      setAllLimits(result.limits || []);
+    }
+  };
+
+  const handleSaveLimit = async (userId: string, newLimit: number) => {
+    const result = await setUserLimit(userId, newLimit);
+    if (result.success) {
+      alert(`✓ Limit updated to ${newLimit}`);
+      await loadAllLimits();
+      setEditingLimitId(null);
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  };
+
+  const handleRemoveLimit = async (userId: string, userName: string) => {
+    if (confirm(`Remove custom limit for "${userName}"? They will revert to default (3).`)) {
+      const result = await removeUserLimit(userId);
+      if (result.success) {
+        alert('✓ Limit removed');
+        await loadAllLimits();
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    }
+  };
+
   // Login screen
   if (!isAuthenticated) {
     return (
@@ -373,7 +417,8 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
           {[
             { id: 'dashboard', label: 'Dashboard', icon: '📊' },
             { id: 'users', label: 'Users', icon: '👥' },
-            { id: 'broadcast', label: 'Broadcast', icon: '📢' }
+            { id: 'broadcast', label: 'Broadcast', icon: '📢' },
+            { id: 'limits', label: 'Limits', icon: '⚡' }
           ].map(item => (
             <button
               key={item.id}
@@ -454,6 +499,7 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
             {activeTab === 'dashboard' && '📊 Dashboard'}
             {activeTab === 'users' && '👥 Users'}
             {activeTab === 'broadcast' && '📢 Broadcast'}
+            {activeTab === 'limits' && '⚡ Limits'}
           </h1>
           <button
             onClick={loadData}
@@ -910,7 +956,242 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
               </div>
             </div>
           )}
-        </div>
+
+          {/* Limits CRUD Management */}
+          {activeTab === 'limits' && (
+            <div>
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h2 style={{ margin: 0, marginBottom: '8px', fontSize: '20px', fontWeight: 'bold' }}>Daily Generation Limits</h2>
+                    <p style={{ margin: 0, color: '#9ca3af', fontSize: '14px' }}>Manage user-specific generation limits (overrides default limit of 3)</p>
+                  </div>
+                  <button
+                    onClick={() => { setLimitsSearch(''); loadAllLimits(); }}
+                    style={{
+                      background: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}
+                  >
+                    🔄 Refresh
+                  </button>
+                </div>
+
+                {/* Search */}
+                <div style={{ marginBottom: '20px' }}>
+                  <input
+                    type="text"
+                    placeholder="Search by user name..."
+                    value={limitsSearch}
+                    onChange={(e) => setLimitsSearch(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {/* Limits List */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {allLimits.filter(l => l.name.toLowerCase().includes(limitsSearch.toLowerCase())).length === 0 ? (
+                    <div style={{
+                      background: 'white',
+                      borderRadius: '12px',
+                      padding: '32px',
+                      textAlign: 'center',
+                      color: '#9ca3af'
+                    }}>
+                      <p style={{ margin: 0 }}>No custom limits set. All users using default limit (3).</p>
+                    </div>
+                  ) : (
+                    allLimits.filter(l => l.name.toLowerCase().includes(limitsSearch.toLowerCase())).map(user => (
+                      <div
+                        key={user.id}
+                        style={{
+                          background: 'white',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          border: '1px solid #e5e7eb',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '16px'
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>{user.name}</div>
+                          <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                            Role: {user.role} • Joined: {new Date(user.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {editingLimitId === user.id ? (
+                            <>
+                              <input
+                                type="number"
+                                value={editingLimitValue}
+                                onChange={(e) => setEditingLimitValue(parseInt(e.target.value) || 0)}
+                                min="0"
+                                max="100"
+                                style={{
+                                  width: '80px',
+                                  padding: '8px 12px',
+                                  border: '1px solid #10b981',
+                                  borderRadius: '6px',
+                                  fontSize: '14px',
+                                  textAlign: 'center'
+                                }}
+                              />
+                              <button
+                                onClick={() => handleSaveLimit(user.id, editingLimitValue)}
+                                style={{
+                                  background: '#10b981',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  fontWeight: '600'
+                                }}
+                              >
+                                ✓ Save
+                              </button>
+                              <button
+                                onClick={() => setEditingLimitId(null)}
+                                style={{
+                                  background: '#f3f4f6',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px'
+                                }}
+                              >
+                                ✕ Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <div style={{ 
+                                background: '#fef3c7', 
+                                color: '#92400e', 
+                                padding: '6px 16px', 
+                                borderRadius: '6px',
+                                fontWeight: '600',
+                                minWidth: '80px',
+                                textAlign: 'center'
+                              }}>
+                                {user.custom_limit || '0'} / day
+                              </div>
+                              <button
+                                onClick={() => {
+                                  setEditingLimitId(user.id);
+                                  setEditingLimitValue(user.custom_limit || 0);
+                                }}
+                                style={{
+                                  background: '#dbeafe',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  color: '#1e40af'
+                                }}
+                              >
+                                ✏️ Edit
+                              </button>
+                              <button
+                                onClick={() => handleRemoveLimit(user.id, user.name)}
+                                style={{
+                                  background: '#fee2e2',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  color: '#dc2626'
+                                }}
+                              >
+                                🗑️ Remove
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Set New Limit Section */}
+                <div style={{ marginTop: '32px', background: '#f9fafb', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '600' }}>Set Limit for Any User</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '12px' }}>
+                    <input
+                      type="text"
+                      placeholder="Search user..."
+                      value={limitsSearch}
+                      onChange={(e) => setLimitsSearch(e.target.value)}
+                      style={{
+                        padding: '10px 12px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '14px'
+                      }}
+                    />
+                    <input
+                      type="number"
+                      placeholder="New limit"
+                      min="0"
+                      max="100"
+                      value={editingLimitValue}
+                      onChange={(e) => setEditingLimitValue(parseInt(e.target.value) || 0)}
+                      style={{
+                        padding: '10px 12px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '14px'
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const user = allLimits.find(u => u.name.toLowerCase().includes(limitsSearch.toLowerCase()));
+                        if (user) {
+                          handleSaveLimit(user.id, editingLimitValue);
+                        } else {
+                          alert('User not found');
+                        }
+                      }}
+                      style={{
+                        background: '#3b82f6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '10px 20px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Set Limit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

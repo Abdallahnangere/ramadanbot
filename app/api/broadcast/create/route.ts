@@ -12,22 +12,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use a default admin ID for broadcasts (can be updated later)
-    const adminId = 'admin-broadcast-system';
+    // Use a default admin ID for broadcasts
+    const adminId = null; // Will be nullable based on schema
 
-    // Create the broadcast message
+    // Create the broadcast message using correct columns from COMPREHENSIVE_MIGRATION_V3.0.sql
     const result = await pool.query(`
       INSERT INTO broadcast_messages 
-      (title, message, action_label, action_link, status, created_by)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, title, message, action_label, action_link, status, created_at, updated_at
+      (admin_id, message, action_text, action_url, status)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, message, action_text, action_url, status, created_at, updated_at
     `, [
-      message.trim(),
+      adminId,
       message.trim(),
       actionText || 'Learn More',
       actionUrl || null,
-      'active',
-      adminId
+      'active'
     ]);
 
     if (!result.rows || result.rows.length === 0) {
