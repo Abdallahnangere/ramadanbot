@@ -1192,6 +1192,7 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
               </div>
             </div>
           )}
+        </div>
       </div>
     </div>
   );
