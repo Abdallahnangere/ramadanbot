@@ -44,27 +44,17 @@ async function main() {
   );
   fs.renameSync(logoTemp, '/workspaces/ramadanbot/public/logo.png');
   
-  // Compress background - use temp file then replace
-  const bgTemp = '/workspaces/ramadanbot/public/ramadan-background-temp.png';
-  await compressImage(
-    '/workspaces/ramadanbot/public/ramadan-background.png',
-    bgTemp,
-    80,
-    { width: 1200, height: 1200 }
-  );
-  fs.renameSync(bgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
-
-  // If a new background was uploaded as final.png, compress it and replace the ramadan background
+  // MASTER PIPELINE: Compress final.png → ramadan-background.png (NO FALLBACKS)
   const finalBgPath = '/workspaces/ramadanbot/public/final.png';
   if (fs.existsSync(finalBgPath)) {
-    const finalBgTemp = '/workspaces/ramadanbot/public/ramadan-background-final-temp.png';
+    const bgTemp = '/workspaces/ramadanbot/public/ramadan-background-temp.png';
     await compressImage(
       finalBgPath,
-      finalBgTemp,
+      bgTemp,
       80,
       { width: 1200, height: 1200 }
     );
-    fs.renameSync(finalBgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
+    fs.renameSync(bgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
 
     // Also create a 1080x1080 export for flyer previews
     const final1080Path = '/workspaces/ramadanbot/public/final-1080.png';
@@ -74,6 +64,8 @@ async function main() {
       85,
       { width: 1080, height: 1080 }
     );
+  } else {
+    console.warn('⚠️  final.png not found - using existing ramadan-background.png');
   }
   
   // Compress WhatsApp icon

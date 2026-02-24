@@ -423,22 +423,61 @@ export default function HomeApp() {
                 }}
             />
 
-            {/* Header - Premium Apple Minimalist Design */}
-            <header className="app-header flex-shrink-0 px-5 py-3 border-b border-opacity-20 sticky top-0 z-30" style={{ backgroundColor: `color-mix(in srgb, var(--app-sf) 85%, transparent)`, borderColor: `var(--app-bd)`, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
-                <div className="flex items-center justify-between max-w-2xl mx-auto">
+            {/* Premium Elegant Header - Sophisticated Design */}
+            <header className="app-header flex-shrink-0 sticky top-0 z-40" style={{
+                background: `linear-gradient(180deg, color-mix(in srgb, var(--app-sf) 95%, transparent) 0%, color-mix(in srgb, var(--app-sf) 80%, transparent) 100%)`,
+                borderBottom: `1px solid ${`color-mix(in srgb, var(--app-bd) 40%, transparent)`}`,
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                padding: '0 24px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center'
+            }}>
+                <div className="flex items-center justify-between w-full max-w-2xl mx-auto">
+                    {/* Menu Button - Sophisticated */}
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 hover:opacity-75 hover:bg-opacity-50"
-                        style={{ backgroundColor: `var(--app-sf2)` }}
+                        className="flex items-center justify-center transition-all duration-300 relative group"
+                        style={{
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '12px',
+                            backgroundColor: `color-mix(in srgb, var(--app-sf2) 80%, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, var(--app-bd) 30%, transparent)`}`,
+                            cursor: 'pointer'
+                        }}
                         aria-label="Open Menu"
                         title="Menu"
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 95%, transparent)`;
+                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.12)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 80%, transparent)`;
+                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.06)';
+                        }}
                     >
-                        <Menu size={20} color={`var(--app-t1)`} strokeWidth={1.8} />
+                        <Menu size={22} color={`var(--app-t1)`} strokeWidth={1.6} style={{ opacity: 0.85 }} />
                     </button>
 
-                    <h1 className="app-title text-center flex-1 px-4" style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '-0.015em', color: `var(--app-t1)` }}>RamadanBot</h1>
+                    {/* Premium Title - Center */}
+                    <h1 className="app-title flex-1 text-center px-6 absolute left-1/2 transform -translate-x-1/2" style={{
+                        fontSize: '20px',
+                        fontWeight: '700',
+                        letterSpacing: '-0.5px',
+                        color: `var(--app-t1)`,
+                        background: `linear-gradient(135deg, var(--app-t1) 0%, color-mix(in srgb, var(--app-t1) 85%, transparent) 100%)`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text'
+                    }}>
+                        RamadanBot
+                    </h1>
 
-                    <div className="w-10 h-10 flex-shrink-0" />
+                    {/* Right Spacer - Balanced */}
+                    <div style={{ width: '44px', height: '44px' }} />
                 </div>
             </header>
 
