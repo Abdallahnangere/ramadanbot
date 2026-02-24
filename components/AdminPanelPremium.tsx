@@ -148,7 +148,8 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
         body: JSON.stringify({
           message: broadcastDetails.trim() || broadcastMessage.trim(),
           actionText: broadcastActionText.trim() || null,
-          actionUrl: broadcastActionUrl.trim() || null
+          actionUrl: broadcastActionUrl.trim() || null,
+          adminId: 'system-broadcast'
         })
       });
       if (res.ok) {
@@ -624,7 +625,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                     border: '1px solid #e5e7eb',
                     borderRadius: '10px',
                     fontSize: '14px',
-                    boxSizing: 'border-box'
+                    boxSizing: 'border-box',
+                    background: 'white',
+                    color: '#1F2937',
+                    caretColor: '#047857'
                   }}
                 />
               </div>
@@ -804,7 +808,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                       border: '1px solid #e5e7eb',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      background: 'white',
+                      color: '#1F2937',
+                      caretColor: '#047857'
                     }}
                   />
                 </div>
@@ -825,7 +832,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                       fontSize: '14px',
                       boxSizing: 'border-box',
                       fontFamily: 'inherit',
-                      minHeight: '100px'
+                      minHeight: '100px',
+                      background: 'white',
+                      color: '#1F2937',
+                      caretColor: '#047857'
                     }}
                   />
                 </div>
@@ -846,7 +856,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                         border: '1px solid #e5e7eb',
                         borderRadius: '10px',
                         fontSize: '14px',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        background: 'white',
+                        color: '#1F2937',
+                        caretColor: '#047857'
                       }}
                     />
                   </div>
@@ -865,7 +878,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                         border: '1px solid #e5e7eb',
                         borderRadius: '10px',
                         fontSize: '14px',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        background: 'white',
+                        color: '#1F2937',
+                        caretColor: '#047857'
                       }}
                     />
                   </div>
@@ -996,7 +1012,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                       border: '1px solid #e5e7eb',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      background: 'white',
+                      color: '#1F2937',
+                      caretColor: '#047857'
                     }}
                   />
                 </div>
@@ -1148,7 +1167,10 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                         padding: '10px 12px',
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px',
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        background: 'white',
+                        color: '#1F2937',
+                        caretColor: '#047857'
                       }}
                     />
                     <input
@@ -1162,7 +1184,11 @@ const AdminPanelPremium: React.FC<AdminPanelProps> = ({ onBack }) => {
                         padding: '10px 12px',
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px',
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        background: 'white',
+                        color: '#1F2937',
+                        caretColor: '#047857'
+                      }}
                       }}
                     />
                     <button

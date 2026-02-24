@@ -20,7 +20,22 @@ export async function GET(request: NextRequest) {
         [id]
       );
       const todayGenerations = parseInt(countRes.rows[0].count || '0');
-      const limit = user.rate_limit_override || 3;
+      
+      // Check for custom limit in rate_limit_overrides table (new system)
+      let limit = 3; // Default limit
+      try {
+        const limitRes = await client.query(
+          `SELECT limit_value FROM rate_limit_overrides WHERE user_id = $1`,
+          [id]
+        );
+        if (limitRes.rows.length > 0) {
+          limit = limitRes.rows[0].limit_value;
+        }
+      } catch (e) {
+        // Fall back to rate_limit_override column if table doesn't exist
+        limit = user.rate_limit_override || 3;
+      }
+      
       const remaining = Math.max(0, limit - todayGenerations);
       return NextResponse.json({ user: { ...user, today_generations: todayGenerations, remaining, limit } });
     } finally {
