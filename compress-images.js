@@ -53,6 +53,28 @@ async function main() {
     { width: 1200, height: 1200 }
   );
   fs.renameSync(bgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
+
+  // If a new background was uploaded as new.png, compress it and replace the ramadan background
+  const newBgPath = '/workspaces/ramadanbot/public/new.png';
+  if (fs.existsSync(newBgPath)) {
+    const newBgTemp = '/workspaces/ramadanbot/public/ramadan-background-new-temp.png';
+    await compressImage(
+      newBgPath,
+      newBgTemp,
+      80,
+      { width: 1200, height: 1200 }
+    );
+    fs.renameSync(newBgTemp, '/workspaces/ramadanbot/public/ramadan-background.png');
+
+    // Also create a 1080x1080 export for flyer previews
+    const new1080Path = '/workspaces/ramadanbot/public/new-1080.png';
+    await compressImage(
+      newBgPath,
+      new1080Path,
+      85,
+      { width: 1080, height: 1080 }
+    );
+  }
   
   // Compress WhatsApp icon
   const waTemp = '/workspaces/ramadanbot/public/whatsapp-temp.png';
