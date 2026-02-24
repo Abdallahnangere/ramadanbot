@@ -11,7 +11,7 @@ import SettingsScreen from '../../components/SettingsScreen';
 import { useRouter } from 'next/navigation';
 import Toast from '../../components/Toast';
 import BroadcastToast from '../../components/BroadcastToast';
-import { Menu, Sparkles, Download, Clock, BookOpen, Moon, Sun } from 'lucide-react';
+import { Menu, Sparkles, Download, Clock, BookOpen } from 'lucide-react';
 
 function getAppCSS() {
   return `
@@ -423,32 +423,22 @@ export default function HomeApp() {
                 }}
             />
 
-            {/* Header - Premium Design */}
-            <header className="app-header flex-shrink-0 px-5 py-4 border-b" style={{ backgroundColor: `var(--app-sf)`, borderColor: `var(--app-bd)` }}>
+            {/* Header - Premium Apple Minimalist Design */}
+            <header className="app-header flex-shrink-0 px-5 py-3 border-b border-opacity-20 sticky top-0 z-30" style={{ backgroundColor: `color-mix(in srgb, var(--app-sf) 85%, transparent)`, borderColor: `var(--app-bd)`, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
                 <div className="flex items-center justify-between max-w-2xl mx-auto">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
+                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 hover:opacity-75 hover:bg-opacity-50"
                         style={{ backgroundColor: `var(--app-sf2)` }}
                         aria-label="Open Menu"
+                        title="Menu"
                     >
-                        <Menu size={20} color={`var(--app-t1)`} />
+                        <Menu size={20} color={`var(--app-t1)`} strokeWidth={1.8} />
                     </button>
 
-                    <h1 className="app-title">🌙 RamadanBot</h1>
+                    <h1 className="app-title text-center flex-1 px-4" style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '-0.015em', color: `var(--app-t1)` }}>RamadanBot</h1>
 
-                    <button
-                        onClick={toggleTheme}
-                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
-                        style={{ backgroundColor: `var(--app-sf2)` }}
-                        aria-label="Toggle Theme"
-                    >
-                        {appState.isDarkMode ? (
-                            <Sun size={20} style={{ color: '#F59E0B' }} />
-                        ) : (
-                            <Moon size={20} style={{ color: `var(--app-t2)` }} />
-                        )}
-                    </button>
+                    <div className="w-10 h-10 flex-shrink-0" />
                 </div>
             </header>
 
