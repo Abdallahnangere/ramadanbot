@@ -15,79 +15,80 @@ import { Menu, Sparkles, Download, Clock, BookOpen } from 'lucide-react';
 
 function getAppCSS() {
   return `
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist:wght@400;500;600;700&display=swap');
     
     /* ── Light Theme (default) ──────────────────────────── */
     [data-app-theme="light"], :root {
-      --app-bg: #FAFAF7;
-      --app-bg-alt: #F3F2EE;
+      --app-bg: #FAFAFA;
+      --app-bg-alt: #F5F5F7;
       --app-sf: #FFFFFF;
-      --app-sf2: #F0EFE9;
-      --app-bd: rgba(0,0,0,0.08);
-      --app-bd-med: rgba(0,0,0,0.13);
-      --app-t1: #0F0E0C;
-      --app-t2: #5B5955;
-      --app-t3: #9C9990;
-      --app-gold: #B8900A;
-      --app-gold-b: #D4A830;
-      --app-gold-dim: rgba(184,144,10,0.1);
-      --app-gold-brd: rgba(184,144,10,0.22);
-      --app-emerald: #047857;
-      --app-em-dim: rgba(4,120,87,0.08);
-      --app-em-brd: rgba(4,120,87,0.18);
-      --app-purple: #6D28D9;
-      --app-pu-dim: rgba(109,40,217,0.08);
-      --app-pu-brd: rgba(109,40,217,0.18);
-      --app-amber: #B45309;
+      --app-sf2: #F5F5F7;
+      --app-bd: rgba(0,0,0,0.06);
+      --app-bd-med: rgba(0,0,0,0.08);
+      --app-t1: #000000;
+      --app-t2: rgba(0,0,0,0.6);
+      --app-t3: rgba(0,0,0,0.3);
+      --app-gold: #CF9500;
+      --app-gold-b: #FFB81C;
+      --app-gold-dim: rgba(207,149,0,0.08);
+      --app-gold-brd: rgba(207,149,0,0.18);
+      --app-emerald: #34C759;
+      --app-em-dim: rgba(52,199,89,0.08);
+      --app-em-brd: rgba(52,199,89,0.18);
+      --app-purple: #AF52DE;
+      --app-pu-dim: rgba(175,82,222,0.08);
+      --app-pu-brd: rgba(175,82,222,0.18);
+      --app-amber: #FF9500;
     }
     
     /* ── Dark Theme ─────────────────────────────────────── */
     [data-app-theme="dark"] {
-      --app-bg: #07080F;
-      --app-bg-alt: #0C0D1A;
-      --app-sf: #111320;
-      --app-sf2: #181A2C;
-      --app-bd: rgba(255,255,255,0.07);
-      --app-bd-med: rgba(255,255,255,0.12);
-      --app-t1: #EDE8DC;
-      --app-t2: #8A93AE;
-      --app-t3: #424B64;
-      --app-gold: #D4A853;
-      --app-gold-b: #F0C060;
-      --app-gold-dim: rgba(212,168,83,0.12);
-      --app-gold-brd: rgba(212,168,83,0.22);
-      --app-emerald: #34D399;
-      --app-em-dim: rgba(52,211,153,0.12);
-      --app-em-brd: rgba(52,211,153,0.22);
-      --app-purple: #A78BFA;
-      --app-pu-dim: rgba(167,139,250,0.12);
-      --app-pu-brd: rgba(167,139,250,0.22);
-      --app-amber: #F59E0B;
+      --app-bg: #000000;
+      --app-bg-alt: #1C1C1E;
+      --app-sf: #1C1C1E;
+      --app-sf2: #2C2C2E;
+      --app-bd: rgba(255,255,255,0.06);
+      --app-bd-med: rgba(255,255,255,0.08);
+      --app-t1: #FFFFFF;
+      --app-t2: rgba(255,255,255,0.6);
+      --app-t3: rgba(255,255,255,0.3);
+      --app-gold: #FFB81C;
+      --app-gold-b: #FFC840;
+      --app-gold-dim: rgba(255,184,28,0.12);
+      --app-gold-brd: rgba(255,184,28,0.22);
+      --app-emerald: #32E0C4;
+      --app-em-dim: rgba(50,224,196,0.12);
+      --app-em-brd: rgba(50,224,196,0.22);
+      --app-purple: #BF5AF0;
+      --app-pu-dim: rgba(191,90,240,0.12);
+      --app-pu-brd: rgba(191,90,240,0.22);
+      --app-amber: #FF9500;
     }
 
-    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Inter', 'Geist', sans-serif; }
     .app-header { background: var(--app-sf); border-bottom: 1px solid var(--app-bd); }
     .app-header.dark { background: var(--app-sf); }
-    .app-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 700; color: var(--app-t1); }
-    .app-greeting { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 700; color: var(--app-t1); line-height: 1.1; }
+    .app-title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; color: var(--app-t1); }
+    .app-greeting { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: var(--app-t1); line-height: 1.1; letter-spacing: -0.02em; }
     .app-subtext { font-size: 15px; font-weight: 400; color: var(--app-t2); }
-    .app-card { background: var(--app-sf); border: 1px solid var(--app-bd); border-radius: 18px; padding: 24px; transition: all 0.25s ease; }
-    .app-card:hover { border-color: var(--app-gold-brd); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .app-card { background: var(--app-sf); border: 1px solid var(--app-bd); border-radius: 18px; padding: 24px; transition: all 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .app-card:hover { border-color: var(--app-gold-brd); box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.12); }
     .app-card.dark { background: var(--app-sf); }
     .app-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--app-t3); }
-    .app-card-value { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 48px; font-weight: 700; color: var(--app-t1); line-height: 1; }
+    .app-card-value { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; color: var(--app-t1); line-height: 1; letter-spacing: -0.02em; }
     .app-card-sublabel { font-size: 13px; font-weight: 500; color: var(--app-t2); margin-top: 4px; }
     .app-progress-bar { height: 6px; background: var(--app-bd); border-radius: 3px; overflow: hidden; }
     .app-progress-fill { height: 100%; background: linear-gradient(90deg, var(--app-gold-b), var(--app-gold)); border-radius: 3px; transition: width 0.6s ease-out; }
-    .app-btn-primary { background: linear-gradient(135deg, var(--app-gold-b), var(--app-gold)); color: #0A0800; border: none; border-radius: 12px; padding: 14px 28px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.25s ease; }
-    .app-btn-primary:hover { transform: scale(1.03); filter: brightness(1.08); box-shadow: 0 8px 24px rgba(184,144,10,0.3); }
-    .app-btn-secondary { background: var(--app-sf2); border: 1px solid var(--app-bd-med); color: var(--app-t1); border-radius: 12px; padding: 12px 20px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .app-btn-primary { background: linear-gradient(135deg, var(--app-gold-b), var(--app-gold)); color: #0A0800; border: none; border-radius: 9999px; padding: 14px 28px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .app-btn-primary:hover { transform: scale(1.03); filter: brightness(1.08); box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 8px 24px rgba(184,144,10,0.3); }
+    .app-btn-primary:active { transform: scale(0.97); }
+    .app-btn-secondary { background: var(--app-sf2); border: 1px solid var(--app-bd-med); color: var(--app-t1); border-radius: 9999px; padding: 12px 20px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
     .app-btn-secondary:hover { border-color: var(--app-gold-brd); background: var(--app-bg-alt); }
     .app-infobox { background: var(--app-gold-dim); border: 1px solid var(--app-gold-brd); border-radius: 14px; padding: 16px; }
     .app-infobox-title { font-weight: 600; font-size: 13px; color: var(--app-t1); margin-bottom: 6px; }
     .app-infobox-text { font-size: 12px; line-height: 1.6; color: var(--app-t2); }
     .app-nav-bottom { background: var(--app-sf); border-top: 1px solid var(--app-bd); }
-    .app-nav-btn { padding: 12px 16px; border-radius: 12px; border: none; background: var(--app-sf2); color: var(--app-t2); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .app-nav-btn { padding: 12px 16px; border-radius: 9999px; border: none; background: var(--app-sf2); color: var(--app-t2); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
     .app-nav-btn.active { background: linear-gradient(135deg, var(--app-purple), var(--app-purple)); color: white; }
     .app-nav-btn:hover:not(.active) { background: var(--app-bg-alt); color: var(--app-t1); }
   `;

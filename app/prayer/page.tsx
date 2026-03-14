@@ -556,27 +556,27 @@ function getGlobalCSS() {
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Scheherazade+New:wght@400;700&display=swap');
 
     :root {
-      /* Apple Light Mode Variables */
-      --bg-main: #F5F5F7;
+      /* Apple System Colors — Light Mode */
+      --bg-main: #FAFAFA;
       --bg-secondary: #FFFFFF;
-      --text-primary: #1D1D1F;
-      --text-secondary: #86868B;
-      --glass-bg: rgba(255, 255, 255, 0.75);
-      --glass-border: rgba(0, 0, 0, 0.08);
-      --accent: #0071E3;
-      --accent-bg: rgba(0, 113, 227, 0.1);
+      --text-primary: #000000;
+      --text-secondary: rgba(0,0,0,0.6);
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(0, 0, 0, 0.06);
+      --accent: #007AFF;
+      --accent-bg: rgba(0, 122, 255, 0.08);
       --success: #34C759;
-      --success-bg: rgba(52, 199, 89, 0.15);
-      --warning: #FF9F0A;
-      --warning-bg: rgba(255, 159, 10, 0.15);
+      --success-bg: rgba(52, 199, 89, 0.08);
+      --warning: #FF9500;
+      --warning-bg: rgba(255, 149, 0, 0.08);
       --nav-bg: rgba(255, 255, 255, 0.72);
       --footer-bg: #F5F5F7;
-      --divider: rgba(0, 0, 0, 0.08);
+      --divider: rgba(0, 0, 0, 0.06);
       --row-hover: rgba(0, 0, 0, 0.02);
-      --row-today: rgba(0, 113, 227, 0.08);
-      --ambient-opacity: 0.15;
+      --row-today: rgba(0, 122, 255, 0.08);
+      --ambient-opacity: 0.1;
       
-      --sf-pro: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+      --sf-pro: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
       --arabic: 'Scheherazade New', serif;
     }
 
@@ -585,22 +585,22 @@ function getGlobalCSS() {
         /* Apple Dark Mode Variables */
         --bg-main: #000000;
         --bg-secondary: #1C1C1E;
-        --text-primary: #F5F5F7;
-        --text-secondary: #86868B;
-        --glass-bg: rgba(28, 28, 30, 0.65);
-        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-primary: #FFFFFF;
+        --text-secondary: rgba(255,255,255,0.6);
+        --glass-bg: rgba(28, 28, 30, 0.72);
+        --glass-border: rgba(255, 255, 255, 0.08);
         --accent: #0A84FF;
-        --accent-bg: rgba(10, 132, 255, 0.15);
+        --accent-bg: rgba(10, 132, 255, 0.12);
         --success: #30D158; 
-        --success-bg: rgba(48, 209, 88, 0.15);
-        --warning: #FF9F0A;
-        --warning-bg: rgba(255, 159, 10, 0.15);
-        --nav-bg: rgba(0, 0, 0, 0.72);
+        --success-bg: rgba(48, 209, 88, 0.12);
+        --warning: #FF9500;
+        --warning-bg: rgba(255, 149, 0, 0.12);
+        --nav-bg: rgba(28, 28, 30, 0.72);
         --footer-bg: #000000;
-        --divider: rgba(255, 255, 255, 0.1);
+        --divider: rgba(255, 255, 255, 0.08);
         --row-hover: rgba(255, 255, 255, 0.04);
-        --row-today: rgba(10, 132, 255, 0.15);
-        --ambient-opacity: 0.35;
+        --row-today: rgba(10, 132, 255, 0.12);
+        --ambient-opacity: 0.2;
       }
     }
 
@@ -611,6 +611,7 @@ function getGlobalCSS() {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       background: var(--bg-main);
+      color: var(--text-primary);
     }
 
     /* Apple smooth scrollbar */
@@ -627,15 +628,18 @@ function getGlobalCSS() {
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-      transition: background-color 0.4s ease, border-color 0.4s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.12);
+      transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.3s ease;
+    }
+    .glass-panel:hover {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 16px 48px rgba(0,0,0,0.16);
     }
 
     .nav-link {
       color: var(--text-secondary);
       text-decoration: none;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 500;
       transition: color 0.2s ease;
     }
     .nav-link:hover { color: var(--text-primary); }
@@ -677,8 +681,8 @@ function getGlobalCSS() {
     }
 
     /* Responsive Text */
-    .hero-title { font-size: clamp(64px, 12vw, 120px); font-weight: 600; letter-spacing: -0.04em; line-height: 1; }
-    .hero-subtitle { font-size: clamp(24px, 5vw, 40px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-secondary); }
+    .hero-title { font-size: clamp(56px, 12vw, 96px); font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+    .hero-subtitle { font-size: clamp(20px, 5vw, 32px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-secondary); }
   `
       }
                         
