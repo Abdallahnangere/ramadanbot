@@ -1,259 +1,96 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, GeneratedData, AppState } from '../../types';
 import RamadanForm from '../../components/RamadanForm';
 import FlyerPreview from '../../components/FlyerPreview';
 import LoginScreen from '../../components/LoginScreen';
 import AdminDashboard from '../../components/AdminDashboardEnhanced';
+import Sidebar from '../../components/Sidebar';
 import SettingsScreen from '../../components/SettingsScreen';
 import { useRouter } from 'next/navigation';
 import Toast from '../../components/Toast';
 import BroadcastToast from '../../components/BroadcastToast';
-import { Menu, Sparkles, Download, Clock, BookOpen, LogOut, Settings, Shield, ChevronRight, Check, Flame, MoreVertical, X, ChevronDown, Home, User as UserIcon } from 'lucide-react';
+import { Menu, Sparkles, Download, Clock, BookOpen } from 'lucide-react';
 
-/**
- * ═════════════════════════════════════════════════════════════════
- * APPLE-GRADE DESIGN SYSTEM
- * ═════════════════════════════════════════════════════════════════
- */
-function getAppleDesignSystem() {
+function getAppCSS() {
   return `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    :root {
-      --sys-bg-primary: #FFFFFF;
-      --sys-bg-secondary: #F2F2F7;
-      --sys-surface-primary: #FFFFFF;
-      --sys-surface-secondary: #F5F5F7;
-      --sys-text-primary: #000000;
-      --sys-text-secondary: rgba(0, 0, 0, 0.55);
-      --sys-text-tertiary: rgba(0, 0, 0, 0.30);
-      --sys-border-primary: rgba(0, 0, 0, 0.08);
-      --sys-accent-primary: #007AFF;
-      --sys-gold: #CF9500;
-      --sys-success: #34C759;
-      --font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist:wght@400;500;600;700&display=swap');
+    
+    /* ── Light Theme (default) ──────────────────────────── */
+    [data-app-theme="light"], :root {
+      --app-bg: #FAFAFA;
+      --app-bg-alt: #F5F5F7;
+      --app-sf: #FFFFFF;
+      --app-sf2: #F5F5F7;
+      --app-bd: rgba(0,0,0,0.06);
+      --app-bd-med: rgba(0,0,0,0.08);
+      --app-t1: #000000;
+      --app-t2: rgba(0,0,0,0.55);
+      --app-t3: rgba(0,0,0,0.30);
+      --app-gold: #CF9500;
+      --app-gold-b: #FFB81C;
+      --app-gold-dim: rgba(207,149,0,0.08);
+      --app-gold-brd: rgba(207,149,0,0.18);
+      --app-emerald: #34C759;
+      --app-em-dim: rgba(52,199,89,0.08);
+      --app-em-brd: rgba(52,199,89,0.18);
+      --app-purple: #AF52DE;
+      --app-pu-dim: rgba(175,82,222,0.08);
+      --app-pu-brd: rgba(175,82,222,0.18);
+      --app-amber: #FF9500;
     }
-
-    [data-theme="dark"] {
-      --sys-bg-primary: #000000;
-      --sys-bg-secondary: #0F0F0F;
-      --sys-surface-primary: #1C1C1E;
-      --sys-surface-secondary: #2C2C2E;
-      --sys-text-primary: #FFFFFF;
-      --sys-text-secondary: rgba(255, 255, 255, 0.55);
-      --sys-text-tertiary: rgba(255, 255, 255, 0.30);
-      --sys-border-primary: rgba(255, 255, 255, 0.08);
+    
+    /* ── Dark Theme ─────────────────────────────────────── */
+    [data-app-theme="dark"] {
+      --app-bg: #000000;
+      --app-bg-alt: #1C1C1E;
+      --app-sf: #1C1C1E;
+      --app-sf2: #2C2C2E;
+      --app-bd: rgba(255,255,255,0.06);
+      --app-bd-med: rgba(255,255,255,0.08);
+      --app-t1: #FFFFFF;
+      --app-t2: rgba(255,255,255,0.55);
+      --app-t3: rgba(255,255,255,0.30);
+      --app-gold: #FFB81C;
+      --app-gold-b: #FFC840;
+      --app-gold-dim: rgba(255,184,28,0.12);
+      --app-gold-brd: rgba(255,184,28,0.22);
+      --app-emerald: #32E0C4;
+      --app-em-dim: rgba(50,224,196,0.12);
+      --app-em-brd: rgba(50,224,196,0.22);
+      --app-purple: #BF5AF0;
+      --app-pu-dim: rgba(191,90,240,0.12);
+      --app-pu-brd: rgba(191,90,240,0.22);
+      --app-amber: #FF9500;
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-family);
-      background: var(--sys-bg-primary);
-      color: var(--sys-text-primary);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Typography Scale */
-    .sys-display { font-size: 34px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
-    .sys-title { font-size: 22px; font-weight: 600; line-height: 1.3; }
-    .sys-body { font-size: 17px; font-weight: 400; line-height: 1.5; }
-    .sys-subhead { font-size: 15px; font-weight: 400; line-height: 1.4; }
-    .sys-caption { font-size: 13px; font-weight: 400; color: var(--sys-text-secondary); }
-
-    /* Components */
-    .sys-card {
-      background: var(--sys-surface-primary);
-      border: 1px solid var(--sys-border-primary);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
-      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .sys-btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 0 24px;
-      background: var(--sys-accent-primary);
-      color: #FFFFFF;
-      border: none;
-      border-radius: 9999px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1);
-      font-family: var(--font-family);
-    }
-
-    .sys-btn-primary:active {
-      transform: scale(0.97);
-    }
-
-    .sys-input {
-      width: 100%;
-      min-height: 44px;
-      padding: 12px 16px;
-      background: var(--sys-surface-secondary);
-      border: 1px solid var(--sys-border-primary);
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: var(--font-family);
-      color: var(--sys-text-primary);
-    }
-
-    .sys-input:focus {
-      outline: 2px solid var(--sys-accent-primary);
-      outline-offset: 2px;
-    }
-
-    .sys-glass {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    [data-theme="dark"] .sys-glass {
-      background: rgba(28, 28, 30, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* Layout */
-    .app-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      grid-template-rows: 64px 1fr;
-      height: 100vh;
-      width: 100%;
-    }
-
-    .app-sidebar {
-      grid-column: 1;
-      grid-row: 1 / -1;
-      background: var(--sys-surface-primary);
-      border-right: 1px solid var(--sys-border-primary);
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .app-topnav {
-      grid-column: 2;
-      grid-row: 1;
-      background: var(--sys-surface-primary);
-      border-bottom: 1px solid var(--sys-border-primary);
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .app-main {
-      grid-column: 2;
-      grid-row: 2;
-      overflow-y: auto;
-      padding: 32px 24px;
-    }
-
-    @media (max-width: 1024px) {
-      .app-layout { grid-template-columns: 1fr; }
-      .app-sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 260px;
-        height: 100vh;
-        z-index: 50;
-        transform: translateX(-100%);
-        transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .app-sidebar.open { transform: translateX(0); }
-      .app-topnav { grid-column: 1 / -1; }
-      .app-main { grid-column: 1 / -1; }
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 15px;
-      color: var(--sys-text-secondary);
-      border: none;
-      background: none;
-      cursor: pointer;
-      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
-      width: 100%;
-      text-align: left;
-    }
-
-    .sidebar-item:hover {
-      color: var(--sys-text-primary);
-      background: var(--sys-bg-secondary);
-    }
-
-    .sidebar-item.active {
-      background: rgba(0, 122, 255, 0.10);
-      color: var(--sys-accent-primary);
-      font-weight: 600;
-    }
-
-    /* Avatar */
-    .sys-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--sys-accent-primary);
-      color: #FFFFFF;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    /* Dropdown Menu */
-    .dropdown-menu {
-      position: fixed;
-      background: var(--sys-glass);
-      border: 1px solid var(--sys-border-primary);
-      border-radius: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 12px 40px rgba(0, 0, 0, 0.10);
-      z-index: 200;
-    }
-
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      color: var(--sys-text-primary);
-      font-size: 15px;
-      width: 100%;
-      text-align: left;
-      transition: all 120ms ease;
-    }
-
-    .dropdown-item:hover {
-      background: rgba(0, 122, 255, 0.08);
-      color: var(--sys-accent-primary);
-    }
+    body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Inter', 'Geist', sans-serif; -webkit-font-smoothing: antialiased; }
+    .app-header { background: var(--app-sf); border-bottom: 1px solid var(--app-bd); }
+    .app-title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; color: var(--app-t1); }
+    .app-greeting { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: var(--app-t1); line-height: 1.1; letter-spacing: -0.02em; }
+    .app-subtext { font-size: 15px; font-weight: 400; color: var(--app-t2); }
+    .app-card { background: var(--app-sf); border: 1px solid var(--app-bd); border-radius: 18px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05); transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-card:hover { border-color: var(--app-gold-brd); box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.12); }
+    .app-card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--app-t3); }
+    .app-card-value { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; color: var(--app-t1); line-height: 1; letter-spacing: -0.02em; }
+    .app-card-sublabel { font-size: 13px; font-weight: 500; color: var(--app-t2); margin-top: 4px; }
+    .app-progress-bar { height: 6px; background: var(--app-bd); border-radius: 3px; overflow: hidden; }
+    .app-progress-fill { height: 100%; background: linear-gradient(90deg, var(--app-gold-b), var(--app-gold)); border-radius: 3px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-btn-primary { background: linear-gradient(135deg, var(--app-gold-b), var(--app-gold)); color: #0A0800; border: none; border-radius: 9999px; padding: 14px 28px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 100ms ease; min-height: 44px; }
+    .app-btn-primary:hover { opacity: 0.92; }
+    .app-btn-primary:active { transform: scale(0.97); opacity: 0.82; }
+    .app-btn-secondary { background: var(--app-sf2); border: 1px solid var(--app-bd-med); color: var(--app-t1); border-radius: 9999px; padding: 12px 20px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-btn-secondary:hover { border-color: var(--app-gold-brd); background: var(--app-bg-alt); }
+    .app-btn-secondary:active { transform: scale(0.97); }
+    .app-infobox { background: var(--app-gold-dim); border: 1px solid var(--app-gold-brd); border-radius: 14px; padding: 16px; }
+    .app-infobox-title { font-weight: 600; font-size: 13px; color: var(--app-t1); margin-bottom: 6px; }
+    .app-infobox-text { font-size: 12px; line-height: 1.6; color: var(--app-t2); }
+    .app-nav-bottom { background: var(--app-sf); border-top: 1px solid var(--app-bd); }
+    .app-nav-btn { padding: 12px 16px; border-radius: 9999px; border: none; background: var(--app-sf2); color: var(--app-t2); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-nav-btn.active { background: linear-gradient(135deg, var(--app-purple), var(--app-purple)); color: white; }
+    .app-nav-btn:hover:not(.active) { background: var(--app-bg-alt); color: var(--app-t1); }
   `;
 }
 
@@ -265,57 +102,90 @@ interface BroadcastMessage {
   created_at: string;
 }
 
-/**
- * ═════════════════════════════════════════════════════════════════
- * MAIN APP COMPONENT
- * ═════════════════════════════════════════════════════════════════
- */
-export default function AppPage() {
+export default function HomeApp() {
   const router = useRouter();
-  const avatarRef = useRef<HTMLDivElement>(null);
-  
-  // ─── State Management ───
-  const [appState, setAppState] = useState<AppState>({
-    view: 'login',
-    currentUser: null,
-    isDarkMode: false
+  const [appState, setAppState] = useState<AppState>({ 
+    view: 'login', 
+    currentUser: null, 
+    isDarkMode: false 
   });
   const [generatedData, setGeneratedData] = useState<GeneratedData | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'flyer' | 'quran'>('flyer');
+  const [downloadedFlyerUrl, setDownloadedFlyerUrl] = useState<string | null>(null);
+  const [hasDownloadedToday, setHasDownloadedToday] = useState(false);
+  const [countdownTime, setCountdownTime] = useState<string>('00:00:00');
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const [broadcastMessages, setBroadcastMessages] = useState<BroadcastMessage[]>([]);
-  const [downloadedFlyerUrl, setDownloadedFlyerUrl] = useState<string | null>(null);
-  const [hasDownloadedToday, setHasDownloadedToday] = useState(false);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [bannerWasDismissed, setBannerWasDismissed] = useState(false);
+  
+  // Initialize app: restore theme and persistent login
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        // Restore theme preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            setAppState(prev => ({...prev, isDarkMode: true}));
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
 
-  // ─── Initialize App & Hydration ───
+        // Restore persistent login if user data exists in localStorage
+        try {
+            const savedUser = localStorage.getItem('ramadanbot_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                setAppState(prev => ({...prev, view: 'app', currentUser: user}));
+            }
+        } catch (e) {
+            console.error('Failed to restore user session:', e);
+        }
+
+        setIsHydrated(true);
+    }
+  }, []);
+
+  // Android Intent + Modal Overlay flow
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Restore theme
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setAppState(prev => ({ ...prev, isDarkMode: true }));
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
+    const ua = navigator.userAgent;
+    const isAndroid = /android/i.test(ua);
+    const isWebView = /wv/.test(ua) || /Version\/[\d.]+.*Chrome\/[\d.]+ Mobile/.test(ua);
+    const shouldRedirect = isAndroid && !isWebView;
 
-    // Restore persistent login
+    if (!shouldRedirect) return;
+
+    const intentUrl = 'intent://ramadanbot.app/app#Intent;scheme=https;package=app.ramadanbot.twa;end';
+    const playUrl = 'https://play.google.com/store/apps/details?id=app.ramadanbot.twa';
+
+    // Try opening the app via intent URL
     try {
-      const savedUser = localStorage.getItem('ramadanbot_user');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        setAppState(prev => ({ ...prev, view: 'app', currentUser: user }));
-      }
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = intentUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => iframe.remove(), 1000);
     } catch (e) {
-      console.error('Failed to restore user:', e);
+      // ignore
     }
 
-    setIsHydrated(true);
+    // Show modal immediately
+    setShowInstallBanner(true);
+
+    // After 8s, if modal still open, hard-redirect to Play Store
+    const redirectTimer = window.setTimeout(() => {
+      if (document.querySelector('[data-android-modal]')) {
+        window.location.href = playUrl;
+      }
+    }, 8000);
+
+    return () => clearTimeout(redirectTimer);
   }, []);
 
-  // ─── Poll User Data ───
+  // Load completed Quran phases on app initialization
   useEffect(() => {
     if (!appState.currentUser?.id) return;
 
@@ -325,10 +195,11 @@ export default function AppPage() {
         if (res.ok) {
           const json = await res.json();
           if (json.user) {
-            const hasChanges =
+            const hasChanges = 
               json.user.streak !== appState.currentUser?.streak ||
-              json.user.remaining !== appState.currentUser?.remaining;
-
+              json.user.remaining !== appState.currentUser?.remaining ||
+              json.user.generation_count !== appState.currentUser?.generation_count;
+            
             if (hasChanges) {
               setAppState(prev => ({ ...prev, currentUser: json.user }));
               try {
@@ -340,18 +211,18 @@ export default function AppPage() {
           }
         }
       } catch (error) {
-        console.error('Poll error:', error);
+        // Silent fail - polling is non-critical
       }
-    }, 30000);
+    }, 30000); // Poll every 30 seconds instead of 5 - 6x reduction
 
     return () => clearInterval(pollInterval);
   }, [appState.currentUser?.id]);
 
-  // ─── Fetch Broadcast Messages ───
+  // Fetch broadcast messages for display
   useEffect(() => {
     if (appState.view !== 'app') return;
 
-    const fetchMessages = async () => {
+    const fetchBroadcastMessages = async () => {
       try {
         const res = await fetch('/api/broadcast/active');
         if (res.ok) {
@@ -365,14 +236,16 @@ export default function AppPage() {
       }
     };
 
-    fetchMessages();
-    const pollInterval = setInterval(fetchMessages, 30000);
+    fetchBroadcastMessages();
+
+    // Poll for new messages every 30 seconds
+    const pollInterval = setInterval(fetchBroadcastMessages, 30000);
 
     return () => clearInterval(pollInterval);
   }, [appState.view]);
 
-  // ─── Event Handlers ───
   const handleLogin = (user: User) => {
+    // Save user to localStorage for persistent login
     try {
       localStorage.setItem('ramadanbot_user', JSON.stringify(user));
     } catch (e) {
@@ -382,6 +255,7 @@ export default function AppPage() {
   };
 
   const handleLogout = () => {
+    // Clear saved user from localStorage
     try {
       localStorage.removeItem('ramadanbot_user');
     } catch (e) {
@@ -389,35 +263,45 @@ export default function AppPage() {
     }
     setAppState(prev => ({ ...prev, view: 'login', currentUser: null }));
     setGeneratedData(null);
-    setSidebarOpen(false);
-    setAvatarDropdownOpen(false);
+    setIsSidebarOpen(false);
   };
 
   const toggleTheme = () => {
     setAppState(prev => {
-      const newMode = !prev.isDarkMode;
-      if (newMode) {
-        localStorage.theme = 'dark';
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        localStorage.theme = 'light';
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-      return { ...prev, isDarkMode: newMode };
+        const newMode = !prev.isDarkMode;
+        if (newMode) {
+            localStorage.theme = 'dark';
+            document.documentElement.classList.add('dark');
+        } else {
+            localStorage.theme = 'light';
+            document.documentElement.classList.remove('dark');
+        }
+        return { ...prev, isDarkMode: newMode };
     });
   };
 
   const handleSuccess = (data: GeneratedData) => {
     setGeneratedData(data);
     if (appState.currentUser) {
-      const u = appState.currentUser;
-      const updatedUser = { ...u, generation_count: u.generation_count + 1 };
-      setAppState(prev => ({ ...prev, currentUser: updatedUser }));
-      try {
-        localStorage.setItem('ramadanbot_user', JSON.stringify(updatedUser));
-      } catch (e) {
-        console.error('Failed to update user session:', e);
-      }
+       const u = appState.currentUser;
+       const updatedUser = { ...u, generation_count: u.generation_count + 1 };
+       setAppState(prev => ({ ...prev, currentUser: updatedUser }));
+       
+       // Update persistent login with new user data
+       try {
+         localStorage.setItem('ramadanbot_user', JSON.stringify(updatedUser));
+       } catch (e) {
+         console.error('Failed to update user session:', e);
+       }
+
+       try {
+         const key = 'generationHistory';
+         const raw = localStorage.getItem(key);
+         const history = raw ? JSON.parse(raw) : [];
+         history.unshift({ topic: data.formData.topic, day: data.formData.day, date: new Date().toISOString() });
+         localStorage.setItem(key, JSON.stringify(history.slice(0, 50)));
+       } catch (e) {
+       }
     }
   };
 
@@ -427,26 +311,27 @@ export default function AppPage() {
 
     try {
       const res = await fetch(`/api/user?id=${appState.currentUser!.id}`);
-      if (res.ok) {
-        const json = await res.json();
-        if (json.user) {
-          setAppState(prev => ({ ...prev, currentUser: json.user }));
-          try {
-            localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
-          } catch (e) {
-            console.error('Failed to update user session:', e);
-          }
+        if (res.ok) {
+                const json = await res.json();
+                if (json.user) {
+                    setAppState(prev => ({ ...prev, currentUser: json.user }));
+                    // Update persistent login with new user data
+                    try {
+                      localStorage.setItem('ramadanbot_user', JSON.stringify(json.user));
+                    } catch (e) {
+                      console.error('Failed to update user session:', e);
+                    }
 
-          const usedToday = json.user.today_generations || 0;
-          const limit = json.user.limit || json.user.rate_limit_override || 3;
-          if (usedToday >= limit && json.user.role !== 'admin') {
-            setHasDownloadedToday(true);
-            setToast({ type: 'warning', message: 'Daily limit reached. Next generation available in 24 hours.' });
-          } else {
-            setHasDownloadedToday(false);
-          }
-        }
-      }
+                    const usedToday = json.user.today_generations || 0;
+                    const limit = json.user.limit || json.user.rate_limit_override || 3;
+                    if (usedToday >= limit && json.user.role !== 'admin') {
+                        setHasDownloadedToday(true);
+                        setToast({ type: 'warning', message: `Daily limit reached. Next generation available in 24 hours.` });
+                    } else {
+                        setHasDownloadedToday(false);
+                    }
+                }
+            }
     } catch (e) {
       console.error('Failed to refresh user after download', e);
       setToast({ type: 'error', message: 'Failed to check limit status' });
@@ -454,7 +339,23 @@ export default function AppPage() {
     }
   };
 
-  // ─── Render Content ───
+  const handleRedownload = () => {
+    if (downloadedFlyerUrl) {
+      const fileName = `Ramadan_Daily_Flyer.png`;
+      const link = document.createElement('a');
+      link.href = downloadedFlyerUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setToast({ type: 'success', message: '✓ Flyer re-downloaded!' });
+    }
+  };
+
+  const handleReset = () => {
+    setGeneratedData(null);
+  };
+
   const renderContent = () => {
     if (appState.view === 'login') {
       return <LoginScreen onLogin={handleLogin} />;
@@ -462,267 +363,398 @@ export default function AppPage() {
 
     if (appState.view === 'admin') {
       return (
-        <AdminDashboard
+        <AdminDashboard 
           onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))}
         />
       );
     }
 
     if (appState.view === 'settings') {
-      return (
-        <SettingsScreen
-          onBack={() => setAppState(prev => ({ ...prev, view: 'app' }))}
-          isDarkMode={appState.isDarkMode}
-          toggleTheme={toggleTheme}
-          user={appState.currentUser!}
-          onLogout={handleLogout}
-        />
-      );
+        return <SettingsScreen 
+            onBack={() => setAppState(prev => ({...prev, view: 'app'}))} 
+            isDarkMode={appState.isDarkMode}
+            toggleTheme={toggleTheme}
+            user={appState.currentUser!}
+            onLogout={handleLogout}
+        />;
     }
 
     const user = appState.currentUser!;
 
-    // ─── Main App View ───
     return (
-      <div className="app-layout" data-theme={appState.isDarkMode ? 'dark' : 'light'}>
-        <style dangerouslySetInnerHTML={{ __html: getAppleDesignSystem() }} />
-
-        {/* Background overlay for sidebar */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* ─── SIDEBAR ─── */}
-        <nav className={`app-sidebar ${sidebarOpen ? 'open' : ''}`}>
-          {/* Header */}
-          <div style={{ marginBottom: '32px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0, marginBottom: '8px' }}>🌙 RamadanBot</h2>
-            <p style={{ fontSize: '13px', color: 'var(--sys-text-secondary)', margin: 0 }}>Daily spiritual growth</p>
-          </div>
-
-          {/* Navigation */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-            <button
-              className="sidebar-item active"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <Home size={20} />
-              <span>Home</span>
-            </button>
-            <button
-              className="sidebar-item"
-              onClick={() => router.push('/quran')}
-            >
-              <BookOpen size={20} />
-              <span>Qur'ān Reader</span>
-            </button>
-            <button
-              className="sidebar-item"
-              onClick={() => router.push('/prayer')}
-            >
-              <Clock size={20} />
-              <span>Prayer Times</span>
-            </button>
-          </div>
-
-          {/* Footer */}
-          <div style={{ paddingTop: '16px', borderTop: '1px solid var(--sys-border-primary)' }}>
-            {user.role === 'admin' && (
-              <button
-                className="sidebar-item"
-                onClick={() => {
-                  setAppState(prev => ({ ...prev, view: 'admin' }));
-                  setSidebarOpen(false);
-                }}
-              >
-                <Shield size={20} />
-                <span>Admin Panel</span>
-              </button>
-            )}
-            <button
-              className="sidebar-item"
-              onClick={() => {
-                setAppState(prev => ({ ...prev, view: 'settings' }));
-                setSidebarOpen(false);
-              }}
-            >
-              <Settings size={20} />
-              <span>Settings</span>
-            </button>
-          </div>
-        </nav>
-
-        {/* ─── TOP NAVIGATION ─── */}
-        <header className="app-topnav">
-          {/* Left: Menu Button */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden"
-            style={{
-              width: '44px',
-              height: '44px',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--sys-text-primary)',
-            }}
-            aria-label="Toggle Menu"
-          >
-            <Menu size={20} />
-          </button>
-
-          {/* Center: Title */}
-          <h1 style={{ fontSize: '18px', fontWeight: '600', margin: 0, flex: 1, textAlign: 'center' }}>Dashboard</h1>
-
-          {/* Right: Avatar with Dropdown */}
-          <div style={{ position: 'relative' }}>
-            <div
-              ref={avatarRef}
-              className="sys-avatar"
-              onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
-              title="Account menu"
-            >
-              {user?.name?.[0]?.toUpperCase()}
-            </div>
-
-            {/* Avatar Dropdown Menu */}
-            {avatarDropdownOpen && (
-              <div
-                className="dropdown-menu"
-                style={{
-                  top: avatarRef.current ? avatarRef.current.getBoundingClientRect().bottom + 8 : 0,
-                  right: 0,
-                  minWidth: '200px',
-                }}
-              >
-                <div style={{ padding: '8px' }}>
-                  <button
-                    className="dropdown-item"
-                    onClick={() => {
-                      setAppState(prev => ({ ...prev, view: 'settings' }));
-                      setAvatarDropdownOpen(false);
-                    }}
+        <div className="flex flex-col h-full" style={{ backgroundColor: `var(--app-bg)`, color: `var(--app-t1)` }} data-app-theme={appState.isDarkMode ? 'dark' : 'light'}>
+            <style dangerouslySetInnerHTML={{ __html: getAppCSS() }} />
+            
+            {/* Gamified Quran Reader Modal */}
+            {activeTab === 'quran' && (
+              <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm pointer-events-auto">
+                <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 text-center max-w-md mx-4 shadow-2xl border border-gray-200 dark:border-gray-800 space-y-6">
+                  <div className="space-y-3">
+                    <h2 className="app-greeting" style={{ fontSize: '28px' }}>Qur'ān Journey</h2>
+                    <p className="app-subtext" style={{ fontSize: '16px', fontWeight: '600', color: `var(--app-gold)` }}>29 Days • 145 Phases</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <p className="app-subtext">📖 <span style={{ fontWeight: '500' }}>5–10 minutes after each prayer</span></p>
+                    <p className="app-subtext" style={{ fontSize: '14px' }}>Complete the entire Qur'ān in Ramadan with daily short sessions designed to fit your prayer routine.</p>
+                  </div>
+                  
+                  <button 
+                    onClick={() => router.push('/quran')}
+                    className="app-btn-primary w-full"
                   >
-                    <Settings size={16} />
-                    <span>Settings</span>
-                  </button>
-                  <button
-                    className="dropdown-item"
-                    onClick={() => {
-                      handleLogout();
-                      setAvatarDropdownOpen(false);
-                    }}
-                  >
-                    <LogOut size={16} />
-                    <span>Sign Out</span>
+                    Begin Your Journey →
                   </button>
                 </div>
               </div>
             )}
-          </div>
-        </header>
 
-        {/* ─── MAIN CONTENT ─── */}
-        <main className="app-main">
-          {generatedData ? (
-            // ─── Generated Output View ───
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <FlyerPreview
-                message={generatedData.text}
-                formData={generatedData.formData}
-                user={user}
-                onReset={() => setGeneratedData(null)}
-                onDownloaded={handleFlyerDownloaded}
-              />
-            </div>
-          ) : (
-            // ─── Dashboard Home ───
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              {/* Hero Greeting */}
-              <div style={{ marginBottom: '40px' }}>
-                <h1 className="sys-display" style={{ marginBottom: '8px' }}>
-                  Good morning, {user?.name?.split(' ')[0]}!
-                </h1>
-                <p className="sys-subhead" style={{ color: 'var(--sys-text-secondary)', margin: 0 }}>
-                  Your daily spiritual companion for Ramadan
-                </p>
+            <Sidebar 
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                user={appState.currentUser!}
+                onLogout={handleLogout}
+                onAdmin={() => {
+                    setAppState(prev => ({ ...prev, view: 'admin' }));
+                    setIsSidebarOpen(false);
+                }}
+                onSettings={() => {
+                    setAppState(prev => ({ ...prev, view: 'settings' }));
+                    setIsSidebarOpen(false);
+                }}
+            />
+
+            {/* ⭐ Enhanced Premium Header with Brilliant Design */}
+            <header className="app-header flex-shrink-0 sticky top-0 z-40" style={{
+                background: `linear-gradient(180deg, color-mix(in srgb, var(--app-sf) 98%, transparent) 0%, color-mix(in srgb, var(--app-sf) 85%, transparent) 100%)`,
+                borderBottom: `1px solid ${`color-mix(in srgb, var(--app-bd) 35%, transparent)`}`,
+                backdropFilter: 'blur(25px)',
+                WebkitBackdropFilter: 'blur(25px)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)',
+                padding: '0 16px',
+                minHeight: '72px',
+                display: 'flex',
+                alignItems: 'center'
+            }}>
+                <div className="flex items-center justify-between w-full max-w-6xl mx-auto">
+                    {/* Left Section - Menu + Profile */}
+                    <div className="flex items-center gap-3">
+                        {/* Menu Button */}
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="flex items-center justify-center transition-all duration-300 hover:scale-105"
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '12px',
+                                backgroundColor: `color-mix(in srgb, var(--app-gold-dim) 1, transparent)`,
+                                border: `1px solid ${`color-mix(in srgb, var(--app-bd) 25%, transparent)`}`,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                            aria-label="Open Menu"
+                            title="Menu"
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-gold-dim) 8, transparent)`;
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(184,144,10,0.15)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-gold-dim) 1, transparent)`;
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <Menu size={20} color={`var(--app-t1)`} strokeWidth={1.8} />
+                        </button>
+
+                        {/* Profile Info Card */}
+                        <div className="hidden sm:flex items-center gap-3 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, var(--app-gold-dim) 3, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, var(--app-gold-brd) 15%, transparent)`}`,
+                            borderRadius: '12px'
+                        }}>
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm" style={{
+                                background: `linear-gradient(135deg, var(--app-gold-b), var(--app-gold))`,
+                                color: '#0A0800'
+                            }}>
+                                {user?.name?.[0]?.toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                                <p style={{ fontSize: '12px', fontWeight: '600', color: `var(--app-t1)`, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {user?.name?.split(' ')[0]}
+                                </p>
+                                <p style={{ fontSize: '11px', color: `var(--app-t3)`, margin: 0, marginTop: '2px' }}>Ready</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Center - Branding */}
+                    <div className="flex-1 flex justify-center px-4">
+                        <h1 className="app-title" style={{
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            letterSpacing: '-0.5px',
+                            background: `linear-gradient(135deg, #D4A830 0%, var(--app-gold) 50%, var(--app-t1) 100%)`,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            🌙 RamadanBot
+                        </h1>
+                    </div>
+
+                    {/* Right Section - Quick Stats */}
+                    <div className="hidden sm:flex items-center gap-2">
+                        {/* Streak Badge */}
+                        <div className="flex items-center gap-1.5 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, #FFA500 10%, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, #FFA500 20%, transparent)`}`,
+                            borderRadius: '10px'
+                        }}>
+                            <span style={{ fontSize: '12px' }}>🔥</span>
+                            <span style={{ fontSize: '11px', fontWeight: '600', color: `var(--app-t1)` }}>{user?.streak || 0}</span>
+                        </div>
+
+                        {/* Daily Limit Badge - Real-time from API */}
+                        <div className="flex items-center gap-1.5 px-3 py-1.5" style={{
+                            backgroundColor: `color-mix(in srgb, var(--app-emerald) 10%, transparent)`,
+                            border: `1px solid ${`color-mix(in srgb, var(--app-emerald) 20%, transparent)`}`,
+                            borderRadius: '10px'
+                        }}>
+                            <span style={{ fontSize: '12px' }}>✨</span>
+                            <span style={{ fontSize: '11px', fontWeight: '600', color: `var(--app-t1)` }}>{typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}</span>
+                        </div>
+
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={() => {
+                                const newDarkMode = !appState.isDarkMode;
+                                setAppState(prev => ({ ...prev, isDarkMode: newDarkMode }));
+                                if (newDarkMode) {
+                                    document.documentElement.classList.add('dark');
+                                    localStorage.theme = 'dark';
+                                } else {
+                                    document.documentElement.classList.remove('dark');
+                                    localStorage.theme = 'light';
+                                }
+                            }}
+                            className="flex items-center justify-center transition-all duration-300 hover:scale-110"
+                            style={{
+                                width: '38px',
+                                height: '38px',
+                                borderRadius: '10px',
+                                backgroundColor: `color-mix(in srgb, var(--app-sf2) 70%, transparent)`,
+                                border: `1px solid ${`color-mix(in srgb, var(--app-bd) 25%, transparent)`}`,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                            aria-label="Toggle dark mode"
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 85%, transparent)`;
+                                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.1)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = `color-mix(in srgb, var(--app-sf2) 70%, transparent)`;
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <span style={{ fontSize: '18px' }}>{appState.isDarkMode ? '☀️' : '🌙'}</span>
+                        </button>
+                    </div>
+
+                    {/* Mobile Right Spacer */}
+                    <div className="sm:hidden" style={{ width: '40px', height: '40px' }} />
+                </div>
+            </header>
+
+            {/* Main Content Area - Scrollable */}
+            <main className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="px-5 py-6 space-y-6 pb-28 max-w-2xl mx-auto">
+                    {activeTab === 'flyer' ? (
+                        <>
+                            {generatedData ? (
+                                <div className="animate-fade-in">
+                                    <FlyerPreview 
+                                        message={generatedData.text}
+                                        formData={generatedData.formData}
+                                        onReset={handleReset}
+                                        user={user}
+                                        onDownloaded={handleFlyerDownloaded}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="animate-fade-in-up space-y-6">
+                                    {/* Greeting */}
+                                    <div className="space-y-2">
+                                        <h2 className="app-greeting">{user.name.split(' ')[0]}'s Reflection</h2>
+                                        <p className="app-subtext">Ready for today's spiritual journey?</p>
+                                    </div>
+
+                                    {/* Form Section */}
+                                    <div className="app-card">
+                                        <RamadanForm 
+                                            onSuccess={handleSuccess} 
+                                            initialName={user.name} 
+                                            userId={user.id}
+                                            disabled={hasDownloadedToday}
+                                            countdownTime={countdownTime}
+                                            hasLimitReached={hasDownloadedToday}
+                                        />
+                                    </div>
+
+                                    {/* Premium Cards Grid */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                      {/* Streak Card */}
+                                      <div className="app-card" style={{ backgroundColor: `var(--app-gold-dim)`, borderColor: `var(--app-gold-brd)` }}>
+                                        <div className="space-y-3">
+                                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: `var(--app-gold-dim)` }}>
+                                            🔥
+                                          </div>
+                                          <div>
+                                            <p className="app-card-label">Streak</p>
+                                            <p className="app-card-value">{user.streak}</p>
+                                            <p className="app-card-sublabel">day{user.streak !== 1 ? 's' : ''} on fire</p>
+                                          </div>
+                                          <div className="pt-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="app-card-label" style={{ color: `var(--app-t3)` }}>Goal Progress</span>
+                                              <span style={{ fontSize: '12px', fontWeight: '700', color: `var(--app-t1)` }}>{Math.min(100, Math.round((user.streak/30)*100))}%</span>
+                                            </div>
+                                            <div className="app-progress-bar">
+                                              <div 
+                                                className="app-progress-fill" 
+                                                style={{ width: `${Math.min(100, Math.round((user.streak/30)*100))}%` }} 
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Daily Limit Card */}
+                                      <div className="app-card" style={{ backgroundColor: `var(--app-em-dim)`, borderColor: `var(--app-em-brd)` }}>
+                                        <div className="space-y-3">
+                                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: `var(--app-em-dim)` }}>
+                                            ✨
+                                          </div>
+                                          <div>
+                                            <p className="app-card-label">Daily Limit</p>
+                                            <p className="app-card-value">{typeof user.remaining !== 'undefined' ? user.remaining : (user.rate_limit_override || 3)}</p>
+                                            <p className="app-card-sublabel">generation{(user.remaining || 3) !== 1 ? 's' : ''} left</p>
+                                          </div>
+                                          <div className="pt-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="app-card-label" style={{ color: `var(--app-t3)` }}>Daily Usage</span>
+                                              <span style={{ fontSize: '12px', fontWeight: '700', color: `var(--app-t1)` }}>{Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%</span>
+                                            </div>
+                                            <div className="app-progress-bar">
+                                              <div 
+                                                className="app-progress-fill" 
+                                                style={{ 
+                                                  background: `linear-gradient(90deg, var(--app-emerald), var(--app-emerald))`,
+                                                  width: `${Math.round(((user.limit || user.rate_limit_override || 3) - (user.today_generations||0))/ (user.limit || user.rate_limit_override || 3) * 100)}%` 
+                                                }} 
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Tips Box */}
+                                    <div className="app-infobox">
+                                        <p className="app-infobox-title">💡 Daily Reflection Tips</p>
+                                        <p className="app-infobox-text">
+                                            Choose a topic that resonates with your spiritual journey. Add specific verses or Hadith for more personalized content.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    ) : null}
+                </div>
+            </main>
+
+            {/* Bottom Navigation */}
+            <nav className="app-nav-bottom fixed bottom-0 left-0 right-0 flex-shrink-0 px-5 py-3 z-40" style={{ backgroundColor: `var(--app-sf)`, borderColor: `var(--app-bd)` }}>
+              <div className="flex gap-3 max-w-2xl mx-auto">
+                <button
+                  onClick={() => setActiveTab('flyer')}
+                  className={`app-nav-btn flex-1 flex items-center justify-center gap-2 ${activeTab === 'flyer' ? 'active' : ''}`}
+                >
+                  <Sparkles size={18} />
+                  <span>Flyer</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('quran')}
+                  className={`app-nav-btn flex-1 flex items-center justify-center gap-2 ${activeTab === 'quran' ? 'active' : ''}`}
+                >
+                  <BookOpen size={18} />
+                  <span>Quran</span>
+                </button>
               </div>
-
-              {/* Stat Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', marginBottom: '40px' }}>
-                {/* Streak Card */}
-                <div className="sys-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '32px' }}>🔥</span>
-                  </div>
-                  <div style={{ fontSize: '34px', fontWeight: '700', marginBottom: '4px' }}>
-                    {user?.streak || 0}
-                  </div>
-                  <p className="sys-caption" style={{ margin: 0 }}>Day Streak</p>
-                </div>
-
-                {/* Generations Card */}
-                <div className="sys-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '32px' }}>✨</span>
-                  </div>
-                  <div style={{ fontSize: '34px', fontWeight: '700', marginBottom: '4px' }}>
-                    {typeof user?.remaining !== 'undefined' ? user.remaining : (user?.rate_limit_override || 3)}
-                  </div>
-                  <p className="sys-caption" style={{ margin: 0 }}>Generations Left</p>
-                </div>
-
-                {/* Total Generated Card */}
-                <div className="sys-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '32px' }}>📊</span>
-                  </div>
-                  <div style={{ fontSize: '34px', fontWeight: '700', marginBottom: '4px' }}>
-                    {user?.generation_count || 0}
-                  </div>
-                  <p className="sys-caption" style={{ margin: 0 }}>Total Generated</p>
-                </div>
-              </div>
-
-              {/* Main Form */}
-              <RamadanForm
-                onSuccess={handleSuccess}
-                initialName={user?.name || ''}
-                userId={user?.id || ''}
-                hasLimitReached={hasDownloadedToday}
-              />
-            </div>
-          )}
-        </main>
-
-        {/* Toast Notifications */}
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
-
-        {/* Broadcast Messages */}
-        {broadcastMessages.length > 0 && (
-          <BroadcastToast
-            messages={broadcastMessages}
-          />
-        )}
-      </div>
+            </nav>
+        </div>
     );
   };
 
-  if (!isHydrated) {
-    return null;
-  }
+  return (
+    <div className={`relative w-full h-full flex justify-center items-center p-0 md:p-8`} data-app-theme={appState.isDarkMode ? 'dark' : 'light'}>
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          duration={4000}
+          onClose={() => setToast(null)}
+        />
+      )}
+      
+      <BroadcastToast 
+        messages={broadcastMessages}
+        onDismiss={(id) => {
+          setBroadcastMessages(prev => prev.filter(m => m.id !== id));
+        }}
+      />
+      
+      <div className="relative w-full h-full md:max-w-[400px] md:max-h-[850px] overflow-hidden transition-colors duration-300 isolate md:rounded-[48px]" style={{ backgroundColor: `var(--app-bg)` }}>
+        <div className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-[126px] h-[30px] bg-black rounded-b-[20px] z-50 pointer-events-none shadow-lg"></div>
+        {isHydrated ? renderContent() : <LoginScreen onLogin={handleLogin} />}
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1.5 bg-black/30 dark:bg-white/30 rounded-full pointer-events-none z-50"></div>
 
-  return renderContent();
+        {showInstallBanner && (
+          <div data-android-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 backdrop-blur-sm">
+            <div className="rounded-3xl shadow-2xl flex flex-col items-center gap-6 p-8 max-w-sm mx-4 app-card">
+              <div className="text-center space-y-2">
+                <h2 className="app-greeting" style={{ fontSize: '24px' }}>Get RamadanBot App</h2>
+                <p className="app-subtext">Install from Google Play for the best experience</p>
+              </div>
+              
+              <a
+                href="https://play.google.com/store/apps/details?id=app.ramadanbot.twa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+                onClick={() => setShowInstallBanner(false)}
+              >
+                <img
+                  src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                  alt="Get it on Google Play"
+                  className="h-16 w-auto mx-auto"
+                />
+              </a>
+
+              <button
+                className="app-btn-secondary w-full"
+                onClick={() => setShowInstallBanner(false)}
+              >
+                Continue in Browser
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
