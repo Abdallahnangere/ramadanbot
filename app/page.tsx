@@ -5,12 +5,14 @@ export default function HomePage() {
   return (
     <main>
       <section className="section hero">
-        <div className="container split">
+        <div className="container hero-grid">
           <div className="card hero-panel">
+            <div className="eyebrow">Ramadanbot Platform Evolution</div>
             <h1>Ramadanbot v2.0 is now year-round</h1>
-            <p className="muted">
+            <p className="muted prose">
               Ramadanbot is no longer a Ramadan-only experience. Version 2.0 is designed for daily use all year: structured Quran reading, reliable reference access, and consistent worship support before, during, and after Ramadan.
             </p>
+            <div className="notice">Version 2.0 rollout: public-facing foundation is live, richer in-app experiences follow next.</div>
             <div style={{ margin: "1rem 0" }}>
               <span className="badge">Full Quran Reader</span>
               <span className="badge">Quran Plan Builder</span>
@@ -26,6 +28,10 @@ export default function HomePage() {
                 About Founder
               </Link>
             </div>
+            <div className="gradient-divider" />
+            <p className="muted" style={{ marginBottom: 0 }}>
+              Built to help users maintain worship consistency after Ramadan, not only during Ramadan.
+            </p>
           </div>
           <PrayerCounter />
         </div>
@@ -34,6 +40,7 @@ export default function HomePage() {
       <section className="section">
         <div className="container">
           <div className="card">
+            <div className="eyebrow">Capability Set</div>
             <h2 style={{ marginTop: 0 }}>What’s New in Version 2.0</h2>
             <div className="grid grid-3">
               <div>
@@ -64,14 +71,17 @@ export default function HomePage() {
       <section className="section">
         <div className="container grid grid-3">
           <div className="card">
+            <div className="eyebrow">Consistency</div>
             <div className="kpi">365</div>
             <p className="muted">Built for daily relevance, not seasonal spikes.</p>
           </div>
           <div className="card">
+            <div className="eyebrow">Knowledge Depth</div>
             <div className="kpi">10+</div>
             <p className="muted">Major hadith collections represented in the product data layer.</p>
           </div>
           <div className="card">
+            <div className="eyebrow">Quran Journey</div>
             <div className="kpi">604</div>
             <p className="muted">Complete Quran page journey available for guided consistency.</p>
           </div>
@@ -81,6 +91,7 @@ export default function HomePage() {
       <section className="section">
         <div className="container grid grid-2">
           <div className="card">
+            <div className="eyebrow">Reference Scope</div>
             <h2 style={{ marginTop: 0 }}>Dataset Coverage</h2>
             <table>
               <thead>
@@ -113,6 +124,7 @@ export default function HomePage() {
           </div>
 
           <div className="card">
+            <div className="eyebrow">Core Direction</div>
             <h2 style={{ marginTop: 0 }}>Mission & Product Philosophy</h2>
             <p className="muted">
               Ramadanbot v2.0 is built to keep Muslim users consistent after Ramadan by making daily worship tools
@@ -131,6 +143,7 @@ export default function HomePage() {
 
       <section className="section">
         <div className="container card">
+          <div className="eyebrow">Strategic Rebuild Context</div>
           <h2 style={{ marginTop: 0 }}>Why This Rebuild Matters</h2>
           <p className="muted">
             Many Islamic apps lose engagement after Ramadan because the product loop is tied to one month. Ramadanbot
@@ -146,6 +159,7 @@ export default function HomePage() {
 
       <section className="section">
         <div className="container card">
+          <div className="eyebrow">Leadership</div>
           <h2 style={{ marginTop: 0 }}>Founder</h2>
           <p className="muted" style={{ marginBottom: "0.4rem" }}>
             <strong style={{ color: "#12203a" }}>Abdallah Nangere</strong> is the founder of Ramadanbot and leads the
@@ -164,6 +178,9 @@ export default function HomePage() {
             <img src="https://anjalventures.com/logo.png" alt="Anjal Ventures" style={{ height: 42 }} />
             <div className="muted" style={{ marginTop: "0.4rem" }}>
               BUILT BY ANJAL VENTURES <a href="https://www.anjalventures.com">WWW.ANJALVENTURES.COM</a>
+            </div>
+            <div className="muted" style={{ marginTop: "0.25rem", fontSize: "0.86rem" }}>
+              Ramadanbot v2.0 public website. All rights reserved.
             </div>
           </div>
           <a className="btn" href="https://wa.me/2348164135836">
