@@ -1,0 +1,154 @@
+:root {
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --text: #12203a;
+  --muted: #5a6b89;
+  --line: #dce4f3;
+  --brand: #2e5bff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  width: min(1120px, 92%);
+  margin: 0 auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  z-index: 20;
+}
+
+.nav {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.menu a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.section {
+  padding: 3rem 0;
+}
+
+.card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0 0 0.7rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid var(--line);
+  background: #eef3ff;
+  color: #29489e;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  margin-right: 0.45rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+}
+
+.btn {
+  border: 1px solid var(--brand);
+  background: var(--brand);
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn.secondary {
+  background: white;
+  color: var(--brand);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid var(--line);
+  padding: 0.6rem;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+th {
+  background: #f3f7ff;
+}
+
+.footer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--line);
+  background: white;
+}
+
+.footer-inner {
+  min-height: 120px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 1.2rem 0;
+}
