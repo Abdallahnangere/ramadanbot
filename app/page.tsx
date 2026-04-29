@@ -5,12 +5,11 @@ export default function HomePage() {
   return (
     <main>
       <section className="section hero">
-        <div className="container grid grid-2">
-          <div className="card">
+        <div className="container split">
+          <div className="card hero-panel">
             <h1>Ramadanbot v2.0 is now year-round</h1>
             <p className="muted">
-              Ramadanbot has evolved from a seasonal tool into a full Islamic consistency platform that serves users
-              before Ramadan, during Ramadan, and after Ramadan.
+              Ramadanbot is no longer a Ramadan-only experience. Version 2.0 is designed for daily use all year: structured Quran reading, reliable reference access, and consistent worship support before, during, and after Ramadan.
             </p>
             <div style={{ margin: "1rem 0" }}>
               <span className="badge">Full Quran Reader</span>
@@ -63,6 +62,23 @@ export default function HomePage() {
       </section>
 
       <section className="section">
+        <div className="container grid grid-3">
+          <div className="card">
+            <div className="kpi">365</div>
+            <p className="muted">Built for daily relevance, not seasonal spikes.</p>
+          </div>
+          <div className="card">
+            <div className="kpi">10+</div>
+            <p className="muted">Major hadith collections represented in the product data layer.</p>
+          </div>
+          <div className="card">
+            <div className="kpi">604</div>
+            <p className="muted">Complete Quran page journey available for guided consistency.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container grid grid-2">
           <div className="card">
             <h2 style={{ marginTop: 0 }}>Dataset Coverage</h2>
@@ -97,7 +113,7 @@ export default function HomePage() {
           </div>
 
           <div className="card">
-            <h2 style={{ marginTop: 0 }}>Mission</h2>
+            <h2 style={{ marginTop: 0 }}>Mission & Product Philosophy</h2>
             <p className="muted">
               Ramadanbot v2.0 is built to keep Muslim users consistent after Ramadan by making daily worship tools
               practical, fast, and accessible in one product.
@@ -110,6 +126,21 @@ export default function HomePage() {
               <li>Clean user experience for ordinary users and developers</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container card">
+          <h2 style={{ marginTop: 0 }}>Why This Rebuild Matters</h2>
+          <p className="muted">
+            Many Islamic apps lose engagement after Ramadan because the product loop is tied to one month. Ramadanbot
+            v2.0 fixes that by centering features users can sustain: daily reading goals, searchable references,
+            calendar conversion utilities, and city-based prayer awareness.
+          </p>
+          <p className="muted">
+            This version is intentionally rebuilt as a clean public-facing frontend foundation. Admin and in-app
+            authenticated experiences are intentionally deferred to a later sprint.
+          </p>
         </div>
       </section>
 
